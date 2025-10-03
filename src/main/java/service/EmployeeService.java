@@ -3,13 +3,16 @@ package service;
 import dto.EmployeeUpdateRequest;
 import java.util.List;
 import model.Employee;
+import org.springframework.stereotype.Service;
 import repository.EmployeeRepository;
 
+@Service
 public class EmployeeService {
     private final EmployeeRepository repository;
     private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
     private static final String PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG = "Password is required when creating an employee";
     private static final String PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG = "Passwords do not match or confirmation missing";
+    private static final String CHIEF_EDITOR_EXISTS_MSG = "Chief editor already exists";
 
     public EmployeeService(EmployeeRepository repository) {
         this.repository = repository;
@@ -17,7 +20,9 @@ public class EmployeeService {
 
     public void addEmployee(Employee employee) {
         if (employee.isChiefEditor()) {
-            repository.resetChiefEditorExcept(-1);
+            if (repository.existsChiefEditor()) {
+                throw new IllegalStateException(CHIEF_EDITOR_EXISTS_MSG);
+            }
         }
         if (employee.getPassword() == null || employee.getPassword().isEmpty()) {
             throw new IllegalArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
@@ -46,6 +51,10 @@ public class EmployeeService {
         existingEmployee.setAddress(request.getAddress());
         existingEmployee.setEducation(request.getEducation());
         existingEmployee.setType(request.getType());
+        if (request.isChiefEditor()) {
+            repository.resetChiefEditorExcept(existingEmployee.getId());
+            existingEmployee.setChiefEditor(true);
+        }
         repository.update(existingEmployee);
     }
 
@@ -67,15 +76,5 @@ public class EmployeeService {
         } else {
             throw new IllegalArgumentException(EMPLOYEE_NOT_FOUND_MSG);
         }
-    }
-
-    public void setChiefEditor(int employeeId) {
-        Employee employee = repository.get(employeeId);
-        if (employee == null) {
-            throw new IllegalArgumentException(EMPLOYEE_NOT_FOUND_MSG);
-        }
-        repository.resetChiefEditorExcept(employee.getId());
-        employee.setChiefEditor(true);
-        repository.update(employee);
     }
 }

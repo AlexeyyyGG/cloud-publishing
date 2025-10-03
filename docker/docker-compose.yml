@@ -1,10 +1,10 @@
 services:
   mysql:
     build: .
-    container_name: Publisher
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: employee_database
+      MYSQL_DATABASE: cloud_publishing
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
     ports:

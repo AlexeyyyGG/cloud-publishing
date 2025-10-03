@@ -1,2 +1,2 @@
 FROM mysql:8.0
-COPY employees.sql /docker-entrypoint-initdb.d/
+COPY cloud-publishing.sql /docker-entrypoint-initdb.d/

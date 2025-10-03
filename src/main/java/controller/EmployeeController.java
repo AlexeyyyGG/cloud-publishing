@@ -16,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping(EmployeeController.EMPLOYEES)
 public class EmployeeController {
     public static final String EMPLOYEES = "/employees";
-    public static final String ID_PATH = "/{id}";
-    public static final String ID = "id";
+    private static final String ID_PATH = "/{id}";
+    private static final String ID = "id";
     private final EmployeeService service;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Autowired
     public EmployeeController(EmployeeService service) {
@@ -32,19 +35,22 @@ public class EmployeeController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllEmployees() {
+        logger.info("getAllEmployees called");
         List<Employee> employees = service.getAllEmployees();
+        logger.debug("Found {} employees", employees.size());
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getEmployee(@PathVariable(ID) int id) {
+        logger.info("getEmployee called with id={}", id);
         Employee employee = service.getEmployee(id);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
-        System.out.println("addPrincess called with: " + employee);
+        logger.info("addEmployee called with: {}", employee);
         service.addEmployee(employee);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -54,6 +60,7 @@ public class EmployeeController {
             @PathVariable(ID) int id,
             @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
+        logger.info("updateEmployee called for id {}", id);
         employeeUpdateRequest.setId(id);
         service.updateEmployee(employeeUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -61,6 +68,7 @@ public class EmployeeController {
 
     @DeleteMapping(value = {ID_PATH})
     public ResponseEntity<?> deletePrincess(@PathVariable(ID) int id) {
+        logger.info("deleteEmployee called with id {}", id);
         service.deleteEmployee(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

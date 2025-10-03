@@ -1,4 +1,4 @@
-USE employee_database;
+USE cloud_publishing;
 
 CREATE TABLE EMPLOYEES (
                           id INT AUTO_INCREMENT PRIMARY KEY,

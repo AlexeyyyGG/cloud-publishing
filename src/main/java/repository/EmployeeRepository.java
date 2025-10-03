@@ -7,10 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import model.Employee;
 import model.Gender;
 import model.Type;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class EmployeeRepository {
     private final Connection connection;
     private static final String COL_ID = "id";
@@ -25,23 +28,21 @@ public class EmployeeRepository {
     private static final String COL_EDUCATION = "education";
     private static final String COL_TYPE = "type";
     private static final String COL_IS_CHIEF_EDITOR = "is_chief_editor";
-    private static final String SQL_INSERT =
-            "INSERT INTO EMPLOYEES(first_name, last_name, middle_name, email, password, gender, "
-                    + "birth_year, address, education, type, is_chief_editor)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE_WITH_PASSWORD =
-            "UPDATE EMPLOYEES SET first_name=?, last_name=?, middle_name=?, email=?, password=?, "
-                    + "gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?";
-    private static final String SQL_UPDATE_WITHOUT_PASSWORD =
-            "UPDATE EMPLOYEES SET first_name=?, last_name=?, middle_name=?, email=?, "
-                    + "gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?";
-    private static final String SQL_GET =
-            "SELECT * FROM EMPLOYEES WHERE id=?";
-    private static final String SQL_LIST =
-            "SELECT * FROM EMPLOYEES";
-    private static final String SQL_DELETE =
-            "DELETE FROM EMPLOYEES WHERE id=?";
-    private static final String SQL_EXIST = "SELECT 1 FROM EMPLOYEES WHERE id = ? LIMIT 1";
+    private static final String SQL_INSERT = """
+            INSERT INTO EMPLOYEES(first_name, last_name, middle_name, email, password, gender,
+            birth_year, address, education, type, is_chief_editor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_UPDATE_WITH_PASSWORD = """
+            UPDATE EMPLOYEES SET first_name=?, last_name=?, middle_name=?, email=?, password=?,
+            gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?""";
+    private static final String SQL_UPDATE_WITHOUT_PASSWORD = """
+            UPDATE EMPLOYEES SET first_name=?, last_name=?, middle_name=?, email=?,
+            gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?""";
+    private static final String SQL_GET = "SELECT * FROM EMPLOYEES WHERE id=?";
+    private static final String SQL_LIST = "SELECT * FROM EMPLOYEES";
+    private static final String SQL_DELETE = "DELETE FROM EMPLOYEES WHERE id=?";
+    private static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM EMPLOYEES WHERE id = ?)";
+    private static final String SQL_EXIST_CE =
+            "SELECT EXISTS(SELECT 1 FROM EMPLOYEES WHERE is_chief_editor = TRUE)";
     private static final String FAILED_TO_RESET_CE_MSG = "Failed to reset chief editor";
     private static final String FAILED_TO_ADD_MSG = "Failed to add";
     private static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Failed to update employee with id, %d";
@@ -49,6 +50,8 @@ public class EmployeeRepository {
     private static final String FAILED_TO_LIST_MSG = "Failed to list";
     private static final String FAILED_TO_DELETE_MSG = "Failed to delete";
     private static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if employee exists";
+    private static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
+    private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
 
     public EmployeeRepository(Connection connection) {
         this.connection = connection;
@@ -103,20 +106,26 @@ public class EmployeeRepository {
             sql = SQL_UPDATE_WITHOUT_PASSWORD;
         }
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            int index = 1;
-            statement.setString(index++, employee.getFirstName());
-            statement.setString(index++, employee.getLastName());
-            statement.setString(index++, employee.getMiddleName());
-            statement.setString(index++, employee.getEmail());
+            statement.setString(1, employee.getFirstName());
+            statement.setString(2, employee.getLastName());
+            statement.setString(3, employee.getMiddleName());
+            statement.setString(4, employee.getEmail());
             if (updatePassword) {
-                statement.setString(index++, employee.getPassword());
+                statement.setString(5, employee.getPassword());
+                statement.setString(6, employee.getGender().name());
+                statement.setObject(7, employee.getBirthYear());
+                statement.setString(8, employee.getAddress());
+                statement.setString(9, employee.getEducation());
+                statement.setString(10, employee.getType().name());
+                statement.setInt(11, employee.getId());
+            } else {
+                statement.setString(5, employee.getGender().name());
+                statement.setObject(6, employee.getBirthYear());
+                statement.setString(7, employee.getAddress());
+                statement.setString(8, employee.getEducation());
+                statement.setString(9, employee.getType().name());
+                statement.setInt(10, employee.getId());
             }
-            statement.setString(index++, employee.getGender().name());
-            statement.setObject(index++, employee.getBirthYear());
-            statement.setString(index++, employee.getAddress());
-            statement.setString(index++, employee.getEducation());
-            statement.setString(index++, employee.getType().name());
-            statement.setInt(index, employee.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_UPDATE_WITH_ID_MSG + employee.getId(), e);
@@ -130,7 +139,7 @@ public class EmployeeRepository {
                 if (resultSet.next()) {
                     return resultSetToEmployee(resultSet);
                 } else {
-                    return null;
+                    throw new NoSuchElementException(EMPLOYEE_NOT_FOUND_MSG);
                 }
             }
         } catch (SQLException e) {
@@ -164,11 +173,26 @@ public class EmployeeRepository {
         try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.next();
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
+                return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_CHECK_MESSAGE, e);
         }
+    }
+
+    public boolean existsChiefEditor() {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
+                ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(FAILED_TO_CHECK_EXISTING_CE_MSG, e);
+        }
+        return false;
     }
 
     private Employee resultSetToEmployee(ResultSet resultSet) throws SQLException {
