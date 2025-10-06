@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping(EmployeeController.EMPLOYEES)
 public class EmployeeController {
-    public static final String EMPLOYEES = "/employees";
+    static final String EMPLOYEES = "/employees";
     private static final String ID_PATH = "/{id}";
     private static final String ID = "id";
     private final EmployeeService service;
@@ -61,8 +61,7 @@ public class EmployeeController {
             @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
         logger.info("updateEmployee called for id {}", id);
-        employeeUpdateRequest.setId(id);
-        service.updateEmployee(employeeUpdateRequest);
+        service.updateEmployee(id, employeeUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

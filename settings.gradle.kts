@@ -1,1 +1,1 @@
-rootProject.name = "Cloud-publishing"
+rootProject.name = "cloud-publishing"

@@ -24,38 +24,40 @@ public class EmployeeService {
                 throw new IllegalStateException(CHIEF_EDITOR_EXISTS_MSG);
             }
         }
-        if (employee.getPassword() == null || employee.getPassword().isEmpty()) {
+        if (employee.password() == null || employee.password().isEmpty()) {
             throw new IllegalArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
         }
         repository.add(employee);
     }
 
-    public void updateEmployee(EmployeeUpdateRequest request) {
-        Employee existingEmployee = repository.get(request.getId());
+    public void updateEmployee(int id, EmployeeUpdateRequest request) {
+        Employee existingEmployee = repository.get(id);
         if (existingEmployee == null) {
             throw new IllegalArgumentException(EMPLOYEE_NOT_FOUND_MSG);
         }
-        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            if (request.getPasswordConfirm() == null || !request.getPassword()
-                    .equals(request.getPasswordConfirm())) {
+        String newPassword = existingEmployee.password();
+        if (request.password() != null && !request.password().isEmpty()) {
+            if (request.passwordConfirm() == null || !request.password()
+                    .equals(request.passwordConfirm())) {
                 throw new IllegalArgumentException(PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG);
             }
-            existingEmployee.setPassword(request.getPassword());
+            newPassword = request.password();
         }
-        existingEmployee.setFirstName(request.getFirstName());
-        existingEmployee.setLastName(request.getLastName());
-        existingEmployee.setMiddleName(request.getMiddleName());
-        existingEmployee.setEmail(request.getEmail());
-        existingEmployee.setGender(request.getGender());
-        existingEmployee.setBirthYear(request.getBirthYear());
-        existingEmployee.setAddress(request.getAddress());
-        existingEmployee.setEducation(request.getEducation());
-        existingEmployee.setType(request.getType());
-        if (request.isChiefEditor()) {
-            repository.resetChiefEditorExcept(existingEmployee.getId());
-            existingEmployee.setChiefEditor(true);
-        }
-        repository.update(existingEmployee);
+        Employee updatedEmployee = new Employee(
+                existingEmployee.id(),
+                request.firstName(),
+                request.lastName(),
+                request.middleName(),
+                request.email(),
+                newPassword,
+                request.gender(),
+                request.birthYear(),
+                request.address(),
+                request.education(),
+                request.type(),
+                request.isChiefEditor()
+        );
+        repository.update(updatedEmployee);
     }
 
     public Employee getEmployee(int id) {
