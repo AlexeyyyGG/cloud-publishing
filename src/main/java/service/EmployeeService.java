@@ -1,6 +1,8 @@
 package service;
 
 import dto.EmployeeUpdateRequest;
+import exception.InvalidArgumentException;
+import exception.ObjectNotFoundException;
 import java.util.List;
 import model.Employee;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,11 @@ public class EmployeeService {
     public void addEmployee(Employee employee) {
         if (employee.isChiefEditor()) {
             if (repository.existsChiefEditor()) {
-                throw new IllegalStateException(CHIEF_EDITOR_EXISTS_MSG);
+                throw new InvalidArgumentException(CHIEF_EDITOR_EXISTS_MSG);
             }
         }
         if (employee.password() == null || employee.password().isEmpty()) {
-            throw new IllegalArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
+            throw new InvalidArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
         }
         repository.add(employee);
     }
@@ -33,13 +35,13 @@ public class EmployeeService {
     public void updateEmployee(int id, EmployeeUpdateRequest request) {
         Employee existingEmployee = repository.get(id);
         if (existingEmployee == null) {
-            throw new IllegalArgumentException(EMPLOYEE_NOT_FOUND_MSG);
+            throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
         }
         String newPassword = existingEmployee.password();
         if (request.password() != null && !request.password().isEmpty()) {
             if (request.passwordConfirm() == null || !request.password()
                     .equals(request.passwordConfirm())) {
-                throw new IllegalArgumentException(PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG);
+                throw new InvalidArgumentException(PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG);
             }
             newPassword = request.password();
         }
@@ -61,10 +63,10 @@ public class EmployeeService {
     }
 
     public Employee getEmployee(int id) {
-        if (repository.exist(id)) {
+        if (repository.exists(id)) {
             return repository.get(id);
         } else {
-            throw new IllegalArgumentException(EMPLOYEE_NOT_FOUND_MSG);
+            throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
         }
     }
 
@@ -73,10 +75,10 @@ public class EmployeeService {
     }
 
     public void deleteEmployee(int id) {
-        if (repository.exist(id)) {
+        if (repository.exists(id)) {
             repository.delete(id);
         } else {
-            throw new IllegalArgumentException(EMPLOYEE_NOT_FOUND_MSG);
+            throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
         }
     }
 }

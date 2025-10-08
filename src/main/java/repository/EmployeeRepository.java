@@ -73,24 +73,6 @@ public class EmployeeRepository {
             statement.setString(10, employee.type().toString());
             statement.setBoolean(11, employee.isChiefEditor());
             statement.executeUpdate();
-            try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                resultSet.next();
-                int id = resultSet.getInt(1);
-                new Employee(
-                        id,
-                        employee.firstName(),
-                        employee.lastName(),
-                        employee.middleName(),
-                        employee.email(),
-                        employee.password(),
-                        employee.gender(),
-                        employee.birthYear(),
-                        employee.address(),
-                        employee.education(),
-                        employee.type(),
-                        employee.isChiefEditor()
-                );
-            }
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_ADD_MSG, e);
         }
@@ -169,7 +151,7 @@ public class EmployeeRepository {
         }
     }
 
-    public boolean exist(int id) {
+    public boolean exists(int id) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {

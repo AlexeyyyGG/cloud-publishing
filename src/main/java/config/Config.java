@@ -1,7 +1,6 @@
 package config;
 
 import java.sql.Connection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +16,6 @@ import repository.DatabaseConnection;
 @ComponentScan(basePackages = {"config", "controller", "service", "repository"})
 @PropertySource("classpath:application.properties")
 public class Config implements WebMvcConfigurer {
-    private final DbProperties dbProperties;
-
-    @Autowired
-    public Config(DbProperties dbProperties) {
-        this.dbProperties = dbProperties;
-    }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfig() {
@@ -30,12 +23,8 @@ public class Config implements WebMvcConfigurer {
     }
 
     @Bean
-    public Connection getConnection() {
-        return DatabaseConnection.getConnection(
-                dbProperties.getUrl(),
-                dbProperties.getUser(),
-                dbProperties.getPassword()
-        );
+    public Connection getConnection(DbProperties dbProperties) {
+        return DatabaseConnection.getConnection(dbProperties);
     }
 
     @Override
