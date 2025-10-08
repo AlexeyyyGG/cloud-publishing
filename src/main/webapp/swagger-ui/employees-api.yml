@@ -1,0 +1,137 @@
+openapi: 3.0.3
+info:
+  title: Employees API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /employees:
+    get:
+      summary: Получение списка всех сотрудников
+      responses:
+        '200':
+          description: Успешный ответ со списком сотрудников
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+    post:
+      summary: Добавление сотрудника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '201':
+          description: Сотрудник добавлен
+        '400':
+          description: Некорректные входные данные
+        '409':
+          description: Электронная почта уже используется
+  /employees/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Уникальный идентификатор сотрудника
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получение данных одного сотрудника по id
+      responses:
+        '200':
+          description: Успешный ответ сотрудник найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Сотрудник с указанным id не найден
+        '400':
+          description: Некорректный id
+    put:
+      summary: Обновление данных сотрудника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Денные сотрудника обновлены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Некорректные входные данные
+        '404':
+          description: Сотрудник с заданным id не найден
+    delete:
+      summary: Удаление сотрудника по id
+      responses:
+        '204':
+          description: Сотрудник удалён
+        '400':
+          description: Некорректный id
+        '404':
+          description: Сотрудник с заданным id не найден
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор сотрудника
+        first_name:
+          type: string
+          description: Имя сотрудника
+        last_name:
+          type: string
+          description: Фамилия сотрудника
+        middle_name:
+          type: string
+          description: Отчество сотрудника
+        email:
+          type: string
+          format: email
+          description: Электронная почта
+        gender:
+          type: string
+          description: Пол
+          enum: [MALE, FEMALE]
+        birth_year:
+          type: integer
+          description: Год рождения
+        address:
+          type: string
+          description: Адрес сотрудника
+        education:
+          type: string
+          description: Образование
+        type:
+          type: string
+          description: Тип сотрудника
+          enum: [JOURNALIST, EDITOR]
+        is_chief_editor:
+          type: boolean
+          description: Главный редактор
+
+      required:
+        - id
+        - first_name
+        - last_name
+        - middle_name
+        - email
+        - gender
+        - birth_year
+        - address
+        - education
+        - type
+        - is_chief_editor
