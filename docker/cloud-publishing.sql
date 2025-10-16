@@ -1,12 +1,12 @@
 USE cloud_publishing;
 
-CREATE TABLE CATEGORIES
+CREATE TABLE categories
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE EMPLOYEES
+CREATE TABLE employees
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     first_name      VARCHAR(100)                  NOT NULL,
@@ -23,17 +23,17 @@ CREATE TABLE EMPLOYEES
     UNIQUE KEY unique_email (email)
 );
 
-CREATE TABLE PUBLICATIONS
+CREATE TABLE publications
 (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     name             VARCHAR(100)                   NOT NULL,
     publication_type ENUM ('Magazine', 'Newspaper') NOT NULL,
     theme            VARCHAR(100)                   NOT NULL,
     category_id      INT                            NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES CATEGORIES (id)
+    FOREIGN KEY (category_id) REFERENCES categories (id)
 );
 
-CREATE TABLE ARTICLES
+CREATE TABLE articles
 (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     name             VARCHAR(100)                   NOT NULL,
@@ -42,27 +42,27 @@ CREATE TABLE ARTICLES
     category_id      INT                            NOT NULL,
     author_id        INT                            NOT NULL,
     publication_id   INT                            NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES CATEGORIES (id),
-    FOREIGN KEY (author_id) REFERENCES EMPLOYEES (id),
-    FOREIGN KEY (publication_id) REFERENCES PUBLICATIONS (id)
+    FOREIGN KEY (category_id) REFERENCES categories (id),
+    FOREIGN KEY (author_id) REFERENCES employees (id),
+    FOREIGN KEY (publication_id) REFERENCES publications (id)
 );
 
-CREATE TABLE ARTICLE_AUTHORS
+CREATE TABLE article_authors
 (
     article_id  INT NOT NULL,
     employee_id INT NOT NULL,
     PRIMARY KEY (article_id, employee_id),
-    FOREIGN KEY (article_id) REFERENCES ARTICLES (id),
-    FOREIGN KEY (employee_id) REFERENCES EMPLOYEES (id)
+    FOREIGN KEY (article_id) REFERENCES articles (id),
+    FOREIGN KEY (employee_id) REFERENCES employees (id)
 );
 
-CREATE TABLE REVIEWS
+CREATE TABLE reviews
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
     article_id INT NOT NULL,
-    reviewer_id INT NOT NULL,
+    author INT NOT NULL,
     review_text TEXT NOT NULL,
     publish_flag BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (article_id) REFERENCES ARTICLES(id),
-    FOREIGN KEY (reviewer_id) REFERENCES EMPLOYEES(id)
+    FOREIGN KEY (article_id) REFERENCES articles(id),
+    FOREIGN KEY (author) REFERENCES employees(id)
 );
