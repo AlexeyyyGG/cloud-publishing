@@ -20,16 +20,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping(EmployeeController.EMPLOYEES)
-public class EmployeeController {
+@RequestMapping(EmployeesController.EMPLOYEES)
+public class EmployeesController {
     static final String EMPLOYEES = "/employees";
     private static final String ID_PATH = "/{id}";
     private static final String ID = "id";
     private final EmployeeService service;
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmployeesController.class);
 
     @Autowired
-    public EmployeeController(EmployeeService service) {
+    public EmployeesController(EmployeeService service) {
         this.service = service;
     }
 
