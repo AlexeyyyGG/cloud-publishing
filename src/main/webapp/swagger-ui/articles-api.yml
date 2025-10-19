@@ -1,0 +1,116 @@
+openapi: 3.0.3
+info:
+  title: Articles API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /articles:
+    get:
+      summary: Получение списка всех статей
+      responses:
+        '200':
+          description: Успешный ответ со списком статей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+    post:
+      summary: Добавление статьи
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+      responses:
+        '201':
+          description: Статья добавлена
+        '400':
+          description: Некорректные входные данные
+  /articles/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Уникальный идентификатор статьи
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получение статьи по id
+      responses:
+        '200':
+          description: Успешный ответ статья найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '404':
+          description: Статья с указанным id не найдена
+        '400':
+          description: Некорректный id
+    put:
+      summary: Обновление данных статьи
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+      responses:
+        '200':
+          description: Данные статьи обновлены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: Некорректные входные данные
+        '404':
+          description: Статья с заданным id не найдена
+    delete:
+      summary: Удаление статьи по id
+      responses:
+        '204':
+          description: Статья удалёна
+        '400':
+          description: Некорректный id
+        '404':
+          description: Статья с заданным id не найдена
+components:
+  schemas:
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор статьи
+        name:
+          type: string
+          description: Название статьи
+        publication_type:
+          type: string
+          description: Тип публикации
+          enum: [MAGAZINE, NEWSPAPER]
+        content:
+          type: string
+          description: Содержание статьи
+        category_id:
+          type: integer
+          description: Идентификатор рубрики
+        author_id:
+          type: integer
+          description: Идентификатор автора статьи
+        publication_id:
+          type: integer
+          description: Идентификатор публикации
+      required:
+        - id
+        - name
+        - publication_type
+        - content
+        - category
+        - author
+        - publication

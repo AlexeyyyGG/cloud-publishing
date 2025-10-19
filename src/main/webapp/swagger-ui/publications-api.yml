@@ -1,0 +1,108 @@
+openapi: 3.0.3
+info:
+  title: Publications API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /publications:
+    get:
+      summary: Получение списка всех публикаций
+      responses:
+        '200':
+          description: Успешный ответ со списком статей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publication'
+    post:
+      summary: Добавление публикации
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publication'
+      responses:
+        '201':
+          description: Публикация добавлена
+        '400':
+          description: Некорректные входные данные
+  /publications/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Уникальный идентификатор публикации
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получение публикации по id
+      responses:
+        '200':
+          description: Успешный ответ публикация найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publication'
+        '404':
+          description: Публикация с указанным id не найдена
+        '400':
+          description: Некорректный id
+    put:
+      summary: Обновление данных публикации
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publication'
+      responses:
+        '200':
+          description: Данные публикации обновлены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publication'
+        '400':
+          description: Некорректные входные данные
+        '404':
+          description: Публикация с заданным id не найдена
+    delete:
+      summary: Удаление публикации по id
+      responses:
+        '204':
+          description: Публикация удалёна
+        '400':
+          description: Некорректный id
+        '404':
+          description: Публикация с заданным id не найдена
+components:
+  schemas:
+    Publication:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор публикации
+        name:
+          type: string
+          description: Название публикации
+        publication_type:
+          type: string
+          description: Тип публикации
+          enum: [MAGAZINE, NEWSPAPER]
+        theme:
+          type: string
+          description: Тематика публикации
+        category_id:
+          type: integer
+          description: Идендификатор рубрики
+      required:
+        - id
+        - name
+        - publication_type
+        - theme
+        - category

@@ -1,0 +1,103 @@
+openapi: 3.0.3
+info:
+  title: Reviews API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /reviews:
+    get:
+      summary: Получение списка всех рецензий
+      responses:
+        '200':
+          description: Успешный ответ со списком рецензий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+    post:
+      summary: Добавление рецензии
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+      responses:
+        '201':
+          description: Рецензия добавлена
+        '400':
+          description: Некорректные входные данные
+  /reviews/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Уникальный идентификатор рецензии
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получение рецензии по id
+      responses:
+        '200':
+          description: Успешный ответ рецензия найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '404':
+          description: Рецензия с указанным id не найдена
+        '400':
+          description: Некорректный id
+    put:
+      summary: Обновление данных рецензии
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+      responses:
+        '200':
+          description: Данные рецензии обновлены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          description: Некорректные входные данные
+        '404':
+          description: Рецензия с заданным id не найдена
+    delete:
+      summary: Удаление рецензии по id
+      responses:
+        '204':
+          description: Рецензия удалёна
+        '400':
+          description: Некорректный id
+        '404':
+          description: Рецензия с заданным id не найдена
+components:
+  schemas:
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор рецензии
+        article_id:
+          type: integer
+          description: Идентификатор статьи
+        author:
+          type: integer
+          description: Идентификатор автора рецензии
+        review_text:
+          type: string
+          description: Содержание рецензии
+      required:
+        - id
+        - article
+        - author
+        - review_text
