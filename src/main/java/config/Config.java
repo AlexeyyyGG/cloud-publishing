@@ -30,6 +30,6 @@ public class Config implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("/swagger-ui/");
+                .addResourceLocations("classpath:/swagger-ui/");
     }
 }
