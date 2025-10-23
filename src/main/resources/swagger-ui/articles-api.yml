@@ -24,7 +24,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Article'
+              $ref: '#/components/schemas/ArticleDTO'
       responses:
         '201':
           description: Статья добавлена
@@ -58,14 +58,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Article'
+              $ref: '#/components/schemas/ArticleDTO'
       responses:
         '200':
           description: Данные статьи обновлены
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Article'
         '400':
           description: Некорректные входные данные
         '404':
@@ -74,11 +70,12 @@ paths:
       summary: Удаление статьи по id
       responses:
         '204':
-          description: Статья удалёна
+          description: Статья удалена
         '400':
           description: Некорректный id
         '404':
           description: Статья с заданным id не найдена
+
 components:
   schemas:
     Article:
@@ -90,6 +87,26 @@ components:
         name:
           type: string
           description: Название статьи
+        publication_name:
+          type: string
+          description: Название публикации
+        category_name:
+          type: string
+          description: Рубрика публикации
+        author:
+          type: string
+          description: Фамилия И.О. автора
+        co_authors:
+          type: array
+          description: Соавторы публикации
+          items:
+            $ref: '#/components/schemas/Co_author'
+    ArticleDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название статьи
         publication_type:
           type: string
           description: Тип публикации
@@ -97,20 +114,39 @@ components:
         content:
           type: string
           description: Содержание статьи
-        category_id:
-          type: integer
-          description: Идентификатор рубрики
-        author_id:
-          type: integer
-          description: Идентификатор автора статьи
-        publication_id:
-          type: integer
-          description: Идентификатор публикации
+        category_name:
+          type: string
+          description: Рубрика публикации
+        author:
+          type: string
+          description: Фамилия И.О. автора
+        publication_name:
+          type: string
+          description: Рубрика публикации
+        co_authors:
+          type: array
+          description: Список соавторов
+          items:
+            $ref: '#/components/schemas/Co_author'
+        review:
+          type: string
+          description: Рецензия
+        review_author:
+          type: string
+          description: Рецензент
       required:
-        - id
         - name
         - publication_type
         - content
-        - category
-        - author
-        - publication
+        - category_name
+        - author_name
+        - publication_name
+
+    Co_author:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Имя соавтора
+      required:
+        - name

@@ -24,7 +24,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Review'
+              $ref: '#/components/schemas/ReviewDTO'
       responses:
         '201':
           description: Рецензия добавлена
@@ -58,14 +58,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Review'
+              $ref: '#/components/schemas/ReviewDTO'
       responses:
         '200':
           description: Данные рецензии обновлены
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: '#/components/schemas/ReviewDTO'
         '400':
           description: Некорректные входные данные
         '404':
@@ -86,18 +86,44 @@ components:
       properties:
         id:
           type: integer
-          description: Уникальный идентификатор рецензии
-        article_id:
-          type: integer
-          description: Идентификатор статьи
+          description: Идентификатор рецензии
+        publication_name:
+          type: string
+          description: Название публикации
+        category_name:
+          type: string
+          description: Название рубрики
         author:
-          type: integer
-          description: Идентификатор автора рецензии
+          type: string
+          description: Фамилия И.О. автора
+        article_name:
+          type: string
+          description: Название статьи
+    ReviewDTO:
+      type: object
+      properties:
+        publication_name:
+          type: string
+          description: Название публикации
+        category_name:
+          type: string
+          description: Название рубрики
+        article_author:
+          type: string
+          description: Фамилия И.О. автора статьи
+        article_name:
+          type: string
+          description: Название статьи
+        article_content:
+          type: string
+          description: Содержание статьи
         review_text:
           type: string
-          description: Содержание рецензии
+          description: Рецензия
       required:
-        - id
-        - article
-        - author
+        - publication_name
+        - category_name
+        - article_author
+        - article_name
+        - article_content
         - review_text

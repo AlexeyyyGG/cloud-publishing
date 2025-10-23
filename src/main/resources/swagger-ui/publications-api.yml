@@ -16,18 +16,18 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Publication'
+                  $ref: '#/components/schemas/PublicationDTO'
     post:
-      summary: Добавление публикации
+      summary: Создание новой публикации
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationDTO'
       responses:
         '201':
-          description: Публикация добавлена
+          description: Публикация успешно создана
         '400':
           description: Некорректные входные данные
   /publications/{id}:
@@ -42,11 +42,11 @@ paths:
       summary: Получение публикации по id
       responses:
         '200':
-          description: Успешный ответ публикация найдена
+          description: Успешный ответ, публикация найдена
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publication'
+                $ref: '#/components/schemas/PublicationDTO'
         '404':
           description: Публикация с указанным id не найдена
         '400':
@@ -58,14 +58,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationDTO'
       responses:
         '200':
           description: Данные публикации обновлены
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publication'
+                $ref: '#/components/schemas/PublicationDTO'
         '400':
           description: Некорректные входные данные
         '404':
@@ -74,7 +74,7 @@ paths:
       summary: Удаление публикации по id
       responses:
         '204':
-          description: Публикация удалёна
+          description: Публикация удалена
         '400':
           description: Некорректный id
         '404':
@@ -86,7 +86,23 @@ components:
       properties:
         id:
           type: integer
-          description: Уникальный идентификатор публикации
+          description: Идентификатор публикации
+        name:
+          type: string
+          description: Название публикации
+        publication_type:
+          type: string
+          description: Тип публикации
+          enum: [ MAGAZINE, NEWSPAPER ]
+        theme:
+          type: string
+          description: Тематика публикации
+        category_name:
+          type: string
+          description: Рубрика публикации
+    PublicationDTO:
+      type: object
+      properties:
         name:
           type: string
           description: Название публикации
@@ -97,12 +113,23 @@ components:
         theme:
           type: string
           description: Тематика публикации
-        category_id:
-          type: integer
-          description: Идендификатор рубрики
+        category_name:
+          type: string
+          description: Рубрика публикации
+        journalists:
+          type: array
+          items:
+            type: string
+          description: Фамилия И.О. журналистов
+        editors:
+          type: array
+          items:
+            type: string
+          description: Фамилия И.О редакторов
       required:
-        - id
         - name
         - publication_type
         - theme
-        - category
+        - category_name
+        - journalists
+        - editors
