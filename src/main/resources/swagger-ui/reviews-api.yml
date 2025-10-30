@@ -16,7 +16,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Review'
+                  $ref: '#/components/schemas/ReviewGetDTO'
     post:
       summary: Добавление рецензии
       requestBody:
@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: '#/components/schemas/ReviewDTO'
         '404':
           description: Рецензия с указанным id не найдена
         '400':
@@ -81,49 +81,60 @@ paths:
           description: Рецензия с заданным id не найдена
 components:
   schemas:
-    Review:
+    ReviewGetDTO:
       type: object
       properties:
         id:
           type: integer
           description: Идентификатор рецензии
-        publication_name:
+        publicationName:
           type: string
           description: Название публикации
-        category_name:
+        categoryName:
           type: string
           description: Название рубрики
         author:
           type: string
-          description: Фамилия И.О. автора
-        article_name:
+          description: Фамилия И.О. автора статьи
+        articleName:
           type: string
           description: Название статьи
+        inPublicationFlag:
+          type: boolean
+          description: Признак "В публикацию"
     ReviewDTO:
       type: object
       properties:
-        publication_name:
+        id:
+          type: integer
+          description: Идентификатор рецензии
+        publicationName:
           type: string
           description: Название публикации
-        category_name:
-          type: string
-          description: Название рубрики
-        article_author:
+        category:
+          type: array
+          items:
+            type: string
+          description: Список рубрик
+        author:
           type: string
           description: Фамилия И.О. автора статьи
-        article_name:
+        articleName:
           type: string
           description: Название статьи
-        article_content:
+        articleContent:
           type: string
           description: Содержание статьи
-        review_text:
+        reviewText:
           type: string
           description: Рецензия
+        forPublication:
+          type: boolean
+          description: Установка признака "В публикацию"
       required:
-        - publication_name
-        - category_name
-        - article_author
-        - article_name
-        - article_content
-        - review_text
+        - publication
+        - category
+        - author
+        - article
+        - articleContent
+        - reviewText

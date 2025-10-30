@@ -16,7 +16,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Article'
+                  $ref: '#/components/schemas/ArticleGetDTO'
     post:
       summary: Добавление статьи
       requestBody:
@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Article'
+                $ref: '#/components/schemas/ArticleDTO'
         '404':
           description: Статья с указанным id не найдена
         '400':
@@ -75,78 +75,88 @@ paths:
           description: Некорректный id
         '404':
           description: Статья с заданным id не найдена
-
 components:
   schemas:
-    Article:
+    ArticleGetDTO:
       type: object
       properties:
         id:
           type: integer
-          description: Уникальный идентификатор статьи
+          description: Идентификатор статьи
         name:
           type: string
           description: Название статьи
-        publication_name:
+        publicationName:
           type: string
           description: Название публикации
-        category_name:
+        categoryName:
           type: string
           description: Рубрика публикации
         author:
           type: string
           description: Фамилия И.О. автора
-        co_authors:
+        coAuthors:
           type: array
           description: Соавторы публикации
           items:
-            $ref: '#/components/schemas/Co_author'
+            $ref: '#/components/schemas/coAuthor'
     ArticleDTO:
       type: object
       properties:
+        id:
+          type: integer
+          description: Идентификатор статьи
+        publicationName:
+          type: string
+          description: Название публикации
+        categoryName:
+          type: string
+          description: Название рубрики
         name:
           type: string
           description: Название статьи
-        publication_type:
-          type: string
-          description: Тип публикации
-          enum: [MAGAZINE, NEWSPAPER]
         content:
           type: string
           description: Содержание статьи
-        category_name:
-          type: string
-          description: Рубрика публикации
-        author:
-          type: string
-          description: Фамилия И.О. автора
-        publication_name:
-          type: string
-          description: Рубрика публикации
-        co_authors:
+        coAuthors:
           type: array
           description: Список соавторов
           items:
-            $ref: '#/components/schemas/Co_author'
-        review:
-          type: string
-          description: Рецензия
-        review_author:
-          type: string
-          description: Рецензент
+            $ref: '#/components/schemas/coAuthor'
+        reviews:
+          type: array
+          description: Список рецензий
+          items:
+            $ref: '#/components/schemas/review'
       required:
-        - name
-        - publication_type
-        - content
-        - category_name
-        - author_name
-        - publication_name
-
-    Co_author:
+        -publicationName
+        -categoryName
+        -name
+        -content
+        -coAuthors
+    coAuthor:
       type: object
       properties:
+        id:
+          type: integer
+          description: Идентификатор соавтора
         name:
           type: string
           description: Имя соавтора
       required:
         - name
+    review:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор рецензии
+        reviewer:
+          type: string
+          description: Рецензент
+        text:
+          type: string
+          description: Рецензия
+      required:
+        - reviewer
+        - text

@@ -16,7 +16,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PublicationDTO'
+                  $ref: '#/components/schemas/PublicationGetDTO'
     post:
       summary: Создание новой публикации
       requestBody:
@@ -81,7 +81,7 @@ paths:
           description: Публикация с заданным id не найдена
 components:
   schemas:
-    Publication:
+    PublicationGetDTO:
       type: object
       properties:
         id:
@@ -90,46 +90,64 @@ components:
         name:
           type: string
           description: Название публикации
-        publication_type:
+        publicationType:
           type: string
           description: Тип публикации
           enum: [ MAGAZINE, NEWSPAPER ]
         theme:
           type: string
           description: Тематика публикации
-        category_name:
-          type: string
-          description: Рубрика публикации
+        category:
+          type: array
+          items:
+            type: string
+          description: Список рубрик
     PublicationDTO:
       type: object
       properties:
+        id:
+          type: integer
+          description: Идентификатор публикации
         name:
           type: string
           description: Название публикации
-        publication_type:
+        publicationType:
           type: string
           description: Тип публикации
           enum: [MAGAZINE, NEWSPAPER]
         theme:
           type: string
           description: Тематика публикации
-        category_name:
-          type: string
-          description: Рубрика публикации
+        category:
+          type: array
+          items:
+            type: string
+          description: Список рубрик
         journalists:
           type: array
+          description: Список журналистов
           items:
-            type: string
-          description: Фамилия И.О. журналистов
+            $ref: '#/components/schemas/Employee'
         editors:
           type: array
+          description: Список редакторов
           items:
-            type: string
-          description: Фамилия И.О редакторов
+            $ref: '#/components/schemas/Employee'
       required:
         - name
-        - publication_type
+        - publicationType
         - theme
-        - category_name
+        - category
         - journalists
         - editors
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор
+        name:
+          type: string
+          description: Фамилия И.О.
+      required:
+        - name
