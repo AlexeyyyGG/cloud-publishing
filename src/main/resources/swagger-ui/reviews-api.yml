@@ -79,6 +79,18 @@ paths:
           description: Некорректный id
         '404':
           description: Рецензия с заданным id не найдена
+  /categories:
+    get:
+      summary: Получение списка рубрик
+      responses:
+        '200':
+          description: Успешный ответ со списком рубрик
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
 components:
   schemas:
     ReviewGetDTO:
@@ -108,20 +120,18 @@ components:
         id:
           type: integer
           description: Идентификатор рецензии
-        publicationName:
-          type: string
-          description: Название публикации
-        category:
-          type: array
-          items:
-            type: string
-          description: Список рубрик
-        author:
-          type: string
-          description: Фамилия И.О. автора статьи
-        articleName:
-          type: string
-          description: Название статьи
+        publicationId:
+          type: integer
+          description: Идентификатор публикации
+        categoryId:
+          type: integer
+          description: Идентификатор рубрики
+        authorId:
+          type: integer
+          description: Идентификатор автора
+        articleId:
+          type: integer
+          description: Идентификатор статьи
         articleContent:
           type: string
           description: Содержание статьи
@@ -132,9 +142,18 @@ components:
           type: boolean
           description: Установка признака "В публикацию"
       required:
-        - publication
-        - category
-        - author
-        - article
+        - publicationId
+        - categoryId
+        - authorId
+        - articleId
         - articleContent
         - reviewText
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор рубрики
+        name:
+          type: string
+          description: Название рубрики

@@ -1,6 +1,6 @@
-package repository;
+package employees.repository;
 
-import exception.ObjectNotFoundException;
+import employees.exception.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import model.Employee;
-import model.Gender;
-import model.Type;
+import employees.model.Employee;
+import employees.model.Gender;
+import employees.model.Type;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -75,6 +75,18 @@ paths:
           description: Некорректный id
         '404':
           description: Статья с заданным id не найдена
+  /categories:
+    get:
+      summary: Получение списка рубрик
+      responses:
+        '200':
+          description: Успешный ответ со списком рубрик
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
 components:
   schemas:
     ArticleGetDTO:
@@ -99,19 +111,19 @@ components:
           type: array
           description: Соавторы публикации
           items:
-            $ref: '#/components/schemas/coAuthor'
+            $ref: '#/components/schemas/CoAuthor'
     ArticleDTO:
       type: object
       properties:
         id:
           type: integer
           description: Идентификатор статьи
-        publicationName:
-          type: string
-          description: Название публикации
-        categoryName:
-          type: string
-          description: Название рубрики
+        publicationId:
+          type: integer
+          description: Идентификатор публикации
+        categoryId:
+          type: integer
+          description: Идентификатор рубрики
         name:
           type: string
           description: Название статьи
@@ -120,21 +132,21 @@ components:
           description: Содержание статьи
         coAuthors:
           type: array
-          description: Список соавторов
+          description: Список идентификаторов авторов
           items:
-            $ref: '#/components/schemas/coAuthor'
-        reviews:
-          type: array
-          description: Список рецензий
-          items:
-            $ref: '#/components/schemas/review'
+            type: integer
+        review:
+          type: string
+          description: Рецензия
+        reviewer:
+          type: integer
+          description: Идентификатор рецензента
       required:
-        -publicationName
-        -categoryName
+        -publicationId
+        -categoryId
         -name
         -content
-        -coAuthors
-    coAuthor:
+    CoAuthor:
       type: object
       properties:
         id:
@@ -142,21 +154,13 @@ components:
           description: Идентификатор соавтора
         name:
           type: string
-          description: Имя соавтора
-      required:
-        - name
-    review:
+          description: Фамилия И.О. соавтора
+    Category:
       type: object
       properties:
         id:
           type: integer
-          description: Идентификатор рецензии
-        reviewer:
+          description: Идентификатор рубрики
+        name:
           type: string
-          description: Рецензент
-        text:
-          type: string
-          description: Рецензия
-      required:
-        - reviewer
-        - text
+          description: Название рубрики

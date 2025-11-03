@@ -1,12 +1,12 @@
-package service;
+package employees.service;
 
-import dto.EmployeeUpdateRequest;
-import exception.InvalidArgumentException;
-import exception.ObjectNotFoundException;
+import employees.dto.EmployeeUpdateRequest;
+import employees.exception.InvalidArgumentException;
+import employees.exception.ObjectNotFoundException;
 import java.util.List;
-import model.Employee;
+import employees.model.Employee;
 import org.springframework.stereotype.Service;
-import repository.EmployeeRepository;
+import employees.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {

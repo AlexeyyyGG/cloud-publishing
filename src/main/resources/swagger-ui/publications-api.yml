@@ -79,6 +79,18 @@ paths:
           description: Некорректный id
         '404':
           description: Публикация с заданным id не найдена
+  /categories:
+    get:
+      summary: Получение списка рубрик
+      responses:
+        '200':
+          description: Успешный ответ со списком рубрик
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
 components:
   schemas:
     PublicationGetDTO:
@@ -97,11 +109,11 @@ components:
         theme:
           type: string
           description: Тематика публикации
-        category:
+        categories:
           type: array
-          items:
-            type: string
           description: Список рубрик
+          items:
+            $ref: '#/components/schemas/Category'
     PublicationDTO:
       type: object
       properties:
@@ -118,36 +130,34 @@ components:
         theme:
           type: string
           description: Тематика публикации
-        category:
+        categories:
           type: array
           items:
-            type: string
-          description: Список рубрик
+            type: integer
+          description: Список идентификаторов рубрик
         journalists:
           type: array
-          description: Список журналистов
           items:
-            $ref: '#/components/schemas/Employee'
+            type: integer
+          description: Список идентификаторов журналистов
         editors:
           type: array
-          description: Список редакторов
           items:
-            $ref: '#/components/schemas/Employee'
+            type: integer
+          description: Список идентификаторов редакторов
       required:
         - name
         - publicationType
         - theme
-        - category
+        - categories
         - journalists
         - editors
-    Employee:
+    Category:
       type: object
       properties:
         id:
           type: integer
-          description: Идентификатор
+          description: Идентификатор рубрики
         name:
           type: string
-          description: Фамилия И.О.
-      required:
-        - name
+          description: Название рубрики

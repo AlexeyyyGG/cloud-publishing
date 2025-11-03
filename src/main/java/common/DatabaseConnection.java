@@ -1,4 +1,4 @@
-package repository;
+package common;
 
 import config.DbProperties;
 import java.sql.Connection;
