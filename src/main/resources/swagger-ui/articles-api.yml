@@ -136,11 +136,7 @@ components:
           items:
             type: integer
         review:
-          type: string
-          description: Рецензия
-        reviewer:
-          type: integer
-          description: Идентификатор рецензента
+            $ref: '#/components/schemas/Review'
       required:
         -publicationId
         -categoryId
@@ -164,3 +160,12 @@ components:
         name:
           type: string
           description: Название рубрики
+    Review:
+      type: object
+      properties:
+        reviewerId:
+          type: integer
+          description: Идентификатор рецензента
+        reviewText:
+          type: string
+          description: Текст рецензии
