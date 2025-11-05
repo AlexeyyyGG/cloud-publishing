@@ -75,18 +75,6 @@ paths:
           description: Некорректный id
         '404':
           description: Статья с заданным id не найдена
-  /categories:
-    get:
-      summary: Получение списка рубрик
-      responses:
-        '200':
-          description: Успешный ответ со списком рубрик
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Category'
 components:
   schemas:
     ArticleGetDTO:
@@ -107,11 +95,11 @@ components:
         author:
           type: string
           description: Фамилия И.О. автора
-        coAuthors:
+        coAuthorsNames:
           type: array
           description: Соавторы публикации
           items:
-            $ref: '#/components/schemas/CoAuthor'
+            type: string
     ArticleDTO:
       type: object
       properties:
@@ -151,15 +139,6 @@ components:
         name:
           type: string
           description: Фамилия И.О. соавтора
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Идентификатор рубрики
-        name:
-          type: string
-          description: Название рубрики
     Review:
       type: object
       properties:

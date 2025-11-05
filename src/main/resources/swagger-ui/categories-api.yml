@@ -1,0 +1,27 @@
+openapi: 3.0.3
+info:
+  title: Articles API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /categories:
+    get:
+      summary: Получение списка рубрик
+      responses:
+        '200':
+          description: Успешный ответ со списком рубрик
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название рубрики

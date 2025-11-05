@@ -62,10 +62,6 @@ paths:
       responses:
         '200':
           description: Данные публикации обновлены
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PublicationDTO'
         '400':
           description: Некорректные входные данные
         '404':
@@ -79,18 +75,6 @@ paths:
           description: Некорректный id
         '404':
           description: Публикация с заданным id не найдена
-  /categories:
-    get:
-      summary: Получение списка рубрик
-      responses:
-        '200':
-          description: Успешный ответ со списком рубрик
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Category'
 components:
   schemas:
     PublicationGetDTO:
@@ -113,7 +97,7 @@ components:
           type: array
           description: Список рубрик
           items:
-            $ref: '#/components/schemas/Category'
+            type: string
     PublicationDTO:
       type: object
       properties:
@@ -152,12 +136,3 @@ components:
         - categories
         - journalists
         - editors
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Идентификатор рубрики
-        name:
-          type: string
-          description: Название рубрики
