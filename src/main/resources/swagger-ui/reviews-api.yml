@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Reviews API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /reviews:
+    get:
+      summary: Получение списка всех рецензий
+      responses:
+        '200':
+          description: Успешный ответ со списком рецензий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewGetDTO'
+    post:
+      summary: Добавление рецензии
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDTO'
+      responses:
+        '201':
+          description: Рецензия добавлена
+        '400':
+          description: Некорректные входные данные
+  /reviews/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Уникальный идентификатор рецензии
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получение рецензии по id
+      responses:
+        '200':
+          description: Успешный ответ рецензия найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDTO'
+        '404':
+          description: Рецензия с указанным id не найдена
+        '400':
+          description: Некорректный id
+    put:
+      summary: Обновление данных рецензии
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDTO'
+      responses:
+        '200':
+          description: Данные рецензии обновлены
+        '400':
+          description: Некорректные входные данные
+        '404':
+          description: Рецензия с заданным id не найдена
+    delete:
+      summary: Удаление рецензии по id
+      responses:
+        '204':
+          description: Рецензия удалёна
+        '400':
+          description: Некорректный id
+        '404':
+          description: Рецензия с заданным id не найдена
+components:
+  schemas:
+    ReviewGetDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор рецензии
+        publicationName:
+          type: string
+          description: Название публикации
+        categoryName:
+          type: string
+          description: Название рубрики
+        author:
+          type: string
+          description: Фамилия И.О. автора статьи
+        articleName:
+          type: string
+          description: Название статьи
+        inPublication:
+          type: boolean
+          description: Признак "В публикацию"
+    ReviewDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор рецензии
+        publicationId:
+          type: integer
+          description: Идентификатор публикации
+        categoryId:
+          type: integer
+          description: Идентификатор рубрики
+        authorId:
+          type: integer
+          description: Идентификатор автора
+        articleId:
+          type: integer
+          description: Идентификатор статьи
+        articleContent:
+          type: string
+          description: Содержание статьи
+        reviewText:
+          type: string
+          description: Рецензия
+        inPublication:
+          type: boolean
+          description: Установка признака "В публикацию"
+      required:
+        - publicationId
+        - categoryId
+        - authorId
+        - articleId
+        - articleContent
+        - reviewText

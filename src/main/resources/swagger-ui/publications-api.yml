@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Publications API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /publications:
+    get:
+      summary: Получение списка всех публикаций
+      responses:
+        '200':
+          description: Успешный ответ со списком статей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicationGetDTO'
+    post:
+      summary: Создание новой публикации
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationDTO'
+      responses:
+        '201':
+          description: Публикация успешно создана
+        '400':
+          description: Некорректные входные данные
+  /publications/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Уникальный идентификатор публикации
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получение публикации по id
+      responses:
+        '200':
+          description: Успешный ответ, публикация найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationDTO'
+        '404':
+          description: Публикация с указанным id не найдена
+        '400':
+          description: Некорректный id
+    put:
+      summary: Обновление данных публикации
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationDTO'
+      responses:
+        '200':
+          description: Данные публикации обновлены
+        '400':
+          description: Некорректные входные данные
+        '404':
+          description: Публикация с заданным id не найдена
+    delete:
+      summary: Удаление публикации по id
+      responses:
+        '204':
+          description: Публикация удалена
+        '400':
+          description: Некорректный id
+        '404':
+          description: Публикация с заданным id не найдена
+components:
+  schemas:
+    PublicationGetDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор публикации
+        name:
+          type: string
+          description: Название публикации
+        publicationType:
+          type: string
+          description: Тип публикации
+          enum: [ MAGAZINE, NEWSPAPER ]
+        theme:
+          type: string
+          description: Тематика публикации
+        categories:
+          type: array
+          description: Список рубрик
+          items:
+            type: string
+    PublicationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор публикации
+        name:
+          type: string
+          description: Название публикации
+        publicationType:
+          type: string
+          description: Тип публикации
+          enum: [MAGAZINE, NEWSPAPER]
+        theme:
+          type: string
+          description: Тематика публикации
+        categories:
+          type: array
+          items:
+            type: integer
+          description: Список идентификаторов рубрик
+        journalists:
+          type: array
+          items:
+            type: integer
+          description: Список идентификаторов журналистов
+        editors:
+          type: array
+          items:
+            type: integer
+          description: Список идентификаторов редакторов
+      required:
+        - name
+        - publicationType
+        - theme
+        - categories
+        - journalists
+        - editors

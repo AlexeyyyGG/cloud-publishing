@@ -1,6 +1,6 @@
-package repository;
+package employees.repository;
 
-import exception.ObjectNotFoundException;
+import employees.exception.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import model.Employee;
-import model.Gender;
-import model.Type;
+import employees.model.Employee;
+import employees.model.Gender;
+import employees.model.Type;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,20 +29,20 @@ public class EmployeeRepository {
     private static final String TYPE = "type";
     private static final String IS_CHIEF_EDITOR = "is_chief_editor";
     private static final String SQL_INSERT = """
-            INSERT INTO EMPLOYEES(first_name, last_name, middle_name, email, password, gender,
+            INSERT INTO employees(first_name, last_name, middle_name, email, password, gender,
             birth_year, address, education, type, is_chief_editor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
     private static final String SQL_UPDATE_WITH_PASSWORD = """
-            UPDATE EMPLOYEES SET first_name=?, last_name=?, middle_name=?, email=?, password=?,
+            UPDATE employees SET first_name=?, last_name=?, middle_name=?, email=?, password=?,
             gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?""";
     private static final String SQL_UPDATE_WITHOUT_PASSWORD = """
-            UPDATE EMPLOYEES SET first_name=?, last_name=?, middle_name=?, email=?,
+            UPDATE employees SET first_name=?, last_name=?, middle_name=?, email=?,
             gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?""";
-    private static final String SQL_GET = "SELECT * FROM EMPLOYEES WHERE id=?";
-    private static final String SQL_LIST = "SELECT * FROM EMPLOYEES";
-    private static final String SQL_DELETE = "DELETE FROM EMPLOYEES WHERE id=?";
-    private static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM EMPLOYEES WHERE id = ?)";
+    private static final String SQL_GET = "SELECT * FROM employees WHERE id=?";
+    private static final String SQL_LIST = "SELECT * FROM employees";
+    private static final String SQL_DELETE = "DELETE FROM employees WHERE id=?";
+    private static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM employees WHERE id = ?)";
     private static final String SQL_EXIST_CE =
-            "SELECT EXISTS(SELECT 1 FROM EMPLOYEES WHERE is_chief_editor = TRUE)";
+            "SELECT EXISTS(SELECT 1 FROM employees WHERE is_chief_editor = TRUE)";
     private static final String FAILED_TO_ADD_MSG = "Failed to add";
     private static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Failed to update employee with id, %d";
     private static final String FAILED_TO_GET_MSG = "Failed to get";

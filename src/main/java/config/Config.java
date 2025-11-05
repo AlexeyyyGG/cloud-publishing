@@ -9,7 +9,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import repository.DatabaseConnection;
+import common.DatabaseConnection;
 
 @Configuration
 @EnableWebMvc
@@ -30,6 +30,6 @@ public class Config implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("/swagger-ui/");
+                .addResourceLocations("classpath:/swagger-ui/");
     }
 }

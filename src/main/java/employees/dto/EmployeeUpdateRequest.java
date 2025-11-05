@@ -1,8 +1,8 @@
-package dto;
+package employees.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import model.Gender;
-import model.Type;
+import employees.model.Gender;
+import employees.model.Type;
 
 public record EmployeeUpdateRequest(
         @JsonProperty("first_name")

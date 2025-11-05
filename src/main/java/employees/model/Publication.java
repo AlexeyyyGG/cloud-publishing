@@ -1,4 +1,6 @@
-package model;
+package employees.model;
+
+import common.PublicationType;
 
 public record Publication(
         String name,

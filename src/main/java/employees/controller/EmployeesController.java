@@ -1,8 +1,8 @@
-package controller;
+package employees.controller;
 
-import dto.EmployeeUpdateRequest;
+import employees.dto.EmployeeUpdateRequest;
 import java.util.List;
-import model.Employee;
+import employees.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.EmployeeService;
+import employees.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
