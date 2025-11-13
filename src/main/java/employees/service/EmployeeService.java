@@ -2,7 +2,7 @@ package employees.service;
 
 import employees.dto.EmployeeUpdateRequest;
 import employees.exception.InvalidArgumentException;
-import employees.exception.ObjectNotFoundException;
+import common.ObjectNotFoundException;
 import java.util.List;
 import employees.model.Employee;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,7 @@ public class EmployeeService {
     }
 
     public List<Employee> getAllEmployees() {
-        return repository.list();
+        return repository.getAll();
     }
 
     public void deleteEmployee(int id) {

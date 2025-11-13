@@ -1,6 +1,6 @@
 package employees.repository;
 
-import employees.exception.ObjectNotFoundException;
+import common.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +46,7 @@ public class EmployeeRepository {
     private static final String FAILED_TO_ADD_MSG = "Failed to add";
     private static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Failed to update employee with id, %d";
     private static final String FAILED_TO_GET_MSG = "Failed to get";
-    private static final String FAILED_TO_LIST_MSG = "Failed to list";
+    private static final String FAILED_TO_LIST_MSG = "Failed to getAll";
     private static final String FAILED_TO_DELETE_MSG = "Failed to delete";
     private static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if employee exists";
     private static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
@@ -129,7 +129,7 @@ public class EmployeeRepository {
         }
     }
 
-    public List<Employee> list() {
+    public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_LIST);
                 ResultSet resultSet = statement.executeQuery()) {
