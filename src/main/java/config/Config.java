@@ -13,7 +13,7 @@ import common.DatabaseConnection;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"config", "controller", "service", "repository"})
+@ComponentScan(basePackages = {"config", "employees", "publications"})
 @PropertySource("classpath:application.properties")
 public class Config implements WebMvcConfigurer {
 
