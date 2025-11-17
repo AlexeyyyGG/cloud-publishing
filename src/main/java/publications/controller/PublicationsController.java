@@ -34,7 +34,7 @@ public class PublicationsController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllPublications() {
+    public ResponseEntity<List<PublicationGetDTO>> getAllPublications() {
         logger.info("getAllPublications called");
         List<PublicationGetDTO> publications = service.getAllPublications();
         logger.debug("Found {} publications", publications.size());
@@ -42,21 +42,21 @@ public class PublicationsController {
     }
 
     @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPublication(@PathVariable(ID) int id) {
+    public ResponseEntity<Publication> getPublication(@PathVariable(ID) int id) {
         logger.info("getPublication called with id={}", id);
         Publication publication = service.getPublication(id);
         return new ResponseEntity<>(publication, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addPublication(@RequestBody Publication publication) {
+    public ResponseEntity<Void> addPublication(@RequestBody Publication publication) {
         logger.info("addPublication called with: {}", publication);
         service.addPublication(publication);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePublication(
+    public ResponseEntity<Void> updatePublication(
             @PathVariable(ID) int id,
             @RequestBody Publication publication
     ) {
@@ -66,7 +66,7 @@ public class PublicationsController {
     }
 
     @DeleteMapping(value = {ID_PATH})
-    public ResponseEntity<?> deletePrincess(@PathVariable(ID) int id) {
+    public ResponseEntity<Void> deletePrincess(@PathVariable(ID) int id) {
         logger.info("deleteEmployee called with id {}", id);
         service.deletePublication(id);
         return ResponseEntity.status(HttpStatus.OK).build();

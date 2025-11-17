@@ -2,7 +2,7 @@ package publications.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import common.PublicationType;
-import java.util.List;
+import java.util.Set;
 
 public record Publication(
         int id,
@@ -10,8 +10,8 @@ public record Publication(
         @JsonProperty("publication_type")
         PublicationType publicationType,
         String theme,
-        List<Integer> categories,
-        List<Integer> journalists,
-        List<Integer> editors
+        Set<Integer> categories,
+        Set<Integer> journalists,
+        Set<Integer> editors
 ) {
 }
