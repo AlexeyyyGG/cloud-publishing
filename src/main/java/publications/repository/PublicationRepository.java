@@ -1,5 +1,7 @@
 package publications.repository;
 
+import common.BaseRepository;
+import common.IRepository;
 import common.PublicationType;
 import common.ObjectNotFoundException;
 import java.sql.Connection;
@@ -20,8 +22,8 @@ import publications.dto.PublicationGetDTO;
 import publications.model.Publication;
 
 @Repository
-public class PublicationRepository {
-    private final Connection connection;
+public class PublicationRepository extends BaseRepository implements
+        IRepository<Publication, Integer> {
     private static final Logger logger = LoggerFactory.getLogger(PublicationRepository.class);
     private static final String ID = "id";
     private static final String NAME = "name";
@@ -77,9 +79,10 @@ public class PublicationRepository {
             "SELECT id, name, publication_type, theme FROM publications WHERE id = ?";
 
     public PublicationRepository(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
 
+    @Override
     public void add(Publication publication) {
         try {
             connection.setAutoCommit(false);
@@ -117,7 +120,8 @@ public class PublicationRepository {
         }
     }
 
-    public Publication get(int id) {
+    @Override
+    public Publication get(Integer id) {
         try {
             try (PreparedStatement ps = connection.prepareStatement(SQL_GET_BY_ID_PUBLICATION)) {
                 ps.setInt(1, id);
@@ -151,6 +155,7 @@ public class PublicationRepository {
         }
     }
 
+    @Override
     public void update(Publication publication) {
         try {
             try (PreparedStatement updateStmt = connection.prepareStatement(UPDATE_PUBLICATION)) {
@@ -172,7 +177,8 @@ public class PublicationRepository {
         }
     }
 
-    public void delete(int id) {
+    @Override
+    public void delete(Integer id) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -202,18 +208,9 @@ public class PublicationRepository {
         return publications;
     }
 
-    public boolean exists(int id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST)) {
-            statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
-                return false;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_CHECK_MESSAGE, e);
-        }
+    @Override
+    public boolean exists(Integer id) {
+        return super.exists(id);
     }
 
     private void deleteConnections(String query, int publicationId) throws SQLException {
