@@ -1,11 +1,11 @@
-package publications.service;
+package service;
 
-import common.ObjectNotFoundException;
+import exception.ObjectNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import publications.dto.PublicationGetDTO;
-import publications.model.Publication;
-import publications.repository.PublicationRepository;
+import dto.PublicationGetDTO;
+import model.Publication;
+import repository.PublicationRepository;
 
 @Service
 public class PublicationService {
@@ -16,11 +16,11 @@ public class PublicationService {
         this.repository = repository;
     }
 
-    public void addPublication(Publication publication) {
+    public void add(Publication publication) {
         repository.add(publication);
     }
 
-    public void updatePublication(int id, Publication request) {
+    public void update(int id, Publication request) {
         Publication existingPublication = repository.get(id);
         if (existingPublication == null) {
             throw new ObjectNotFoundException(PUBLICATION_NOT_FOUND_MSG);
@@ -37,7 +37,7 @@ public class PublicationService {
         repository.update(updatedPublication);
     }
 
-    public Publication getPublication(int id) {
+    public Publication get(int id) {
         if (repository.exists(id)) {
             return repository.get(id);
         } else {
@@ -45,11 +45,11 @@ public class PublicationService {
         }
     }
 
-    public List<PublicationGetDTO> getAllPublications() {
+    public List<PublicationGetDTO> getAll() {
         return repository.getAll();
     }
 
-    public void deletePublication(int id) {
+    public void delete(int id) {
         if (repository.exists(id)) {
             repository.delete(id);
         } else {

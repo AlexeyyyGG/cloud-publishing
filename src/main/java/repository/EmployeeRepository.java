@@ -1,6 +1,6 @@
-package employees.repository;
+package repository;
 
-import common.ObjectNotFoundException;
+import exception.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,14 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import employees.model.Employee;
-import employees.model.Gender;
-import employees.model.Type;
+import model.Employee;
+import model.Gender;
+import model.Type;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EmployeeRepository {
-    private final Connection connection;
+public class EmployeeRepository extends BaseRepository implements IRepository<Employee, Integer> {
     private static final String ID = "id";
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
@@ -53,9 +52,9 @@ public class EmployeeRepository {
     private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
 
     public EmployeeRepository(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
-
+    @Override
     public void add(Employee employee) {
         try (PreparedStatement statement = connection.prepareStatement(
                 SQL_INSERT,
@@ -77,10 +76,9 @@ public class EmployeeRepository {
             throw new RuntimeException(FAILED_TO_ADD_MSG, e);
         }
     }
-
+    @Override
     public void update(Employee employee) {
-        boolean updatePassword =
-                employee.password() != null && !employee.password().isEmpty();
+        boolean updatePassword = employee.password() != null && !employee.password().isEmpty();
         String sql;
         if (updatePassword) {
             sql = SQL_UPDATE_WITH_PASSWORD;
@@ -113,8 +111,8 @@ public class EmployeeRepository {
             throw new RuntimeException(FAILED_TO_UPDATE_WITH_ID_MSG + employee.id(), e);
         }
     }
-
-    public Employee get(int id) {
+    @Override
+    public Employee get(Integer id) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_GET)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -141,8 +139,8 @@ public class EmployeeRepository {
             throw new RuntimeException(FAILED_TO_LIST_MSG, e);
         }
     }
-
-    public void delete(int id) {
+    @Override
+    public void delete(Integer id) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -150,19 +148,9 @@ public class EmployeeRepository {
             throw new RuntimeException(FAILED_TO_DELETE_MSG, e);
         }
     }
-
-    public boolean exists(int id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST)) {
-            statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
-                return false;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_CHECK_MESSAGE, e);
-        }
+    @Override
+    public boolean exists(Integer id) {
+        return super.exists(id, SQL_EXIST, FAILED_TO_CHECK_MESSAGE);
     }
 
     public boolean existsChiefEditor() {

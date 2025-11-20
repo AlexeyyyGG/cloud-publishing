@@ -9,11 +9,11 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import common.DatabaseConnection;
+import repository.DatabaseConnection;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"config", "employees", "publications"})
+@ComponentScan(basePackages = {"config", "controller", "service", "repository"})
 @PropertySource("classpath:application.properties")
 public class Config implements WebMvcConfigurer {
 

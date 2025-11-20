@@ -1,9 +1,7 @@
-package publications.repository;
+package repository;
 
-import common.BaseRepository;
-import common.IRepository;
-import common.PublicationType;
-import common.ObjectNotFoundException;
+import model.PublicationType;
+import exception.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,8 +16,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import publications.dto.PublicationGetDTO;
-import publications.model.Publication;
+import dto.PublicationGetDTO;
+import model.Publication;
 
 @Repository
 public class PublicationRepository extends BaseRepository implements
@@ -86,30 +84,17 @@ public class PublicationRepository extends BaseRepository implements
     public void add(Publication publication) {
         try {
             connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PUBLICATION,
-                    Statement.RETURN_GENERATED_KEYS
-            )) {
-                statement.setString(1, publication.name());
-                statement.setString(2, publication.publicationType().toString());
-                statement.setString(3, publication.theme());
-                statement.executeUpdate();
-                int publicationId;
-                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        publicationId = generatedKeys.getInt(1);
-                    } else {
-                        throw new RuntimeException(FAILED_CREATING_MSG);
-                    }
-                }
-                insertConnections(INSERT_PUB_CATEGORY, publicationId, publication.categories());
-                insertConnections(INSERT_JOURNALIST, publicationId, publication.journalists());
-                insertConnections(INSERT_EDITOR, publicationId, publication.editors());
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new RuntimeException(FAILED_TO_ADD_MSG, e);
-            }
+            int publicationId = insertPublication(publication);
+            insertConnections(INSERT_PUB_CATEGORY, publicationId, publication.categories());
+            insertConnections(INSERT_JOURNALIST, publicationId, publication.journalists());
+            insertConnections(INSERT_EDITOR, publicationId, publication.editors());
+            connection.commit();
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(FAILED_TO_ADD_MSG, ex);
+            }
             throw new RuntimeException(FAILED_TO_ADD_MSG, e);
         } finally {
             try {
@@ -122,32 +107,29 @@ public class PublicationRepository extends BaseRepository implements
 
     @Override
     public Publication get(Integer id) {
-        try {
-            try (PreparedStatement ps = connection.prepareStatement(SQL_GET_BY_ID_PUBLICATION)) {
-                ps.setInt(1, id);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        String name = rs.getString(NAME);
-                        PublicationType type = PublicationType.valueOf(
-                                rs.getString(PUBLICATION_TYPE).toUpperCase());
-                        String theme = rs.getString(THEME);
-                        Set<Integer> categories = getCategories(id);
-                        Set<Integer> journalists = getEmployeeIdsByPublicationId(id,
-                                PUBLICATION_JOURNALISTS);
-                        Set<Integer> editors = getEmployeeIdsByPublicationId(id,
-                                PUBLICATION_EDITORS);
-                        return new Publication(
-                                id,
-                                name,
-                                type,
-                                theme,
-                                categories,
-                                journalists,
-                                editors
-                        );
-                    } else {
-                        throw new ObjectNotFoundException(PUBLICATION_NOT_FOUND_MSG);
-                    }
+        try (PreparedStatement statement = connection.prepareStatement(SQL_GET_BY_ID_PUBLICATION)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String name = resultSet.getString(NAME);
+                    PublicationType type = PublicationType.valueOf(
+                            resultSet.getString(PUBLICATION_TYPE).toUpperCase());
+                    String theme = resultSet.getString(THEME);
+                    Set<Integer> categories = getCategories(id);
+                    Set<Integer> journalists = getEmployeeIdsByPublicationId(id,
+                            PUBLICATION_JOURNALISTS);
+                    Set<Integer> editors = getEmployeeIdsByPublicationId(id, PUBLICATION_EDITORS);
+                    return new Publication(
+                            id,
+                            name,
+                            type,
+                            theme,
+                            categories,
+                            journalists,
+                            editors
+                    );
+                } else {
+                    throw new ObjectNotFoundException(PUBLICATION_NOT_FOUND_MSG);
                 }
             }
         } catch (SQLException e) {
@@ -158,22 +140,30 @@ public class PublicationRepository extends BaseRepository implements
     @Override
     public void update(Publication publication) {
         try {
-            try (PreparedStatement updateStmt = connection.prepareStatement(UPDATE_PUBLICATION)) {
-                updateStmt.setString(1, publication.name());
-                updateStmt.setString(2, publication.publicationType().toString());
-                updateStmt.setString(3, publication.theme());
-                updateStmt.setInt(4, publication.id());
-                updateStmt.executeUpdate();
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(UPDATE_PUBLICATION)) {
+                statement.setString(1, publication.name());
+                statement.setString(2, publication.publicationType().toString());
+                statement.setString(3, publication.theme());
+                statement.setInt(4, publication.id());
+                statement.executeUpdate();
             }
             int publicationId = publication.id();
-            deleteConnections(DELETE_CATEGORY, publicationId);
-            deleteConnections(DELETE_JOURNALIST, publicationId);
-            deleteConnections(DELETE_EDITOR, publicationId);
-            insertConnections(INSERT_PUB_CATEGORY, publicationId, publication.categories());
-            insertConnections(INSERT_JOURNALIST, publicationId, publication.journalists());
-            insertConnections(INSERT_EDITOR, publicationId, publication.editors());
+            updatePublication(publicationId, publication);
+            connection.commit();
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(FAILED_TO_UPDATE, ex);
+            }
             throw new RuntimeException(FAILED_TO_UPDATE, e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.error("Error during recovery of autoCommit", e);
+            }
         }
     }
 
@@ -210,7 +200,7 @@ public class PublicationRepository extends BaseRepository implements
 
     @Override
     public boolean exists(Integer id) {
-        return super.exists(id);
+        return super.exists(id, SQL_EXIST, FAILED_TO_CHECK_MESSAGE);
     }
 
     private void deleteConnections(String query, int publicationId) throws SQLException {
@@ -237,9 +227,9 @@ public class PublicationRepository extends BaseRepository implements
         try (PreparedStatement statement = connection.prepareStatement(
                 SQL_GET_CATEGORIES_BY_PUBLICATION)) {
             statement.setInt(1, publicationId);
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    categories.add(rs.getInt(ID));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    categories.add(resultSet.getInt(ID));
                 }
             }
         } catch (SQLException e) {
@@ -250,11 +240,11 @@ public class PublicationRepository extends BaseRepository implements
 
     private Map<Integer, List<String>> getCategoriesMap() throws SQLException {
         Map<Integer, List<String>> categoriesMap = new HashMap<>();
-        try (PreparedStatement psCat = connection.prepareStatement(SQL_GET_ALL_CATEGORIES);
-                ResultSet rsCat = psCat.executeQuery()) {
-            while (rsCat.next()) {
-                int pubId = rsCat.getInt(PUBLICATION_ID);
-                String catName = rsCat.getString(NAME);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_GET_ALL_CATEGORIES);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                int pubId = resultSet.getInt(PUBLICATION_ID);
+                String catName = resultSet.getString(NAME);
                 if (categoriesMap.containsKey(pubId)) {
                     categoriesMap.get(pubId).add(catName);
                 } else {
@@ -272,14 +262,41 @@ public class PublicationRepository extends BaseRepository implements
         String sql = String.format(SQL_GET_EMPLOYEE, tableName);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, publicationId);
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    employees.add(rs.getInt(ID));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    employees.add(resultSet.getInt(ID));
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_GET_EMP_ID + tableName, e);
         }
         return employees;
+    }
+
+    private void updatePublication(int publicationId, Publication publication) throws SQLException {
+        deleteConnections(DELETE_CATEGORY, publicationId);
+        deleteConnections(DELETE_JOURNALIST, publicationId);
+        deleteConnections(DELETE_EDITOR, publicationId);
+        insertConnections(INSERT_PUB_CATEGORY, publicationId, publication.categories());
+        insertConnections(INSERT_JOURNALIST, publicationId, publication.journalists());
+        insertConnections(INSERT_EDITOR, publicationId, publication.editors());
+    }
+
+    private Integer insertPublication(Publication publication) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PUBLICATION,
+                Statement.RETURN_GENERATED_KEYS
+        )) {
+            statement.setString(1, publication.name());
+            statement.setString(2, publication.publicationType().toString());
+            statement.setString(3, publication.theme());
+            statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new RuntimeException(FAILED_CREATING_MSG);
+                }
+            }
+        }
     }
 }

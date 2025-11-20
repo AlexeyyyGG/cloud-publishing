@@ -1,6 +1,6 @@
-package publications.dto;
+package dto;
 
-import common.PublicationType;
+import model.PublicationType;
 import java.util.List;
 
 public record PublicationGetDTO(

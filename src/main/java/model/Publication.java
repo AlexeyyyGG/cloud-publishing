@@ -1,7 +1,6 @@
-package publications.model;
+package model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import common.PublicationType;
 import java.util.Set;
 
 public record Publication(

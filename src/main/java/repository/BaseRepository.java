@@ -1,4 +1,4 @@
-package common;
+package repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,15 +7,13 @@ import java.sql.SQLException;
 
 public abstract class BaseRepository {
     protected Connection connection;
-    protected static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if exists";
-    private static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM employees WHERE id = ?)";
 
     protected BaseRepository(Connection connection) {
         this.connection = connection;
     }
 
-    public boolean exists(Integer id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST)) {
+    public boolean exists(Integer id, String sql, String errorMessage) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -24,7 +22,7 @@ public abstract class BaseRepository {
                 return false;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_CHECK_MESSAGE, e);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 }

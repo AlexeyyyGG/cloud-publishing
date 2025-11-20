@@ -1,4 +1,4 @@
-package publications.controller;
+package controller;
 
 import java.util.List;
 import org.slf4j.Logger;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import publications.dto.PublicationGetDTO;
-import publications.model.Publication;
-import publications.service.PublicationService;
+import dto.PublicationGetDTO;
+import model.Publication;
+import service.PublicationService;
 
 @RestController
 @RequestMapping(PublicationsController.PUBLICATIONS)
@@ -34,41 +34,41 @@ public class PublicationsController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PublicationGetDTO>> getAllPublications() {
-        logger.info("getAllPublications called");
-        List<PublicationGetDTO> publications = service.getAllPublications();
+    public ResponseEntity<List<PublicationGetDTO>> getAll() {
+        logger.info("getAll called");
+        List<PublicationGetDTO> publications = service.getAll();
         logger.debug("Found {} publications", publications.size());
         return new ResponseEntity<>(publications, HttpStatus.OK);
     }
 
     @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Publication> getPublication(@PathVariable(ID) int id) {
-        logger.info("getPublication called with id={}", id);
-        Publication publication = service.getPublication(id);
+    public ResponseEntity<Publication> get(@PathVariable(ID) int id) {
+        logger.info("get called with id={}", id);
+        Publication publication = service.get(id);
         return new ResponseEntity<>(publication, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addPublication(@RequestBody Publication publication) {
-        logger.info("addPublication called with: {}", publication);
-        service.addPublication(publication);
+    public ResponseEntity<Void> add(@RequestBody Publication publication) {
+        logger.info("add called with: {}", publication);
+        service.add(publication);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updatePublication(
+    public ResponseEntity<Void> update(
             @PathVariable(ID) int id,
             @RequestBody Publication publication
     ) {
-        logger.info("updateEmployee called for id {}", id);
-        service.updatePublication(id, publication);
+        logger.info("update called for id {}", id);
+        service.update(id, publication);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping(value = {ID_PATH})
-    public ResponseEntity<Void> deletePrincess(@PathVariable(ID) int id) {
-        logger.info("deleteEmployee called with id {}", id);
-        service.deletePublication(id);
+    public ResponseEntity<Void> delete(@PathVariable(ID) int id) {
+        logger.info("delete called with id {}", id);
+        service.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
