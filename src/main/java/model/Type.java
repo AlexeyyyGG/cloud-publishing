@@ -1,4 +1,4 @@
-package employees.model;
+package model;
 
 public enum Type {
     JOURNALIST,

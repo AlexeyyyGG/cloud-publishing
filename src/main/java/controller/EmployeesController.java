@@ -1,8 +1,8 @@
-package employees.controller;
+package controller;
 
-import employees.dto.EmployeeUpdateRequest;
+import dto.EmployeeUpdateRequest;
 import java.util.List;
-import employees.model.Employee;
+import model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import employees.service.EmployeeService;
+import service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,41 +34,41 @@ public class EmployeesController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllEmployees() {
-        logger.info("getAllEmployees called");
-        List<Employee> employees = service.getAllEmployees();
+    public ResponseEntity<List<Employee>> getAll() {
+        logger.info("getAll called");
+        List<Employee> employees = service.getAll();
         logger.debug("Found {} employees", employees.size());
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getEmployee(@PathVariable(ID) int id) {
-        logger.info("getEmployee called with id={}", id);
-        Employee employee = service.getEmployee(id);
+    public ResponseEntity<Employee> get(@PathVariable(ID) int id) {
+        logger.info("get called with id={}", id);
+        Employee employee = service.get(id);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
-        logger.info("addEmployee called with: {}", employee);
-        service.addEmployee(employee);
+    public ResponseEntity<Void> add(@RequestBody Employee employee) {
+        logger.info("add called with: {}", employee);
+        service.add(employee);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateEmployee(
+    public ResponseEntity<Void> update(
             @PathVariable(ID) int id,
             @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
-        logger.info("updateEmployee called for id {}", id);
-        service.updateEmployee(id, employeeUpdateRequest);
+        logger.info("update called for id {}", id);
+        service.update(id, employeeUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping(value = {ID_PATH})
-    public ResponseEntity<?> deletePrincess(@PathVariable(ID) int id) {
-        logger.info("deleteEmployee called with id {}", id);
-        service.deleteEmployee(id);
+    public ResponseEntity<Void> delete(@PathVariable(ID) int id) {
+        logger.info("delete called with id {}", id);
+        service.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
