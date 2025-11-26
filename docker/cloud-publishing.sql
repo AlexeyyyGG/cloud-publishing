@@ -48,21 +48,21 @@ CREATE TABLE articles
 CREATE TABLE publication_categories (
     publication_id INT,
     category_id INT,
-    FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE,
+    FOREIGN KEY (publication_id) REFERENCES publications(id),
     FOREIGN KEY (category_id) REFERENCES  categories(id)
 );
 
 CREATE TABLE publication_journalists (
     publication_id INT,
     employee_id INT,
-    FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE,
+    FOREIGN KEY (publication_id) REFERENCES publications(id),
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
 CREATE TABLE publication_editors (
     publication_id INT,
     employee_id INT,
-    FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE,
+    FOREIGN KEY (publication_id) REFERENCES publications(id),
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 

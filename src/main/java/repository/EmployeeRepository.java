@@ -51,12 +51,13 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
     private static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
     private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
 
-    public EmployeeRepository(Connection connection) {
-        super(connection);
+    public EmployeeRepository(DatabaseConnection databaseConnection) {
+        super(databaseConnection);
     }
     @Override
     public void add(Employee employee) {
-        try (PreparedStatement statement = connection.prepareStatement(
+        try (Connection connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
                 SQL_INSERT,
                 Statement.RETURN_GENERATED_KEYS
         )) {
@@ -85,7 +86,8 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
         } else {
             sql = SQL_UPDATE_WITHOUT_PASSWORD;
         }
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, employee.firstName());
             statement.setString(2, employee.lastName());
             statement.setString(3, employee.middleName());
@@ -113,7 +115,8 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
     }
     @Override
     public Employee get(Integer id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_GET)) {
+        try (Connection  connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_GET)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -129,7 +132,8 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
 
     public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_LIST);
+        try (Connection connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_LIST);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 employees.add(resultSetToEmployee(resultSet));
@@ -141,7 +145,8 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
     }
     @Override
     public void delete(Integer id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+        try (Connection connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -154,7 +159,8 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
     }
 
     public boolean existsChiefEditor() {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
+        try (Connection connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
                 ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 return resultSet.getBoolean(1);

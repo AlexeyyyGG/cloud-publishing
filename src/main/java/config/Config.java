@@ -1,6 +1,7 @@
 package config;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,11 +21,6 @@ public class Config implements WebMvcConfigurer {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfig() {
         return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    @Bean
-    public Connection getConnection(DbProperties dbProperties) {
-        return DatabaseConnection.getConnection(dbProperties);
     }
 
     @Override

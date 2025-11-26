@@ -1,27 +1,28 @@
 package repository;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import config.DbProperties;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DatabaseConnection {
-    private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DRIVER_NOT_FOUND_MSG = "MySQL JDBC Driver not found";
-    private static final String FAILED_TO_CONNECT_MSG = "Failed to connect to database";
+    private static final HikariConfig config = new HikariConfig();
+    private final HikariDataSource dataSource;
 
-    public static Connection getConnection(DbProperties dbProperties) {
-        try {
-            Class.forName(DB_DRIVER);
-            return DriverManager.getConnection(
-                    dbProperties.getUrl(),
-                    dbProperties.getUser(),
-                    dbProperties.getPassword()
-            );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(DRIVER_NOT_FOUND_MSG, e);
-        } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_CONNECT_MSG, e);
-        }
+    public DatabaseConnection(DbProperties dbProperties) {
+        config.setJdbcUrl(dbProperties.getUrl());
+        config.setUsername(dbProperties.getUser());
+        config.setPassword(dbProperties.getPassword());
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        dataSource = new HikariDataSource(config);
+    }
+
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }
