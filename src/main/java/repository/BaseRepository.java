@@ -4,17 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 public abstract class BaseRepository {
     private static final String CONNECTION_ERROR_MSG = "Error connecting to database";
-    protected DatabaseConnection databaseConnection;
+    protected DataSource dataSource;
 
-    protected BaseRepository(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
+    protected BaseRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public boolean exists(Integer id, String sql, String errorMessage) {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -29,7 +30,7 @@ public abstract class BaseRepository {
     }
 
     public void doTransactional(TransactionalOperation operation, String message) {
-        try (Connection connection = databaseConnection.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setAutoCommit(false);
                 operation.execute(connection);
@@ -42,5 +43,4 @@ public abstract class BaseRepository {
             throw new RuntimeException(CONNECTION_ERROR_MSG, e);
         }
     }
-
 }

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 import model.Employee;
 import model.Gender;
 import model.Type;
@@ -51,16 +52,17 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
     private static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
     private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
 
-    public EmployeeRepository(DatabaseConnection databaseConnection) {
-        super(databaseConnection);
+    public EmployeeRepository(DataSource dataSource) {
+        super(dataSource);
     }
+
     @Override
     public void add(Employee employee) {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                SQL_INSERT,
-                Statement.RETURN_GENERATED_KEYS
-        )) {
+                        SQL_INSERT,
+                        Statement.RETURN_GENERATED_KEYS
+                )) {
             statement.setString(1, employee.firstName());
             statement.setString(2, employee.lastName());
             statement.setString(3, employee.middleName());
@@ -77,6 +79,7 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
             throw new RuntimeException(FAILED_TO_ADD_MSG, e);
         }
     }
+
     @Override
     public void update(Employee employee) {
         boolean updatePassword = employee.password() != null && !employee.password().isEmpty();
@@ -86,7 +89,7 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
         } else {
             sql = SQL_UPDATE_WITHOUT_PASSWORD;
         }
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, employee.firstName());
             statement.setString(2, employee.lastName());
@@ -113,9 +116,10 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
             throw new RuntimeException(FAILED_TO_UPDATE_WITH_ID_MSG + employee.id(), e);
         }
     }
+
     @Override
     public Employee get(Integer id) {
-        try (Connection  connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_GET)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -132,7 +136,7 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
 
     public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_LIST);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -143,9 +147,10 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
             throw new RuntimeException(FAILED_TO_LIST_MSG, e);
         }
     }
+
     @Override
     public void delete(Integer id) {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -153,13 +158,14 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
             throw new RuntimeException(FAILED_TO_DELETE_MSG, e);
         }
     }
+
     @Override
     public boolean exists(Integer id) {
         return super.exists(id, SQL_EXIST, FAILED_TO_CHECK_MESSAGE);
     }
 
     public boolean existsChiefEditor() {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
                 ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {

@@ -1,5 +1,6 @@
 package repository;
 
+import javax.sql.DataSource;
 import model.PublicationType;
 import exception.ObjectNotFoundException;
 import java.sql.Connection;
@@ -73,8 +74,8 @@ public class PublicationRepository extends BaseRepository implements
     private static final String SQL_GET_BY_ID_PUBLICATION =
             "SELECT id, name, publication_type, theme FROM publications WHERE id = ?";
 
-    public PublicationRepository(DatabaseConnection databaseConnection) {
-        super(databaseConnection);
+    public PublicationRepository(DataSource dataSource) {
+        super(dataSource);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class PublicationRepository extends BaseRepository implements
 
     @Override
     public Publication get(Integer id) {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         SQL_GET_BY_ID_PUBLICATION)) {
             statement.setInt(1, id);
@@ -146,7 +147,7 @@ public class PublicationRepository extends BaseRepository implements
 
     public List<PublicationGetDTO> getAll() {
         List<PublicationGetDTO> publications = new ArrayList<>();
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_GET_PUBLICATION);
                 ResultSet resultSet = statement.executeQuery()
         ) {
@@ -172,7 +173,7 @@ public class PublicationRepository extends BaseRepository implements
     }
 
     private void deleteConnections(String query, int publicationId) throws SQLException {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, publicationId);
             statement.executeUpdate();
@@ -181,7 +182,7 @@ public class PublicationRepository extends BaseRepository implements
 
     private void insertConnections(String query, int publicationId, Set<Integer> ids)
             throws SQLException {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             for (Integer id : ids) {
                 statement.setInt(1, publicationId);
@@ -194,7 +195,7 @@ public class PublicationRepository extends BaseRepository implements
 
     private Set<Integer> getCategories(int publicationId) {
         Set<Integer> categories = new HashSet<>();
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         SQL_GET_CATEGORIES_BY_PUBLICATION)) {
             statement.setInt(1, publicationId);
@@ -211,7 +212,7 @@ public class PublicationRepository extends BaseRepository implements
 
     private Map<Integer, List<String>> getCategoriesMap() throws SQLException {
         Map<Integer, List<String>> categoriesMap = new HashMap<>();
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_GET_ALL_CATEGORIES);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -232,7 +233,7 @@ public class PublicationRepository extends BaseRepository implements
     private Set<Integer> getEmployeeIdsByPublicationId(int publicationId, String tableName) {
         Set<Integer> employees = new HashSet<>();
         String sql = String.format(SQL_GET_EMPLOYEE, tableName);
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, publicationId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -247,7 +248,7 @@ public class PublicationRepository extends BaseRepository implements
     }
 
     private Integer updatePublication(Publication publication) throws SQLException {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement updateStmt = connection.prepareStatement(UPDATE_PUBLICATION)) {
             updateStmt.setString(1, publication.name());
             updateStmt.setString(2, publication.publicationType().toString());
@@ -259,7 +260,7 @@ public class PublicationRepository extends BaseRepository implements
     }
 
     private Integer insertPublication(Publication publication) throws SQLException {
-        try (Connection connection = databaseConnection.getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PUBLICATION,
                         Statement.RETURN_GENERATED_KEYS
                 )) {
