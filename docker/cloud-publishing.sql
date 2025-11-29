@@ -28,9 +28,7 @@ CREATE TABLE publications
     id               INT AUTO_INCREMENT PRIMARY KEY,
     name             VARCHAR(100)                   NOT NULL,
     publication_type ENUM ('Magazine', 'Newspaper') NOT NULL,
-    theme            VARCHAR(100)                   NOT NULL,
-    category_id      INT                            NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories (id)
+    theme            VARCHAR(100)                   NOT NULL
 );
 
 CREATE TABLE articles
@@ -45,6 +43,27 @@ CREATE TABLE articles
     FOREIGN KEY (category_id) REFERENCES categories (id),
     FOREIGN KEY (author_id) REFERENCES employees (id),
     FOREIGN KEY (publication_id) REFERENCES publications (id)
+);
+
+CREATE TABLE publication_categories (
+    publication_id INT,
+    category_id INT,
+    FOREIGN KEY (publication_id) REFERENCES publications(id),
+    FOREIGN KEY (category_id) REFERENCES  categories(id)
+);
+
+CREATE TABLE publication_journalists (
+    publication_id INT,
+    employee_id INT,
+    FOREIGN KEY (publication_id) REFERENCES publications(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+
+CREATE TABLE publication_editors (
+    publication_id INT,
+    employee_id INT,
+    FOREIGN KEY (publication_id) REFERENCES publications(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
 CREATE TABLE article_authors
@@ -66,3 +85,10 @@ CREATE TABLE reviews
     FOREIGN KEY (article_id) REFERENCES articles(id),
     FOREIGN KEY (author) REFERENCES employees(id)
 );
+
+INSERT INTO categories (name) VALUES ('Sport');
+INSERT INTO categories (name) VALUES ('Leisure');
+INSERT INTO categories (name) VALUES ('Finance');
+INSERT INTO categories (name) VALUES ('Advertising');
+INSERT INTO categories (name) VALUES ('Humor');
+INSERT INTO categories (name) VALUES ('Work');

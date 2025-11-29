@@ -1,12 +1,12 @@
-package employees.service;
+package service;
 
-import employees.dto.EmployeeUpdateRequest;
-import employees.exception.InvalidArgumentException;
-import employees.exception.ObjectNotFoundException;
+import dto.EmployeeUpdateRequest;
+import exception.InvalidArgumentException;
+import exception.ObjectNotFoundException;
 import java.util.List;
-import employees.model.Employee;
+import model.Employee;
 import org.springframework.stereotype.Service;
-import employees.repository.EmployeeRepository;
+import repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
@@ -20,7 +20,7 @@ public class EmployeeService {
         this.repository = repository;
     }
 
-    public void addEmployee(Employee employee) {
+    public void add(Employee employee) {
         if (employee.isChiefEditor()) {
             if (repository.existsChiefEditor()) {
                 throw new InvalidArgumentException(CHIEF_EDITOR_EXISTS_MSG);
@@ -32,7 +32,7 @@ public class EmployeeService {
         repository.add(employee);
     }
 
-    public void updateEmployee(int id, EmployeeUpdateRequest request) {
+    public void update(int id, EmployeeUpdateRequest request) {
         Employee existingEmployee = repository.get(id);
         if (existingEmployee == null) {
             throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
@@ -62,7 +62,7 @@ public class EmployeeService {
         repository.update(updatedEmployee);
     }
 
-    public Employee getEmployee(int id) {
+    public Employee get(int id) {
         if (repository.exists(id)) {
             return repository.get(id);
         } else {
@@ -70,11 +70,11 @@ public class EmployeeService {
         }
     }
 
-    public List<Employee> getAllEmployees() {
-        return repository.list();
+    public List<Employee> getAll() {
+        return repository.getAll();
     }
 
-    public void deleteEmployee(int id) {
+    public void delete(int id) {
         if (repository.exists(id)) {
             repository.delete(id);
         } else {

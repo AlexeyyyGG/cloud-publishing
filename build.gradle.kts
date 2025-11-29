@@ -29,6 +29,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.18")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:11.0.7")
+    implementation("com.zaxxer:HikariCP:7.0.2")
     compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
 }
 

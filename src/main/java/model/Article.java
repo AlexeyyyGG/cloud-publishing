@@ -1,6 +1,5 @@
-package articles;
+package model;
 
-import employees.model.Employee;
 import java.util.List;
 
 public record Article(

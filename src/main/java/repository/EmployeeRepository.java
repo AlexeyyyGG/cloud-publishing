@@ -1,6 +1,6 @@
-package employees.repository;
+package repository;
 
-import employees.exception.ObjectNotFoundException;
+import exception.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,14 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import employees.model.Employee;
-import employees.model.Gender;
-import employees.model.Type;
+import javax.sql.DataSource;
+import model.Employee;
+import model.Gender;
+import model.Type;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EmployeeRepository {
-    private final Connection connection;
+public class EmployeeRepository extends BaseRepository implements IRepository<Employee, Integer> {
     private static final String ID = "id";
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
@@ -46,21 +46,23 @@ public class EmployeeRepository {
     private static final String FAILED_TO_ADD_MSG = "Failed to add";
     private static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Failed to update employee with id, %d";
     private static final String FAILED_TO_GET_MSG = "Failed to get";
-    private static final String FAILED_TO_LIST_MSG = "Failed to list";
+    private static final String FAILED_TO_LIST_MSG = "Failed to getAll";
     private static final String FAILED_TO_DELETE_MSG = "Failed to delete";
     private static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if employee exists";
     private static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
     private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
 
-    public EmployeeRepository(Connection connection) {
-        this.connection = connection;
+    public EmployeeRepository(DataSource dataSource) {
+        super(dataSource);
     }
 
+    @Override
     public void add(Employee employee) {
-        try (PreparedStatement statement = connection.prepareStatement(
-                SQL_INSERT,
-                Statement.RETURN_GENERATED_KEYS
-        )) {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        SQL_INSERT,
+                        Statement.RETURN_GENERATED_KEYS
+                )) {
             statement.setString(1, employee.firstName());
             statement.setString(2, employee.lastName());
             statement.setString(3, employee.middleName());
@@ -78,16 +80,17 @@ public class EmployeeRepository {
         }
     }
 
+    @Override
     public void update(Employee employee) {
-        boolean updatePassword =
-                employee.password() != null && !employee.password().isEmpty();
+        boolean updatePassword = employee.password() != null && !employee.password().isEmpty();
         String sql;
         if (updatePassword) {
             sql = SQL_UPDATE_WITH_PASSWORD;
         } else {
             sql = SQL_UPDATE_WITHOUT_PASSWORD;
         }
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, employee.firstName());
             statement.setString(2, employee.lastName());
             statement.setString(3, employee.middleName());
@@ -114,8 +117,10 @@ public class EmployeeRepository {
         }
     }
 
-    public Employee get(int id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_GET)) {
+    @Override
+    public Employee get(Integer id) {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_GET)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -129,9 +134,10 @@ public class EmployeeRepository {
         }
     }
 
-    public List<Employee> list() {
+    public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_LIST);
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_LIST);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 employees.add(resultSetToEmployee(resultSet));
@@ -142,8 +148,10 @@ public class EmployeeRepository {
         }
     }
 
-    public void delete(int id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    @Override
+    public void delete(Integer id) {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -151,22 +159,14 @@ public class EmployeeRepository {
         }
     }
 
-    public boolean exists(int id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST)) {
-            statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
-                return false;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_CHECK_MESSAGE, e);
-        }
+    @Override
+    public boolean exists(Integer id) {
+        return super.exists(id, SQL_EXIST, FAILED_TO_CHECK_MESSAGE);
     }
 
     public boolean existsChiefEditor() {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
                 ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 return resultSet.getBoolean(1);
