@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +13,7 @@ public class Application {
         tomcat.setPort(PORT);
         tomcat.getConnector();
         tomcat.getHost().setAppBase(".");
-        tomcat.addWebapp("/", ".");
+        tomcat.addWebapp("/", new File("src/main/webapp").getAbsolutePath());
         tomcat.start();
         tomcat.getServer().await();
     }
