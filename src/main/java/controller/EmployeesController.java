@@ -1,5 +1,9 @@
 package controller;
 
+import static constants.Urls.ID;
+import static constants.Urls.ID_PATH;
+import static constants.Urls.EMPLOYEES;
+
 import dto.EmployeeUpdateRequest;
 import java.util.List;
 import model.Employee;
@@ -20,11 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping(EmployeesController.EMPLOYEES)
+@RequestMapping(EMPLOYEES)
 public class EmployeesController {
-    static final String EMPLOYEES = "/employees";
-    private static final String ID_PATH = "/{id}";
-    private static final String ID = "id";
     private final EmployeeService service;
     private static final Logger logger = LoggerFactory.getLogger(EmployeesController.class);
 

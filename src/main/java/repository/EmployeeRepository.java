@@ -1,5 +1,9 @@
 package repository;
 
+import static constants.employee.EmployeeField.*;
+import static constants.employee.EmployeeMessage.*;
+import static constants.employee.EmployeeSQL.*;
+
 import exception.ObjectNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,42 +20,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class EmployeeRepository extends BaseRepository implements IRepository<Employee, Integer> {
-    private static final String ID = "id";
-    private static final String FIRST_NAME = "first_name";
-    private static final String LAST_NAME = "last_name";
-    private static final String MIDDLE_NAME = "middle_name";
-    private static final String EMAIL = "email";
-    private static final String PASSWORD = "password";
-    private static final String GENDER = "gender";
-    private static final String BIRTH_YEAR = "birth_year";
-    private static final String ADDRESS = "address";
-    private static final String EDUCATION = "education";
-    private static final String TYPE = "type";
-    private static final String IS_CHIEF_EDITOR = "is_chief_editor";
-    private static final String SQL_INSERT = """
-            INSERT INTO employees(first_name, last_name, middle_name, email, password, gender,
-            birth_year, address, education, type, is_chief_editor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
-    private static final String SQL_UPDATE_WITH_PASSWORD = """
-            UPDATE employees SET first_name=?, last_name=?, middle_name=?, email=?, password=?,
-            gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?""";
-    private static final String SQL_UPDATE_WITHOUT_PASSWORD = """
-            UPDATE employees SET first_name=?, last_name=?, middle_name=?, email=?,
-            gender=?, birth_year=?, address=?, education=?, type=? WHERE id=?""";
-    private static final String SQL_GET = "SELECT * FROM employees WHERE id=?";
-    private static final String SQL_LIST = "SELECT * FROM employees";
-    private static final String SQL_DELETE = "DELETE FROM employees WHERE id=?";
-    private static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM employees WHERE id = ?)";
-    private static final String SQL_EXIST_CE =
-            "SELECT EXISTS(SELECT 1 FROM employees WHERE is_chief_editor = TRUE)";
-    private static final String FAILED_TO_ADD_MSG = "Failed to add";
-    private static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Failed to update employee with id, %d";
-    private static final String FAILED_TO_GET_MSG = "Failed to get";
-    private static final String FAILED_TO_LIST_MSG = "Failed to getAll";
-    private static final String FAILED_TO_DELETE_MSG = "Failed to delete";
-    private static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if employee exists";
-    private static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
-    private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
-
     public EmployeeRepository(DataSource dataSource) {
         super(dataSource);
     }

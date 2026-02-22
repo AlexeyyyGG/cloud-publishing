@@ -1,5 +1,9 @@
 package controller;
 
+import static constants.Urls.ID;
+import static constants.Urls.ID_PATH;
+import static constants.Urls.PUBLICATIONS;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +24,8 @@ import model.Publication;
 import service.PublicationService;
 
 @RestController
-@RequestMapping(PublicationsController.PUBLICATIONS)
+@RequestMapping(PUBLICATIONS)
 public class PublicationsController {
-    static final String PUBLICATIONS = "/publications";
-    private static final String ID_PATH = "/{id}";
-    private static final String ID = "id";
     private final PublicationService service;
     private static final Logger logger = LoggerFactory.getLogger(PublicationsController.class);
 
