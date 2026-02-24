@@ -3,7 +3,7 @@ package model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Employee(
-        int id,
+        Integer id,
         @JsonProperty("first_name")
         String firstName,
         @JsonProperty("last_name")

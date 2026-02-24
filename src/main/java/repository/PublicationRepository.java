@@ -1,5 +1,9 @@
 package repository;
 
+import static constants.publication.PublicationField.*;
+import static constants.publication.PublicationMessage.*;
+import static constants.publication.PublicationSQL.*;
+
 import javax.sql.DataSource;
 import model.PublicationType;
 import exception.ObjectNotFoundException;
@@ -21,59 +25,6 @@ import model.Publication;
 @Repository
 public class PublicationRepository extends BaseRepository implements
         IRepository<Publication, Integer> {
-    private static final String ID = "id";
-    private static final String NAME = "name";
-    private static final String PUBLICATION_TYPE = "publication_type";
-    private static final String THEME = "theme";
-    private static final String PUBLICATION_ID = "publication_id";
-    private static final String PUBLICATION_JOURNALISTS = "publication_journalists";
-    private static final String PUBLICATION_EDITORS = "publication_editors";
-    private static final String PUBLICATION_NOT_FOUND_MSG = "Publication not found";
-    private static final String FAILED_CREATING_MSG = "Creating publication failed, no ID obtained.";
-    private static final String FAILED_TO_ADD_MSG = "Failed to add publication";
-    private static final String FAILED_TO_GET_MSG = "Failed to get";
-    private static final String FAILED_TO_DELETE_MSG = "Failed to delete";
-    private static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if publication exists";
-    private static final String FAILED_TO_UPDATE = "Error updating publication";
-    private static final String FAILED_TO_GET_EMP_ID = "Failed to get employee IDs from table: ";
-    private static final String FAILED_TO_GET_CATEGORIES = "Failed to get categories";
-    private static final String SQL_INSERT_PUBLICATION =
-            "INSERT INTO publications (name, publication_type, theme) VALUES (?, ?, ?)";
-    private static final String INSERT_PUB_CATEGORY =
-            "INSERT INTO publication_categories (publication_id, category_id) VALUES (?, ?)";
-    private static final String INSERT_JOURNALIST =
-            "INSERT INTO publication_journalists (publication_id, employee_id) VALUES (?, ?)";
-    private static final String INSERT_EDITOR =
-            "INSERT INTO publication_editors (publication_id, employee_id) VALUES (?, ?)";
-    private static final String UPDATE_PUBLICATION =
-            "UPDATE publications SET name=?, publication_type=?, theme=? WHERE id=?";
-    private static final String DELETE_CATEGORY =
-            "DELETE FROM publication_categories WHERE publication_id = ?";
-    private static final String DELETE_JOURNALIST =
-            "DELETE FROM publication_journalists WHERE publication_id = ?";
-    private static final String DELETE_EDITOR =
-            "DELETE FROM publication_editors WHERE publication_id = ?";
-    private static final String SQL_DELETE = "DELETE FROM publications WHERE id=?";
-    private static final String SQL_GET_PUBLICATION = "SELECT id, name, publication_type, theme FROM publications";
-    private static final String SQL_GET_ALL_CATEGORIES = """
-            SELECT publication_id, c.name
-            FROM publication_categories pc
-            JOIN categories c ON pc.category_id = c.id;
-            """;
-    private static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM publications WHERE id = ?)";
-    private static final String SQL_GET_EMPLOYEE = """
-            SELECT e.id
-            FROM employees e
-            JOIN %s p ON e.id = p.employee_id WHERE p.publication_id = ?
-            """;
-    private static final String SQL_GET_CATEGORIES_BY_PUBLICATION = """
-            SELECT c.id
-            FROM categories c
-            JOIN publication_categories pc ON c.id = pc.category_id WHERE pc.publication_id = ?
-            """;
-    private static final String SQL_GET_BY_ID_PUBLICATION =
-            "SELECT id, name, publication_type, theme FROM publications WHERE id = ?";
-
     public PublicationRepository(DataSource dataSource) {
         super(dataSource);
     }
@@ -261,7 +212,8 @@ public class PublicationRepository extends BaseRepository implements
 
     private Integer insertPublication(Publication publication) throws SQLException {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PUBLICATION,
+                PreparedStatement statement = connection.prepareStatement(
+                        SQL_INSERT_PUBLICATION,
                         Statement.RETURN_GENERATED_KEYS
                 )) {
             statement.setString(1, publication.name());

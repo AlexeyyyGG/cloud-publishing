@@ -30,6 +30,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:11.0.7")
     implementation("com.zaxxer:HikariCP:7.0.2")
+    implementation("org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0")
     compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
 }
 
