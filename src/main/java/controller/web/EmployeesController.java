@@ -47,7 +47,7 @@ public class EmployeesController {
     @PostMapping(ADD)
     public String add(Employee employee) {
         service.add(employee);
-        return "redirect:/web/employees";
+        return "redirect:" + WEB_EMPLOYEES;
     }
 
     @GetMapping(EDIT)
@@ -60,12 +60,12 @@ public class EmployeesController {
     public String update(@PathVariable(ID) int id,
             @ModelAttribute EmployeeUpdateRequest employeeUpdateRequest) {
         service.update(id, employeeUpdateRequest);
-        return "redirect:/web/employees";
+        return "redirect:" + WEB_EMPLOYEES;
     }
 
     @DeleteMapping(ID_PATH)
     public String delete(@PathVariable(ID) int id) {
         service.delete(id);
-        return "redirect:/web/employees";
+        return "redirect:" + WEB_EMPLOYEES;
     }
 }

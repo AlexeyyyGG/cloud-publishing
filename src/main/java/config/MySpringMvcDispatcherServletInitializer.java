@@ -23,13 +23,13 @@ public class MySpringMvcDispatcherServletInitializer extends
     }
 
     @Override
-    public void onStartup(ServletContext aServletContext) throws ServletException {
-        super.onStartup(aServletContext);
-        registerHiddenFieldFilter(aServletContext);
+    public void onStartup(ServletContext context) throws ServletException {
+        super.onStartup(context);
+        registerHiddenFieldFilter(context);
     }
 
-    private void registerHiddenFieldFilter(ServletContext aContext) {
-        aContext.addFilter("hiddenHttpMethodFilter",
+    private void registerHiddenFieldFilter(ServletContext context) {
+        context.addFilter("hiddenHttpMethodFilter",
                 new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null ,true, "/*");
     }
 }
