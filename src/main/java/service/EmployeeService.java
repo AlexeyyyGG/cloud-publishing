@@ -1,6 +1,8 @@
 package service;
 
-import dto.EmployeeUpdateRequest;
+import dto.request.EmployeeRequest;
+import dto.response.EmployeeResponse;
+import dto.request.EmployeeUpdateRequest;
 import exception.InvalidArgumentException;
 import exception.ObjectNotFoundException;
 import java.util.List;
@@ -20,23 +22,35 @@ public class EmployeeService {
         this.repository = repository;
     }
 
-    public void add(Employee employee) {
-        if (employee.isChiefEditor()) {
+    public EmployeeResponse add(EmployeeRequest request) {
+        if (request.isChiefEditor()) {
             if (repository.existsChiefEditor()) {
                 throw new InvalidArgumentException(CHIEF_EDITOR_EXISTS_MSG);
             }
         }
-        if (employee.password() == null || employee.password().isEmpty()) {
+        if (request.password() == null || request.password().isEmpty()) {
             throw new InvalidArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
         }
-        repository.add(employee);
+        Employee employee = new Employee(
+                null,
+                request.firstName(),
+                request.lastName(),
+                request.middleName(),
+                request.email(),
+                request.password(),
+                request.gender(),
+                request.birthYear(),
+                request.address(),
+                request.education(),
+                request.type(),
+                request.isChiefEditor()
+                );
+        Employee saved = repository.add(employee);
+        return toResponse(saved);
     }
 
-    public void update(int id, EmployeeUpdateRequest request) {
+    public EmployeeResponse update(int id, EmployeeUpdateRequest request) {
         Employee existingEmployee = repository.get(id);
-        if (existingEmployee == null) {
-            throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
-        }
         String newPassword = existingEmployee.password();
         if (request.password() != null && !request.password().isEmpty()) {
             if (request.passwordConfirm() == null || !request.password()
@@ -60,18 +74,20 @@ public class EmployeeService {
                 request.isChiefEditor()
         );
         repository.update(updatedEmployee);
+        return toResponse(updatedEmployee);
     }
 
-    public Employee get(int id) {
-        if (repository.exists(id)) {
-            return repository.get(id);
-        } else {
-            throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
-        }
+    public EmployeeResponse get(int id) {
+        Employee existingEmployee = repository.get(id);
+        return toResponse(existingEmployee);
     }
 
-    public List<Employee> getAll() {
-        return repository.getAll();
+    public List<EmployeeResponse> getAll() {
+        return repository.getAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
     }
 
     public void delete(int id) {
@@ -80,5 +96,21 @@ public class EmployeeService {
         } else {
             throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
         }
+    }
+
+    private EmployeeResponse toResponse(Employee employee) {
+        return new EmployeeResponse(
+                employee.id(),
+                employee.firstName(),
+                employee.lastName(),
+                employee.middleName(),
+                employee.email(),
+                employee.gender(),
+                employee.birthYear(),
+                employee.address(),
+                employee.education(),
+                employee.type(),
+                employee.isChiefEditor()
+        );
     }
 }

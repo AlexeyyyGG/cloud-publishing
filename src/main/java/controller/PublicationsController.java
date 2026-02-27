@@ -4,6 +4,8 @@ import static constants.Urls.ID;
 import static constants.Urls.ID_PATH;
 import static constants.Urls.PUBLICATIONS;
 
+import dto.request.PublicationRequest;
+import dto.response.PublicationResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import dto.PublicationGetDTO;
-import model.Publication;
+import dto.response.PublicationGetDTO;
 import service.PublicationService;
 
 @RestController
@@ -43,33 +44,32 @@ public class PublicationsController {
     }
 
     @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Publication> get(@PathVariable(ID) int id) {
+    public ResponseEntity<PublicationResponse> get(@PathVariable(ID) int id) {
         logger.info("get called with id={}", id);
-        Publication publication = service.get(id);
-        return new ResponseEntity<>(publication, HttpStatus.OK);
+        PublicationResponse publication = service.get(id);
+        return ResponseEntity.status(HttpStatus.OK).body(publication);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> add(@RequestBody Publication publication) {
-        logger.info("add called with: {}", publication);
-        service.add(publication);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<PublicationResponse> add(@RequestBody PublicationRequest request) {
+        logger.info("add called with: {}", request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(request));
     }
 
     @PutMapping(value = ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(
+    public ResponseEntity<PublicationResponse> update(
             @PathVariable(ID) int id,
-            @RequestBody Publication publication
+            @RequestBody PublicationRequest request
     ) {
         logger.info("update called for id {}", id);
-        service.update(id, publication);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        PublicationResponse updated = service.update(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
     @DeleteMapping(value = {ID_PATH})
     public ResponseEntity<Void> delete(@PathVariable(ID) int id) {
         logger.info("delete called with id {}", id);
         service.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

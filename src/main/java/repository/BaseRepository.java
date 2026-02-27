@@ -14,7 +14,7 @@ public abstract class BaseRepository {
         this.dataSource = dataSource;
     }
 
-    public boolean exists(Integer id, String sql, String errorMessage) {
+    protected boolean exists(Integer id, String sql, String errorMessage) {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
@@ -29,13 +29,28 @@ public abstract class BaseRepository {
         }
     }
 
-    public void doTransactional(TransactionalOperation operation, String message) {
+    protected void doTransactional(TransactionalVoidOperation operation, String message) {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setAutoCommit(false);
                 operation.execute(connection);
                 connection.commit();
             } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(message, e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(CONNECTION_ERROR_MSG, e);
+        }
+    }
+    protected <T> T doTransactional(TransactionalOperation<T> operation, String message) {
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                T result = operation.execute(connection);
+                connection.commit();
+                return result;
+            } catch (Exception e) {
                 connection.rollback();
                 throw new RuntimeException(message, e);
             }

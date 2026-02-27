@@ -1,4 +1,4 @@
-package dto;
+package dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import model.Gender;

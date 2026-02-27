@@ -1,12 +1,14 @@
-package model;
+package dto.response;
 
-public record Employee(
+import model.Gender;
+import model.Type;
+
+public record EmployeeResponse(
         Integer id,
         String firstName,
         String lastName,
         String middleName,
         String email,
-        String password,
         Gender gender,
         int birthYear,
         String address,

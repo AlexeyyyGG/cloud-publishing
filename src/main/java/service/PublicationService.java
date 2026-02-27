@@ -1,9 +1,11 @@
 package service;
 
+import dto.request.PublicationRequest;
+import dto.response.PublicationResponse;
 import exception.ObjectNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import dto.PublicationGetDTO;
+import dto.response.PublicationGetDTO;
 import model.Publication;
 import repository.PublicationRepository;
 
@@ -16,15 +18,22 @@ public class PublicationService {
         this.repository = repository;
     }
 
-    public void add(Publication publication) {
-        repository.add(publication);
+    public PublicationResponse add(PublicationRequest request) {
+        Publication publication = new Publication(
+                null,
+                request.name(),
+                request.publicationType(),
+                request.theme(),
+                request.categories(),
+                request.journalists(),
+                request.editors()
+        );
+        Publication saved = repository.add(publication);
+        return toResponse(saved);
     }
 
-    public void update(int id, Publication request) {
+    public PublicationResponse update(int id, PublicationRequest request) {
         Publication existingPublication = repository.get(id);
-        if (existingPublication == null) {
-            throw new ObjectNotFoundException(PUBLICATION_NOT_FOUND_MSG);
-        }
         Publication updatedPublication = new Publication(
                 existingPublication.id(),
                 request.name(),
@@ -35,14 +44,12 @@ public class PublicationService {
                 request.editors()
         );
         repository.update(updatedPublication);
+        return toResponse(updatedPublication);
     }
 
-    public Publication get(int id) {
-        if (repository.exists(id)) {
-            return repository.get(id);
-        } else {
-            throw new ObjectNotFoundException(PUBLICATION_NOT_FOUND_MSG);
-        }
+    public PublicationResponse get(int id) {
+       Publication existingPublication = repository.get(id);
+       return toResponse(existingPublication);
     }
 
     public List<PublicationGetDTO> getAll() {
@@ -55,5 +62,17 @@ public class PublicationService {
         } else {
             throw new ObjectNotFoundException(PUBLICATION_NOT_FOUND_MSG);
         }
+    }
+
+    private PublicationResponse toResponse(Publication publication) {
+        return new PublicationResponse(
+                publication.id(),
+                publication.name(),
+                publication.publicationType(),
+                publication.theme(),
+                publication.categories(),
+                publication.journalists(),
+                publication.editors()
+        );
     }
 }

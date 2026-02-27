@@ -4,9 +4,10 @@ import static constants.Urls.ID;
 import static constants.Urls.ID_PATH;
 import static constants.Urls.EMPLOYEES;
 
-import dto.EmployeeUpdateRequest;
+import dto.request.EmployeeRequest;
+import dto.response.EmployeeResponse;
+import dto.request.EmployeeUpdateRequest;
 import java.util.List;
-import model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,41 +36,40 @@ public class EmployeesController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Employee>> getAll() {
+    public ResponseEntity<List<EmployeeResponse>> getAll() {
         logger.info("getAll called");
-        List<Employee> employees = service.getAll();
+        List<EmployeeResponse> employees = service.getAll();
         logger.debug("Found {} employees", employees.size());
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(employees);
     }
 
     @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Employee> get(@PathVariable(ID) int id) {
+    public ResponseEntity<EmployeeResponse> get(@PathVariable(ID) int id) {
         logger.info("get called with id={}", id);
-        Employee employee = service.get(id);
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+        EmployeeResponse employee = service.get(id);
+        return ResponseEntity.status(HttpStatus.OK).body(employee);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> add(@RequestBody Employee employee) {
-        logger.info("add called with: {}", employee);
-        service.add(employee);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<EmployeeResponse> add(@RequestBody EmployeeRequest request) {
+        logger.info("add called with: {}", request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(request));
     }
 
     @PutMapping(value = ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(
+    public ResponseEntity<EmployeeResponse> update(
             @PathVariable(ID) int id,
             @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
         logger.info("update called for id {}", id);
-        service.update(id, employeeUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        EmployeeResponse updated = service.update(id, employeeUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
     @DeleteMapping(value = {ID_PATH})
     public ResponseEntity<Void> delete(@PathVariable(ID) int id) {
         logger.info("delete called with id {}", id);
         service.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

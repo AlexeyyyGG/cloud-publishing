@@ -1,8 +1,9 @@
-package model;
+package dto.response;
 
 import java.util.Set;
+import model.PublicationType;
 
-public record Publication(
+public record PublicationResponse(
         Integer id,
         String name,
         PublicationType publicationType,
