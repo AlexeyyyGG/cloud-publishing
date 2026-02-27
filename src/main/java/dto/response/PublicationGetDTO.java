@@ -1,4 +1,4 @@
-package dto;
+package dto.response;
 
 import model.PublicationType;
 import java.util.List;

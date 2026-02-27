@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework:spring-context:$springVersion")
     implementation("org.springframework:spring-web:$springVersion")
     implementation("org.springframework:spring-webmvc:$springVersion")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     implementation("mysql:mysql-connector-java:8.0.33")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     implementation("ch.qos.logback:logback-classic:1.5.18")

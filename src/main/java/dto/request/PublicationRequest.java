@@ -1,10 +1,12 @@
-package model;
+package dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
+import model.PublicationType;
 
-public record Publication(
-        Integer id,
+public record PublicationRequest(
         String name,
+        @JsonProperty("publication_type")
         PublicationType publicationType,
         String theme,
         Set<Integer> categories,

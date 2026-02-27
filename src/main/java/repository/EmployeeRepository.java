@@ -25,7 +25,7 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
     }
 
     @Override
-    public void add(Employee employee) {
+    public Employee add(Employee employee) {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         SQL_INSERT,
@@ -42,7 +42,33 @@ public class EmployeeRepository extends BaseRepository implements IRepository<Em
             statement.setString(9, employee.education());
             statement.setString(10, employee.type().toString());
             statement.setBoolean(11, employee.isChiefEditor());
-            statement.executeUpdate();
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating employee failed, no rows affected.");
+            }
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    Integer id = generatedKeys.getInt(1);
+                    return new Employee(
+                            id,
+                            employee.firstName(),
+                            employee.lastName(),
+                            employee.middleName(),
+                            employee.email(),
+                            employee.password(),
+                            employee.gender(),
+                            employee.birthYear(),
+                            employee.address(),
+                            employee.education(),
+                            employee.type(),
+                            employee.isChiefEditor()
+                    );
+                }else {
+                    throw new SQLException("Creating employee failed, no ID obtained.");
+                }
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_ADD_MSG, e);
         }
