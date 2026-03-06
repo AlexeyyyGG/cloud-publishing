@@ -1,0 +1,21 @@
+package mapper;
+
+import dto.request.PublicationRequest;
+import dto.response.PublicationResponse;
+import model.Publication;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+
+@Mapper(componentModel = "spring")
+public interface PublicationMapper {
+    @Mapping(target = "id", ignore = true)
+    Publication toEntity(PublicationRequest request);
+
+    PublicationResponse toResponse(Publication publication);
+
+    @Mapping(target = "id", ignore = true)
+    void update(PublicationRequest request, @MappingTarget Publication publication);
+}

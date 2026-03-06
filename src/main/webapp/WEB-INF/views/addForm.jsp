@@ -35,6 +35,10 @@
         <form:errors path="password" cssStyle="color:red"/>
     </div>
     <div>
+        <form:input path="gender" placeholder="Пол"/>
+        <form:errors path="gender" cssStyle="color:red"/>
+    </div>
+    <div>
         <form:input path="birthYear" placeholder="Год рождения"/>
         <form:errors path="birthYear" cssStyle="color:red"/>
     </div>
@@ -47,7 +51,11 @@
         <form:errors path="education" cssStyle="color:red"/>
     </div>
     <div>
-        <form:checkbox path="isChiefEditor"/> Главный редактор
+        <form:input path="type" placeholder="Тип"/>
+        <form:errors path="type" cssStyle="color:red"/>
+    </div>
+    <div>
+        <form:checkbox path="chiefEditor"/> Главный редактор
     </div>
     <div>
         <button type="submit">Добавить</button>

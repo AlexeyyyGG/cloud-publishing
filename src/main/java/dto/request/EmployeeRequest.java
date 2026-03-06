@@ -41,6 +41,21 @@ public record EmployeeRequest(
         @NotNull(message = "Employee type must be specified")
         Type type,
         @JsonProperty("is_chief_editor")
-        Boolean isChiefEditor
+        boolean chiefEditor
 ) {
+    public static EmployeeRequest empty() {
+        return new EmployeeRequest(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false
+        );
+    }
 }

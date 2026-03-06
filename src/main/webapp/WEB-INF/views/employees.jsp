@@ -8,7 +8,6 @@
         <th>Last name</th>
         <th>Middle name</th>
         <th>Email</th>
-        <th>Password</th>
         <th>Gender</th>
         <th>Birth year</th>
         <th>Address</th>
@@ -23,13 +22,12 @@
             <td>${emp.lastName}</td>
             <td>${emp.middleName}</td>
             <td>${emp.email}</td>
-            <td>${emp.password}</td>
             <td>${emp.gender}</td>
             <td>${emp.birthYear}</td>
             <td>${emp.address}</td>
             <td>${emp.education}</td>
             <td>${emp.type}</td>
-            <td>${emp.isChiefEditor}</td>
+            <td>${emp.chiefEditor}</td>
             <td>
                 <form action="${pageContext.request.contextPath}/web/employees/${emp.id}" method="post" style="display:inline;">
                     <input type="hidden" name="_method" value="delete" />

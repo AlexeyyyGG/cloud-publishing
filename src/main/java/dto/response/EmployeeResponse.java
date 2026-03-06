@@ -14,6 +14,6 @@ public record EmployeeResponse(
         String address,
         String education,
         Type type,
-        boolean isChiefEditor
+        boolean chiefEditor
 ) {
 }

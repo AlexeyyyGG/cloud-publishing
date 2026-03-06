@@ -1,49 +1,61 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<meta charset="UTF-8"/>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <h2>Обновить сотрудника</h2>
-<form action="${pageContext.request.contextPath}/web/employees/${employee.id}" method="post">
-    <input type="hidden" name="_method" value="put" />
+
+<%--@elvariable id="employeeUpdateRequest" type="dto"--%>
+<form:form method="post"
+           action="${pageContext.request.contextPath}/web/employees/${employeeId}"
+           modelAttribute="employeeUpdateRequest">
+    <input type="hidden" name="_method" value="put"/>
     <div>
-        <input type="text" name="firstName" value="${employee.firstName}" placeholder="Имя" required />
+        <form:input path="firstName" placeholder="Имя"/>
+        <form:errors path="firstName" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="text" name="lastName" value="${employee.lastName}" placeholder="Фамилия" required />
+        <form:input path="lastName" placeholder="Фамилия"/>
+        <form:errors path="lastName" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="text" name="middleName" value="${employee.middleName}" placeholder="Отчество" />
+        <form:input path="middleName" placeholder="Отчество"/>
+        <form:errors path="middleName" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="email" name="email" value="${employee.email}" placeholder="Email" required />
+        <form:input path="email" placeholder="Email"/>
+        <form:errors path="email" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="password" name="password" placeholder="Пароль (оставьте пустым, чтобы не менять)" />
+        <form:password path="password" placeholder="Пароль"/>
+        <form:errors path="password" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="password" name="passwordConfirm" placeholder="Подтверждение пароля" />
+        <form:password path="passwordConfirm" placeholder="Подтверждение пароля"/>
+        <form:errors path="passwordConfirm" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="text" name="gender" value="${employee.gender}" placeholder="Пол" />
+        <form:input path="gender" placeholder="Пол"/>
+        <form:errors path="gender" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="number" name="birthYear" value="${employee.birthYear}" placeholder="Год рождения" />
+        <form:input path="birthYear" placeholder="Год рождения"/>
+        <form:errors path="birthYear" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="text" name="address" value="${employee.address}" placeholder="Адрес" />
+        <form:input path="address" placeholder="Адрес"/>
+        <form:errors path="address" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="text" name="education" value="${employee.education}" placeholder="Образование" />
+        <form:input path="education" placeholder="Образование"/>
+        <form:errors path="education" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="text" name="type" value="${employee.type}" placeholder="Тип" />
+        <form:input path="type" placeholder="Тип"/>
+        <form:errors path="type" cssStyle="color:red"/>
     </div>
     <div>
-        <input type="hidden" name="isChiefEditor" value="false" />
-        <label>
-            <input type="checkbox" name="isChiefEditor" value="true" ${employee.isChiefEditor ? 'checked' : ''} />
-            Главный редактор
-        </label>
+        <form:checkbox path="chiefEditor"/> Главный редактор
     </div>
     <div>
         <button type="submit">Обновить</button>
     </div>
-</form>
+</form:form>

@@ -1,116 +1,59 @@
 package service;
 
 import dto.request.EmployeeRequest;
-import dto.response.EmployeeResponse;
 import dto.request.EmployeeUpdateRequest;
-import exception.InvalidArgumentException;
-import exception.ObjectNotFoundException;
+import dto.response.EmployeeResponse;
 import java.util.List;
-import model.Employee;
-import org.springframework.stereotype.Service;
-import repository.EmployeeRepository;
 
-@Service
-public class EmployeeService {
-    private final EmployeeRepository repository;
-    private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
-    private static final String PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG = "Password is required when creating an employee";
-    private static final String PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG = "Passwords do not match or confirmation missing";
-    private static final String CHIEF_EDITOR_EXISTS_MSG = "Chief editor already exists";
+/**
+ * Service interface for managing employees. Provides operations for creating, updating, retrieving
+ * and deleting employees.
+ */
+public interface EmployeeService {
+    /**
+     * Creates a new employee.
+     *
+     * @param request object containing employee data
+     * @return created employee
+     */
+    EmployeeResponse add(EmployeeRequest request);
 
-    public EmployeeService(EmployeeRepository repository) {
-        this.repository = repository;
-    }
+    /**
+     * Updates an existing employee.
+     *
+     * @param id      identifier of the employee to update
+     * @param request object containing updated employee data
+     * @return updated employee
+     */
+    EmployeeResponse update(int id, EmployeeUpdateRequest request);
 
-    public EmployeeResponse add(EmployeeRequest request) {
-        if (request.isChiefEditor()) {
-            if (repository.existsChiefEditor()) {
-                throw new InvalidArgumentException(CHIEF_EDITOR_EXISTS_MSG);
-            }
-        }
-        if (request.password() == null || request.password().isEmpty()) {
-            throw new InvalidArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
-        }
-        Employee employee = new Employee(
-                null,
-                request.firstName(),
-                request.lastName(),
-                request.middleName(),
-                request.email(),
-                request.password(),
-                request.gender(),
-                request.birthYear(),
-                request.address(),
-                request.education(),
-                request.type(),
-                request.isChiefEditor()
-                );
-        Employee saved = repository.add(employee);
-        return toResponse(saved);
-    }
+    /**
+     * Returns employee by id.
+     *
+     * @param id identifier of the employee
+     * @return employee
+     */
+    EmployeeResponse get(int id);
 
-    public EmployeeResponse update(int id, EmployeeUpdateRequest request) {
-        Employee existingEmployee = repository.get(id);
-        String newPassword = existingEmployee.password();
-        if (request.password() != null && !request.password().isEmpty()) {
-            if (request.passwordConfirm() == null || !request.password()
-                    .equals(request.passwordConfirm())) {
-                throw new InvalidArgumentException(PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG);
-            }
-            newPassword = request.password();
-        }
-        Employee updatedEmployee = new Employee(
-                existingEmployee.id(),
-                request.firstName(),
-                request.lastName(),
-                request.middleName(),
-                request.email(),
-                newPassword,
-                request.gender(),
-                request.birthYear(),
-                request.address(),
-                request.education(),
-                request.type(),
-                request.isChiefEditor()
-        );
-        repository.update(updatedEmployee);
-        return toResponse(updatedEmployee);
-    }
+    /**
+     * Returns employee data prepared for update form.
+     *
+     * @param id identifier of the employee
+     * @return employee
+     */
+    EmployeeUpdateRequest getForUpdate(int id);
 
-    public EmployeeResponse get(int id) {
-        Employee existingEmployee = repository.get(id);
-        return toResponse(existingEmployee);
-    }
+    /**
+     * Returns list of all employees.
+     *
+     * @return list of employees
+     */
+    List<EmployeeResponse> getAll();
 
-    public List<EmployeeResponse> getAll() {
-        return repository.getAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-
-    }
-
-    public void delete(int id) {
-        if (repository.exists(id)) {
-            repository.delete(id);
-        } else {
-            throw new ObjectNotFoundException(EMPLOYEE_NOT_FOUND_MSG);
-        }
-    }
-
-    private EmployeeResponse toResponse(Employee employee) {
-        return new EmployeeResponse(
-                employee.id(),
-                employee.firstName(),
-                employee.lastName(),
-                employee.middleName(),
-                employee.email(),
-                employee.gender(),
-                employee.birthYear(),
-                employee.address(),
-                employee.education(),
-                employee.type(),
-                employee.isChiefEditor()
-        );
-    }
+    /**
+     * Deletes employee by id.
+     *
+     * @param id identifier of the employee to delete
+     */
+    void delete(int id);
 }

@@ -44,25 +44,13 @@ public class EmployeesController {
 
     @GetMapping(ADD_FORM)
     public String showAddForm(Model model) {
-        model.addAttribute("employeeRequest", new EmployeeRequest(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-                )
-        );
+        model.addAttribute("employeeRequest", EmployeeRequest.empty());
         return "addForm";
     }
 
     @PostMapping(ADD)
-    public String add(@Valid @ModelAttribute("employeeRequest") EmployeeRequest request,
+    public String add(
+            @Valid @ModelAttribute("employeeRequest") EmployeeRequest request,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
@@ -74,16 +62,17 @@ public class EmployeesController {
 
     @GetMapping(EDIT)
     public String showUpdateForm(Model model, @PathVariable(ID) int id) {
-        model.addAttribute("employee", service.get(id));
-        return  "updateForm";
+        model.addAttribute("employeeUpdateRequest", service.getForUpdate(id));
+        model.addAttribute("employeeId", id);
+        return "updateForm";
     }
 
     @PutMapping(ID_PATH)
     public String update(
             @PathVariable(ID) int id,
-            @ModelAttribute EmployeeUpdateRequest employeeUpdateRequest,
+            @Valid @ModelAttribute("employeeUpdateRequest") EmployeeUpdateRequest employeeUpdateRequest,
             BindingResult bindingResult
-            ) {
+    ) {
         if (bindingResult.hasErrors()) {
             return "updateForm";
         }

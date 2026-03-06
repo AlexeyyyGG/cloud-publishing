@@ -29,20 +29,6 @@ public abstract class BaseRepository {
         }
     }
 
-    protected void doTransactional(TransactionalVoidOperation operation, String message) {
-        try (Connection connection = dataSource.getConnection()) {
-            try {
-                connection.setAutoCommit(false);
-                operation.execute(connection);
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new RuntimeException(message, e);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(CONNECTION_ERROR_MSG, e);
-        }
-    }
     protected <T> T doTransactional(TransactionalOperation<T> operation, String message) {
         try (Connection connection = dataSource.getConnection()) {
             try {
