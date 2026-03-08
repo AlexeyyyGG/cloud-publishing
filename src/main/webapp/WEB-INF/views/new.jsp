@@ -12,7 +12,7 @@
 
 <%--@elvariable id="employeeRequest" type="dto"--%>
 <form:form method="post"
-           action="${pageContext.request.contextPath}/web/employees/add"
+           action="${pageContext.request.contextPath}/web/employees"
            modelAttribute="employeeRequest">
     <div>
         <form:input path="firstName" placeholder="Имя"/>

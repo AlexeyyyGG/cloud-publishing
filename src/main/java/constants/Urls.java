@@ -9,7 +9,6 @@ public class Urls {
     public static final String ID = "id";
     public static final String PUBLICATIONS = "/publications";
     public static final String WEB_EMPLOYEES = "/web/employees";
-    public static final String ADD = "/add";
-    public static final String ADD_FORM = "/add-form";
+    public static final String NEW = "/new";
     public static final String EDIT = "/{id}/edit";
 }

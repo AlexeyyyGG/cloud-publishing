@@ -1,7 +1,6 @@
 package controller.web;
 
-import static constants.Urls.ADD;
-import static constants.Urls.ADD_FORM;
+import static constants.Urls.NEW;
 import static constants.Urls.EDIT;
 import static constants.Urls.ID;
 import static constants.Urls.ID_PATH;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import service.EmployeeService;
 
 @Controller("webEmployeesController")
@@ -42,19 +42,19 @@ public class EmployeesController {
         return "employees";
     }
 
-    @GetMapping(ADD_FORM)
+    @GetMapping(NEW)
     public String showAddForm(Model model) {
         model.addAttribute("employeeRequest", EmployeeRequest.empty());
-        return "addForm";
+        return "new";
     }
 
-    @PostMapping(ADD)
+    @PostMapping
     public String add(
             @Valid @ModelAttribute("employeeRequest") EmployeeRequest request,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return "addForm";
+            return "new";
         }
         service.add(request);
         return "redirect:" + WEB_EMPLOYEES;
@@ -62,19 +62,27 @@ public class EmployeesController {
 
     @GetMapping(EDIT)
     public String showUpdateForm(Model model, @PathVariable(ID) int id) {
-        model.addAttribute("employeeUpdateRequest", service.getForUpdate(id));
+        if (!model.containsAttribute("employeeUpdateRequest")) {
+            model.addAttribute("employeeUpdateRequest", service.getForUpdate(id));
+        }
         model.addAttribute("employeeId", id);
-        return "updateForm";
+        return "edit";
     }
 
     @PutMapping(ID_PATH)
     public String update(
             @PathVariable(ID) int id,
             @Valid @ModelAttribute("employeeUpdateRequest") EmployeeUpdateRequest employeeUpdateRequest,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
     ) {
         if (bindingResult.hasErrors()) {
-            return "updateForm";
+            redirectAttributes.addFlashAttribute(
+                    "org.springframework.validation.BindingResult.employeeUpdateRequest",
+                    bindingResult
+            );
+            redirectAttributes.addFlashAttribute("employeeUpdateRequest", employeeUpdateRequest);
+            return "redirect:" + WEB_EMPLOYEES + "/" + id + "/edit";
         }
         service.update(id, employeeUpdateRequest);
         return "redirect:" + WEB_EMPLOYEES;
