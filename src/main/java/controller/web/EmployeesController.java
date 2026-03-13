@@ -1,11 +1,7 @@
 package controller.web;
 
-import static constants.Urls.NEW;
-import static constants.Urls.EDIT;
-import static constants.Urls.ID;
-import static constants.Urls.ID_PATH;
-import static constants.Urls.WEB_EMPLOYEES;
-
+import constants.Parameters;
+import constants.Urls;
 import dto.request.EmployeeRequest;
 import dto.response.EmployeeResponse;
 import dto.request.EmployeeUpdateRequest;
@@ -20,15 +16,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import service.EmployeeService;
 
 @Controller("webEmployeesController")
-@RequestMapping(WEB_EMPLOYEES)
+@RequestMapping(Urls.WEB_EMPLOYEES)
 public class EmployeesController {
     private final EmployeeService service;
+    private static final String EMPLOYEES = "employees";
+    private static final String LIST_PAGE = "employees/employees";
+    private static final String NEW_PAGE = "employees/new";
+    private static final String EDIT_PAGE = "employees/edit";
+    private static final String EMPLOYEE_REQUEST = "employeeRequest";
+    private static final String EMPLOYEE_UPDATE_REQUEST = "employeeUpdateRequest";
+    private static final String EMPLOYEE_ID = "employeeId";
+    private static final String REDIRECT_EMPLOYEES = "redirect:" + Urls.WEB_EMPLOYEES;
 
     @Autowired
     public EmployeesController(EmployeeService service) {
@@ -38,59 +40,53 @@ public class EmployeesController {
     @GetMapping
     public String getAll(Model model) {
         List<EmployeeResponse> employees = service.getAll();
-        model.addAttribute("employees", employees);
-        return "employees";
+        model.addAttribute(EMPLOYEES, employees);
+        return LIST_PAGE;
     }
 
-    @GetMapping(NEW)
+    @GetMapping(Urls.NEW)
     public String showAddForm(Model model) {
-        model.addAttribute("employeeRequest", EmployeeRequest.empty());
-        return "new";
+        model.addAttribute(EMPLOYEE_REQUEST, EmployeeRequest.empty());
+        return NEW_PAGE;
     }
 
     @PostMapping
     public String add(
-            @Valid @ModelAttribute("employeeRequest") EmployeeRequest request,
+            @Valid @ModelAttribute(EMPLOYEE_REQUEST) EmployeeRequest request,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return "new";
+            return NEW_PAGE;
         }
         service.add(request);
-        return "redirect:" + WEB_EMPLOYEES;
+        return REDIRECT_EMPLOYEES;
     }
 
-    @GetMapping(EDIT)
-    public String showUpdateForm(Model model, @PathVariable(ID) int id) {
-        if (!model.containsAttribute("employeeUpdateRequest")) {
-            model.addAttribute("employeeUpdateRequest", service.getForUpdate(id));
-        }
-        model.addAttribute("employeeId", id);
-        return "edit";
+    @GetMapping(Urls.ID + Urls.EDIT)
+    public String showUpdateForm(Model model, @PathVariable(Parameters.ID) int id) {
+        model.addAttribute(EMPLOYEE_UPDATE_REQUEST, service.getForUpdate(id));
+        model.addAttribute(EMPLOYEE_ID, id);
+        return EDIT_PAGE;
     }
 
-    @PutMapping(ID_PATH)
+    @PostMapping(Urls.ID)
     public String update(
-            @PathVariable(ID) int id,
-            @Valid @ModelAttribute("employeeUpdateRequest") EmployeeUpdateRequest employeeUpdateRequest,
+            @Valid @ModelAttribute(EMPLOYEE_UPDATE_REQUEST) EmployeeUpdateRequest request,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes
+            @PathVariable(Parameters.ID) int id,
+            Model model
     ) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute(
-                    "org.springframework.validation.BindingResult.employeeUpdateRequest",
-                    bindingResult
-            );
-            redirectAttributes.addFlashAttribute("employeeUpdateRequest", employeeUpdateRequest);
-            return "redirect:" + WEB_EMPLOYEES + "/" + id + "/edit";
+            model.addAttribute(EMPLOYEE_ID, id);
+            return EDIT_PAGE;
         }
-        service.update(id, employeeUpdateRequest);
-        return "redirect:" + WEB_EMPLOYEES;
+        service.update(id, request);
+        return REDIRECT_EMPLOYEES;
     }
 
-    @DeleteMapping(ID_PATH)
-    public String delete(@PathVariable(ID) int id) {
+    @DeleteMapping(Urls.ID)
+    public String delete(@PathVariable(Parameters.ID) int id) {
         service.delete(id);
-        return "redirect:" + WEB_EMPLOYEES;
+        return REDIRECT_EMPLOYEES;
     }
 }

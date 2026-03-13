@@ -13,8 +13,8 @@ public interface EmployeeService {
     /**
      * Creates a new employee.
      *
-     * @param request object containing employee data
-     * @return created employee
+     * @param request {@link EmployeeRequest} containing employee data
+     * @return created {@link EmployeeResponse}
      */
     EmployeeResponse add(EmployeeRequest request);
 
@@ -22,8 +22,8 @@ public interface EmployeeService {
      * Updates an existing employee.
      *
      * @param id      identifier of the employee to update
-     * @param request object containing updated employee data
-     * @return updated employee
+     * @param request {@link EmployeeUpdateRequest} containing updated employee data
+     * @return updated {@link EmployeeResponse}
      */
     EmployeeResponse update(int id, EmployeeUpdateRequest request);
 
@@ -31,7 +31,7 @@ public interface EmployeeService {
      * Returns employee by id.
      *
      * @param id identifier of the employee
-     * @return employee
+     * @return {@link EmployeeResponse}
      */
     EmployeeResponse get(int id);
 
@@ -39,14 +39,14 @@ public interface EmployeeService {
      * Returns employee data prepared for update form.
      *
      * @param id identifier of the employee
-     * @return employee
+     * @return {@link EmployeeUpdateRequest}
      */
     EmployeeUpdateRequest getForUpdate(int id);
 
     /**
      * Returns list of all employees.
      *
-     * @return list of employees
+     * @return list of {@link EmployeeResponse}
      */
     List<EmployeeResponse> getAll();
 

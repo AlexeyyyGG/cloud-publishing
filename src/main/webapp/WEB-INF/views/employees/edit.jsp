@@ -7,7 +7,6 @@
 <form:form method="post"
            action="${pageContext.request.contextPath}/web/employees/${employeeId}"
            modelAttribute="employeeUpdateRequest">
-    <input type="hidden" name="_method" value="put"/>
     <div>
         <form:input path="firstName" placeholder="Имя"/>
         <form:errors path="firstName" cssStyle="color:red"/>

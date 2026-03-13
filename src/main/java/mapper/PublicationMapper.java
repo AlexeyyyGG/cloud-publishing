@@ -14,8 +14,8 @@ public interface PublicationMapper {
     @Mapping(target = "id", ignore = true)
     Publication toEntity(PublicationRequest request);
 
-    PublicationResponse toResponse(Publication publication);
+    @Mapping(target = "id", source = "id")
+    Publication toEntity(int id, PublicationRequest request);
 
-    @Mapping(target = "id", ignore = true)
-    void update(PublicationRequest request, @MappingTarget Publication publication);
+    PublicationResponse toResponse(Publication publication);
 }

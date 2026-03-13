@@ -31,17 +31,17 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                         SQL_INSERT,
                         Statement.RETURN_GENERATED_KEYS
                 )) {
-            statement.setString(1, employee.getFirstName());
-            statement.setString(2, employee.getLastName());
-            statement.setString(3, employee.getMiddleName());
-            statement.setString(4, employee.getEmail());
-            statement.setString(5, employee.getPassword());
-            statement.setString(6, employee.getGender().toString());
-            statement.setInt(7, employee.getBirthYear());
-            statement.setString(8, employee.getAddress());
-            statement.setString(9, employee.getEducation());
-            statement.setString(10, employee.getType().toString());
-            statement.setBoolean(11, employee.isChiefEditor());
+            statement.setString(1, employee.firstName());
+            statement.setString(2, employee.lastName());
+            statement.setString(3, employee.middleName());
+            statement.setString(4, employee.email());
+            statement.setString(5, employee.password());
+            statement.setString(6, employee.gender().toString());
+            statement.setInt(7, employee.birthYear());
+            statement.setString(8, employee.address());
+            statement.setString(9, employee.education());
+            statement.setString(10, employee.type().toString());
+            statement.setBoolean(11, employee.chiefEditor());
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Creating employee failed, no rows affected.");
@@ -51,17 +51,17 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                     Integer id = generatedKeys.getInt(1);
                     return new Employee(
                             id,
-                            employee.getFirstName(),
-                            employee.getLastName(),
-                            employee.getMiddleName(),
-                            employee.getEmail(),
-                            employee.getPassword(),
-                            employee.getGender(),
-                            employee.getBirthYear(),
-                            employee.getAddress(),
-                            employee.getEducation(),
-                            employee.getType(),
-                            employee.isChiefEditor()
+                            employee.firstName(),
+                            employee.lastName(),
+                            employee.middleName(),
+                            employee.email(),
+                            employee.password(),
+                            employee.gender(),
+                            employee.birthYear(),
+                            employee.address(),
+                            employee.education(),
+                            employee.type(),
+                            employee.chiefEditor()
                     );
                 } else {
                     throw new SQLException("Creating employee failed, no ID obtained.");
@@ -75,7 +75,7 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     @Override
     public void update(Employee employee) {
         boolean updatePassword =
-                employee.getPassword() != null && !employee.getPassword().isEmpty();
+                employee.password() != null && !employee.password().isEmpty();
         String sql;
         if (updatePassword) {
             sql = SQL_UPDATE_WITH_PASSWORD;
@@ -84,29 +84,29 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
         }
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, employee.getFirstName());
-            statement.setString(2, employee.getLastName());
-            statement.setString(3, employee.getMiddleName());
-            statement.setString(4, employee.getEmail());
+            statement.setString(1, employee.firstName());
+            statement.setString(2, employee.lastName());
+            statement.setString(3, employee.middleName());
+            statement.setString(4, employee.email());
             if (updatePassword) {
-                statement.setString(5, employee.getPassword());
-                statement.setString(6, employee.getGender().name());
-                statement.setObject(7, employee.getBirthYear());
-                statement.setString(8, employee.getAddress());
-                statement.setString(9, employee.getEducation());
-                statement.setString(10, employee.getType().name());
-                statement.setInt(11, employee.getId());
+                statement.setString(5, employee.password());
+                statement.setString(6, employee.gender().name());
+                statement.setInt(7, employee.birthYear());
+                statement.setString(8, employee.address());
+                statement.setString(9, employee.education());
+                statement.setString(10, employee.type().name());
+                statement.setInt(11, employee.id());
             } else {
-                statement.setString(5, employee.getGender().name());
-                statement.setObject(6, employee.getBirthYear());
-                statement.setString(7, employee.getAddress());
-                statement.setString(8, employee.getEducation());
-                statement.setString(9, employee.getType().name());
-                statement.setInt(10, employee.getId());
+                statement.setString(5, employee.gender().name());
+                statement.setInt(6, employee.birthYear());
+                statement.setString(7, employee.address());
+                statement.setString(8, employee.education());
+                statement.setString(9, employee.type().name());
+                statement.setInt(10, employee.id());
             }
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_UPDATE_WITH_ID_MSG + employee.getId(), e);
+            throw new RuntimeException(FAILED_TO_UPDATE_WITH_ID_MSG + employee.id(), e);
         }
     }
 

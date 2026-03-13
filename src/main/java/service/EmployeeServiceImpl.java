@@ -42,17 +42,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponse update(int id, EmployeeUpdateRequest request) {
-        Employee existingEmployee = repository.get(id);
-        if (request.password() != null && !request.password().isEmpty()) {
+        boolean hasPassword = request.password() != null && !request.password().isEmpty();
+        if (hasPassword) {
             if (request.passwordConfirm() == null || !request.password()
                     .equals(request.passwordConfirm())) {
                 throw new InvalidArgumentException(PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG);
             }
-            existingEmployee.setPassword(request.password());
         }
-        mapper.update(request, existingEmployee);
-        repository.update(existingEmployee);
-        return mapper.toResponse(existingEmployee);
+        Employee employee = mapper.toEntity(id, request);
+        if (hasPassword) {
+            employee = Employee.withPassword(employee, request.password());
+        }
+        repository.update(employee);
+        return mapper.toResponse(employee);
     }
 
     @Override

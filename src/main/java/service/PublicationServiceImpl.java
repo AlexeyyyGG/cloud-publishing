@@ -30,10 +30,9 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public PublicationResponse update(int id, PublicationRequest request) {
-        Publication existingPublication = repository.get(id);
-        mapper.update(request, existingPublication);
-        repository.update(existingPublication);
-        return mapper.toResponse(existingPublication);
+        Publication publication = mapper.toEntity(id, request);
+        repository.update(publication);
+        return mapper.toResponse(publication);
     }
 
     @Override

@@ -1,9 +1,7 @@
 package controller;
 
-import static constants.Urls.ID;
-import static constants.Urls.ID_PATH;
-import static constants.Urls.EMPLOYEES;
-
+import constants.Parameters;
+import constants.Urls;
 import dto.request.EmployeeRequest;
 import dto.response.EmployeeResponse;
 import dto.request.EmployeeUpdateRequest;
@@ -25,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping(EMPLOYEES)
+@RequestMapping(Urls.EMPLOYEES)
 public class EmployeesController {
     private final EmployeeService service;
     private static final Logger logger = LoggerFactory.getLogger(EmployeesController.class);
@@ -43,8 +41,8 @@ public class EmployeesController {
         return ResponseEntity.status(HttpStatus.OK).body(employees);
     }
 
-    @GetMapping(value = ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeResponse> get(@PathVariable(ID) int id) {
+    @GetMapping(value = Urls.ID, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeResponse> get(@PathVariable(Parameters.ID) int id) {
         logger.info("get called with id={}", id);
         EmployeeResponse employee = service.get(id);
         return ResponseEntity.status(HttpStatus.OK).body(employee);
@@ -56,9 +54,9 @@ public class EmployeesController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.add(request));
     }
 
-    @PutMapping(value = ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = Urls.ID, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeResponse> update(
-            @PathVariable(ID) int id,
+            @PathVariable(Parameters.ID) int id,
             @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
         logger.info("update called for id {}", id);
@@ -66,8 +64,8 @@ public class EmployeesController {
         return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
-    @DeleteMapping(value = {ID_PATH})
-    public ResponseEntity<Void> delete(@PathVariable(ID) int id) {
+    @DeleteMapping(value = {Urls.ID})
+    public ResponseEntity<Void> delete(@PathVariable(Parameters.ID) int id) {
         logger.info("delete called with id {}", id);
         service.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -13,12 +13,13 @@ public interface EmployeeMapper {
     @Mapping(target = "id", ignore = true)
     Employee toEntity(EmployeeRequest employeeRequest);
 
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "password", ignore = true)
+    Employee toEntity(int id, EmployeeUpdateRequest request);
+
     EmployeeResponse toResponse(Employee employee);
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "passwordConfirm", ignore = true)
     EmployeeUpdateRequest toUpdateRequest(Employee employee);
-
-    @Mapping(target = "id", ignore = true)
-    void update(EmployeeUpdateRequest request, @MappingTarget Employee employee);
 }
