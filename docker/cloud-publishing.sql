@@ -11,7 +11,7 @@ CREATE TABLE employees
     id              INT AUTO_INCREMENT PRIMARY KEY,
     first_name      VARCHAR(100)                  NOT NULL,
     last_name       VARCHAR(100)                  NOT NULL,
-    middle_name     VARCHAR(100)                  NOT NULL,
+    middle_name     VARCHAR(100)                          ,
     email           VARCHAR(100)                  NOT NULL,
     password        VARCHAR(100)                  NOT NULL,
     gender          ENUM ('male', 'female')       NOT NULL,
