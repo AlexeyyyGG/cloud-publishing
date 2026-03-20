@@ -14,22 +14,26 @@ public class MySpringMvcDispatcherServletInitializer extends
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] { Config.class };
+        return new Class[]{Config.class};
     }
 
     @Override
     protected String[] getServletMappings() {
-        return new String[]  { "/" };
+        return new String[]{"/"};
     }
 
     @Override
     public void onStartup(ServletContext context) throws ServletException {
         super.onStartup(context);
         registerHiddenFieldFilter(context);
+        context.addFilter("springSecurityFilterChain",
+                        new org.springframework.web.filter.DelegatingFilterProxy(
+                                "springSecurityFilterChain"))
+                .addMappingForUrlPatterns(null, true, "/*");
     }
 
     private void registerHiddenFieldFilter(ServletContext context) {
-        context.addFilter("hiddenHttpMethodFilter",
-                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null ,true, "/*");
+        context.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter())
+                .addMappingForUrlPatterns(null, true, "/*");
     }
 }
