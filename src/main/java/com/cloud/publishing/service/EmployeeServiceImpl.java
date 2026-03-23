@@ -8,6 +8,8 @@ import com.cloud.publishing.exception.ObjectNotFoundException;
 import java.util.List;
 import com.cloud.publishing.mapper.EmployeeMapper;
 import com.cloud.publishing.model.Employee;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.cloud.publishing.repository.EmployeeRepository;
 
@@ -15,14 +17,21 @@ import com.cloud.publishing.repository.EmployeeRepository;
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository repository;
     private final EmployeeMapper mapper;
+    private final PasswordEncoder passwordEncoder;
     private static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
     private static final String PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG = "Password is required when creating an employee";
     private static final String PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG = "Passwords do not match or confirmation missing";
     private static final String CHIEF_EDITOR_EXISTS_MSG = "Chief editor already exists";
 
-    public EmployeeServiceImpl(EmployeeRepository repository, EmployeeMapper mapper) {
+    @Autowired
+    public EmployeeServiceImpl(
+            EmployeeRepository repository,
+            EmployeeMapper mapper,
+            PasswordEncoder passwordEncoder
+    ) {
         this.repository = repository;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,6 +45,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new InvalidArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
         }
         Employee employee = mapper.toEntity(request);
+        String password = passwordEncoder.encode(request.password());
+        employee = Employee.withPassword(employee, password);
         Employee saved = repository.add(employee);
         return mapper.toResponse(saved);
     }
@@ -51,7 +62,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         Employee employee = mapper.toEntity(id, request);
         if (hasPassword) {
-            employee = Employee.withPassword(employee, request.password());
+            String password = passwordEncoder.encode(request.password());
+            employee = Employee.withPassword(employee, password);
         }
         repository.update(employee);
         return mapper.toResponse(employee);

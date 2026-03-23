@@ -19,4 +19,5 @@ public class EmployeeSQL {
     public static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM employees WHERE id = ?)";
     public static final String SQL_EXIST_CE =
             "SELECT EXISTS(SELECT 1 FROM employees WHERE is_chief_editor = TRUE)";
+    public static final String SQL_FIND_BY_EMAIL = "SELECT * FROM employees WHERE email=?";
 }

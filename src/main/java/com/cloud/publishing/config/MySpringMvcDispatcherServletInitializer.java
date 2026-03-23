@@ -33,7 +33,7 @@ public class MySpringMvcDispatcherServletInitializer extends
     }
 
     private void registerHiddenFieldFilter(ServletContext context) {
-        context.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter())
-                .addMappingForUrlPatterns(null, true, "/*");
+        context.addFilter("hiddenHttpMethodFilter",
+                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
     }
 }

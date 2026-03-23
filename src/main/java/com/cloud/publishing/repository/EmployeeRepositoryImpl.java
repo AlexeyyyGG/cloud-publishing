@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.sql.DataSource;
 import com.cloud.publishing.model.Employee;
 import com.cloud.publishing.model.Gender;
@@ -170,6 +171,23 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
             throw new RuntimeException(FAILED_TO_CHECK_EXISTING_CE_MSG, e);
         }
         return false;
+    }
+
+    @Override
+    public Optional<Employee> findByEmail(String email) {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_EMAIL)) {
+            statement.setString(1, email);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(resultSetToEmployee(resultSet));
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(FAILED_TO_GET_MSG, e);
+        }
     }
 
     private Employee resultSetToEmployee(ResultSet resultSet) throws SQLException {

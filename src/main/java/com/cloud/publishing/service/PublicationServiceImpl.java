@@ -5,6 +5,7 @@ import com.cloud.publishing.dto.response.PublicationResponse;
 import com.cloud.publishing.exception.ObjectNotFoundException;
 import java.util.List;
 import com.cloud.publishing.mapper.PublicationMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cloud.publishing.dto.response.PublicationGetDTO;
 import com.cloud.publishing.model.Publication;
@@ -16,6 +17,7 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationMapper mapper;
     private static final String PUBLICATION_NOT_FOUND_MSG = "Publication not found";
 
+    @Autowired
     public PublicationServiceImpl(PublicationRepository repository, PublicationMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;

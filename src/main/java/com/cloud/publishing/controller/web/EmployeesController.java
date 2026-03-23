@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,7 +42,7 @@ public class EmployeesController {
     }
 
     @InitBinder
-    public  void initBinder(WebDataBinder binder) {
+    public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
@@ -53,12 +54,14 @@ public class EmployeesController {
     }
 
     @GetMapping(Urls.NEW)
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String showAddForm(Model model) {
         model.addAttribute(EMPLOYEE_REQUEST, EmployeeRequest.empty());
         return NEW_PAGE;
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String add(
             @Valid @ModelAttribute(EMPLOYEE_REQUEST) EmployeeRequest request,
             BindingResult bindingResult
@@ -71,6 +74,7 @@ public class EmployeesController {
     }
 
     @GetMapping(Urls.ID + Urls.EDIT)
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String showUpdateForm(Model model, @PathVariable(Parameters.ID) int id) {
         model.addAttribute(EMPLOYEE_UPDATE_REQUEST, service.getForUpdate(id));
         model.addAttribute(EMPLOYEE_ID, id);
@@ -78,6 +82,7 @@ public class EmployeesController {
     }
 
     @PostMapping(Urls.ID)
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String update(
             @Valid @ModelAttribute(EMPLOYEE_UPDATE_REQUEST) EmployeeUpdateRequest request,
             BindingResult bindingResult,
@@ -93,6 +98,7 @@ public class EmployeesController {
     }
 
     @DeleteMapping(Urls.ID)
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String delete(@PathVariable(Parameters.ID) int id) {
         service.delete(id);
         return REDIRECT_EMPLOYEES;
