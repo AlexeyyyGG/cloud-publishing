@@ -2,6 +2,7 @@ package com.cloud.publishing.config;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -27,8 +28,7 @@ public class MySpringMvcDispatcherServletInitializer extends
         super.onStartup(context);
         registerHiddenFieldFilter(context);
         context.addFilter("springSecurityFilterChain",
-                        new org.springframework.web.filter.DelegatingFilterProxy(
-                                "springSecurityFilterChain"))
+                        new DelegatingFilterProxy("springSecurityFilterChain"))
                 .addMappingForUrlPatterns(null, true, "/*");
     }
 

@@ -15,9 +15,14 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.cloud.publishing.config", "com.cloud.publishing.controller",
-        "com.cloud.publishing.service", "com.cloud.publishing.repository",
-        "com.cloud.publishing.mapper"})
+@ComponentScan(basePackages = {
+        "com.cloud.publishing.config",
+        "com.cloud.publishing.controller",
+        "com.cloud.publishing.service",
+        "com.cloud.publishing.repository",
+        "com.cloud.publishing.mapper",
+        "com.cloud.publishing.security"
+})
 @PropertySource("classpath:application.properties")
 public class Config implements WebMvcConfigurer {
     @Bean

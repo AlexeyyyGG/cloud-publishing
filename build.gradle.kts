@@ -36,6 +36,9 @@ dependencies {
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:11.0.7")
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
 }
 
