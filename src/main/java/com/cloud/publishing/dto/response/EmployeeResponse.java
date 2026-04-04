@@ -1,5 +1,6 @@
 package com.cloud.publishing.dto.response;
 
+import com.cloud.publishing.model.Education;
 import com.cloud.publishing.model.Gender;
 import com.cloud.publishing.model.Type;
 
@@ -12,7 +13,7 @@ public record EmployeeResponse(
         Gender gender,
         int birthYear,
         String address,
-        String education,
+        Education education,
         Type type,
         boolean chiefEditor
 ) {

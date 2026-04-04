@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtUtil {
+public class JwtService {
     private final SecretKey secretKey;
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
@@ -24,10 +24,10 @@ public class JwtUtil {
     private static final String ROLES = "roles";
     private static final String INVALID_TOKEN_TYPE = "Invalid token type";
 
-    public JwtUtil(
+    public JwtService(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access.expiration}") long accessTokenExpiration,
-            @Value("${jwt.refresh.expiration}") long refreshTokenExpiration
+            @Value("${jwt.access.expiration.ms}") long accessTokenExpiration,
+            @Value("${jwt.refresh.expiration.ms}") long refreshTokenExpiration
     ) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.accessTokenExpiration = accessTokenExpiration;

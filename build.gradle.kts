@@ -29,7 +29,7 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
     implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
-    implementation("mysql:mysql-connector-java:8.0.33")
+    implementation("com.mysql:mysql-connector-j:8.3.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     implementation("ch.qos.logback:logback-classic:1.5.18")
     implementation("org.slf4j:slf4j-api:2.0.17")
@@ -44,4 +44,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
 }

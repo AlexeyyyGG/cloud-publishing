@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String ACCESS_TOKEN_TYPE = "access";
@@ -26,8 +26,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String TYPE = "type";
 
     @Autowired
-    public JwtFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    public JwtFilter(JwtService jwtService) {
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -48,13 +48,13 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         String token = header.substring(BEARER_PREFIX.length());
         try {
-            Claims claims = jwtUtil.parseAllClaims(token);
+            Claims claims = jwtService.parseAllClaims(token);
             if (!ACCESS_TOKEN_TYPE.equals(claims.get(TYPE))) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
             String username = claims.getSubject();
-            List<String> roles = jwtUtil.extractRoles(claims);
+            List<String> roles = jwtService.extractRoles(claims);
             List<SimpleGrantedAuthority> authorities = roles.stream()
                     .map(SimpleGrantedAuthority::new)
                     .toList();

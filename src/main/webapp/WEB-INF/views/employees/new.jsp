@@ -35,11 +35,18 @@
         <form:errors path="password" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="gender" placeholder="Пол"/>
+        <form:radiobuttons
+                path="gender"
+                items="${genders}"
+                itemValue="name"
+                itemLabel="label"/>
         <form:errors path="gender" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="birthYear" placeholder="Год рождения"/>
+        <form:select path="birthYear">
+            <form:option value="" label="Выберите год"/>
+            <form:options items="${birthYears}"/>
+        </form:select>
         <form:errors path="birthYear" cssStyle="color:red"/>
     </div>
     <div>
@@ -47,11 +54,17 @@
         <form:errors path="address" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="education" placeholder="Образование"/>
+        <form:select path="education">
+            <form:option value="" label="Выберите образование"/>
+            <form:options items="${educations}" itemValue="name" itemLabel="label"/>
+        </form:select>
         <form:errors path="education" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="type" placeholder="Тип"/>
+        <form:select path="type">
+            <form:option value="" label="Выберите тип"/>
+            <form:options items="${types}" itemValue="name" itemLabel="label"/>
+        </form:select>
         <form:errors path="type" cssStyle="color:red"/>
     </div>
     <div>

@@ -1,7 +1,9 @@
 package com.cloud.publishing.config;
 
+import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -15,7 +17,7 @@ public class MySpringMvcDispatcherServletInitializer extends
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{Config.class};
+        return new Class[] { Config.class };
     }
 
     @Override
@@ -26,6 +28,14 @@ public class MySpringMvcDispatcherServletInitializer extends
     @Override
     public void onStartup(ServletContext context) throws ServletException {
         super.onStartup(context);
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setForceEncoding(true);
+        FilterRegistration.Dynamic encoding = context.addFilter(
+                "encodingFilter",
+                encodingFilter
+        );
+        encoding.addMappingForUrlPatterns(null, true, "/*");
         registerHiddenFieldFilter(context);
         context.addFilter("springSecurityFilterChain",
                         new DelegatingFilterProxy("springSecurityFilterChain"))

@@ -1,5 +1,6 @@
 package com.cloud.publishing.dto.request;
 
+import com.cloud.publishing.model.Education;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -36,8 +37,8 @@ public record EmployeeUpdateRequest(
         Integer birthYear,
         @NotEmpty(message = "Address is required")
         String address,
-        @NotEmpty(message = "Education is required")
-        String education,
+        @NotNull(message = "Education is required")
+        Education education,
         @NotNull(message = "Employee type must be specified")
         Type type,
         @JsonProperty("is_chief_editor")

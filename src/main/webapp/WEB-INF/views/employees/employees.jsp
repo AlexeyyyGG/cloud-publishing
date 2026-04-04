@@ -9,35 +9,23 @@
 
 <table border="1">
     <tr>
-        <th>Id</th>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Middle name</th>
-        <th>Email</th>
-        <th>Gender</th>
-        <th>Birth year</th>
-        <th>Address</th>
-        <th>Education</th>
-        <th>Type</th>
-        <th>Is chief editor</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Пол</th>
+        <th>Год рождения</th>
+        <th>Тип сотрудника</th>
         <c:if test="${pageContext.request.isUserInRole('CHIEF_EDITOR')}">
-            <th>Actions</th>
+            <th></th>
         </c:if>
     </tr>
 
     <c:forEach var="emp" items="${employees}">
         <tr>
-            <td>${emp.id}</td>
             <td>${emp.firstName}</td>
             <td>${emp.lastName}</td>
-            <td>${emp.middleName}</td>
-            <td>${emp.email}</td>
-            <td>${emp.gender}</td>
+            <td>${emp.gender.label}</td>
             <td>${emp.birthYear}</td>
-            <td>${emp.address}</td>
-            <td>${emp.education}</td>
-            <td>${emp.type}</td>
-            <td>${emp.chiefEditor}</td>
+            <td>${emp.type.label}</td>
             <td>
                 <c:if test="${pageContext.request.isUserInRole('CHIEF_EDITOR')}">
                     <a href="${pageContext.request.contextPath}/web/employees/${emp.id}/edit">

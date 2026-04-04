@@ -15,7 +15,7 @@ public class Application {
         tomcat.setPort(PORT);
         tomcat.getConnector();
         tomcat.getHost().setAppBase(".");
-        tomcat.addWebapp("/", new File("src/main/webapp").getAbsolutePath());
+        tomcat.addWebapp("", new File("src/main/webapp").getAbsolutePath());
         tomcat.start();
         tomcat.getServer().await();
     }

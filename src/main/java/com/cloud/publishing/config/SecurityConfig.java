@@ -24,8 +24,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     @Bean
     @Order(1)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http, JwtFilter jwtFilter)
-            throws Exception {
+    public SecurityFilterChain apiSecurityFilterChain(
+            HttpSecurity http,
+            JwtFilter jwtFilter
+    ) throws Exception {
         http
                 .securityMatcher("/employees/**","/auth/**")
                 .csrf(csrf -> csrf.disable())
@@ -42,10 +44,10 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/web/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated())
+                        .requestMatchers("/web/**").authenticated()
+                        .anyRequest().permitAll())
                 .formLogin(form -> form
                         .defaultSuccessUrl("/web/employees", true)
                         .permitAll());

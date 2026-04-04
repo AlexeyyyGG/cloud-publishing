@@ -3,7 +3,6 @@ package com.cloud.publishing.controller;
 import com.cloud.publishing.constants.Urls;
 import com.cloud.publishing.dto.request.LoginRequest;
 import com.cloud.publishing.dto.request.RefreshRequest;
-import com.cloud.publishing.dto.response.AccessTokenResponse;
 import com.cloud.publishing.dto.response.AuthResponse;
 import com.cloud.publishing.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping(Urls.REFRESH)
-    public ResponseEntity<AccessTokenResponse> refresh(@RequestBody RefreshRequest request) {
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
         return ResponseEntity.ok(service.refreshToken(request.refreshToken()));
     }
 }

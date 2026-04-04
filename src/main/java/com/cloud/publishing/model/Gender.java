@@ -1,6 +1,15 @@
 package com.cloud.publishing.model;
 
 public enum Gender {
-    MALE,
-    FEMALE
+    MALE("Мужской"),
+    FEMALE("Женский");
+    private final String label;
+
+    Gender(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 }

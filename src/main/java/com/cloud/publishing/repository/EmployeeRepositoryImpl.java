@@ -5,6 +5,7 @@ import static com.cloud.publishing.constants.employee.EmployeeMessage.*;
 import static com.cloud.publishing.constants.employee.EmployeeSQL.*;
 
 import com.cloud.publishing.exception.ObjectNotFoundException;
+import com.cloud.publishing.model.Education;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,7 +41,7 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
             statement.setString(6, employee.gender().toString());
             statement.setInt(7, employee.birthYear());
             statement.setString(8, employee.address());
-            statement.setString(9, employee.education());
+            statement.setString(9, employee.education().toString());
             statement.setString(10, employee.type().toString());
             statement.setBoolean(11, employee.chiefEditor());
             int affectedRows = statement.executeUpdate();
@@ -94,14 +95,14 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                 statement.setString(6, employee.gender().name());
                 statement.setInt(7, employee.birthYear());
                 statement.setString(8, employee.address());
-                statement.setString(9, employee.education());
+                statement.setString(9, employee.education().name());
                 statement.setString(10, employee.type().name());
                 statement.setInt(11, employee.id());
             } else {
                 statement.setString(5, employee.gender().name());
                 statement.setInt(6, employee.birthYear());
                 statement.setString(7, employee.address());
-                statement.setString(8, employee.education());
+                statement.setString(8, employee.education().name());
                 statement.setString(9, employee.type().name());
                 statement.setInt(10, employee.id());
             }
@@ -201,7 +202,7 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                 Gender.valueOf(resultSet.getString(GENDER).toUpperCase()),
                 resultSet.getInt(BIRTH_YEAR),
                 resultSet.getString(ADDRESS),
-                resultSet.getString(EDUCATION),
+                Education.valueOf(resultSet.getString(EDUCATION).toUpperCase()),
                 Type.valueOf(resultSet.getString(TYPE).toUpperCase()),
                 resultSet.getBoolean(IS_CHIEF_EDITOR)
         );

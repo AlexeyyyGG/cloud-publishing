@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 USE cloud_publishing;
 
 CREATE TABLE categories
@@ -17,7 +19,14 @@ CREATE TABLE employees
     gender          ENUM ('male', 'female')       NOT NULL,
     birth_year      YEAR                          NOT NULL,
     address         VARCHAR(100)                  NOT NULL,
-    education       VARCHAR(100)                  NOT NULL,
+    education       ENUM(
+        'Secondary',
+        'Vocational',
+        'Incomplete_higher',
+        'Higher',
+        'Bachelor',
+        'Master'
+        )  NOT NULL,
     type            ENUM ('Journalist', 'Editor') NOT NULL,
     is_chief_editor BOOLEAN DEFAULT FALSE,
     UNIQUE KEY unique_email (email)
@@ -92,3 +101,59 @@ INSERT INTO categories (name) VALUES ('Finance');
 INSERT INTO categories (name) VALUES ('Advertising');
 INSERT INTO categories (name) VALUES ('Humor');
 INSERT INTO categories (name) VALUES ('Work');
+
+INSERT INTO employees (
+    first_name,
+    last_name,
+    middle_name,
+    email,
+    password,
+    gender,
+    birth_year,
+    address,
+    education,
+    type,
+    is_chief_editor
+)
+VALUES (
+    'Петр',
+    'Иванов',
+    'Иванович',
+    'test1@gmail.com',
+    '$2a$10$I7IhNA2hLFJfWLobjTCb0uHeRLzHX.MRATv1UpcBEJiQrv8MRcgBS',
+    'male',
+    1985,
+    'test',
+    'Master',
+    'Editor',
+    TRUE
+);
+
+INSERT INTO employees
+(
+    first_name,
+    last_name,
+    middle_name,
+    email,
+    password,
+    gender,
+    birth_year,
+    address,
+    education,
+    type,
+    is_chief_editor
+)
+VALUES
+(
+    'Иван',
+    'Петров',
+    'Петрович',
+    'test2@gmail.com',
+    '$2a$10$I7IhNA2hLFJfWLobjTCb0uHeRLzHX.MRATv1UpcBEJiQrv8MRcgBS',
+    'male',
+    1993,
+    'test',
+    'Higher',
+    'Journalist',
+    FALSE
+);
