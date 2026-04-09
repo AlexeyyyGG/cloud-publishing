@@ -1,5 +1,7 @@
 package com.cloud.publishing.service;
 
+import static com.cloud.publishing.constants.employee.EmployeeMessage.EMPLOYEE_NOT_FOUND_MSG;
+
 import com.cloud.publishing.model.Employee;
 import com.cloud.publishing.repository.EmployeeRepository;
 import com.cloud.publishing.security.EmployeeDetails;
@@ -21,7 +23,7 @@ public class EmployeeDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Employee employee = repository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(EMPLOYEE_NOT_FOUND_MSG));
         return new EmployeeDetails(employee.email(), employee.password(), employee.chiefEditor());
     }
 }

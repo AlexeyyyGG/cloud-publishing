@@ -1,5 +1,7 @@
 package com.cloud.publishing.service;
 
+import static com.cloud.publishing.constants.publication.PublicationMessage.PUBLICATION_NOT_FOUND_MSG;
+
 import com.cloud.publishing.dto.request.PublicationRequest;
 import com.cloud.publishing.dto.response.PublicationResponse;
 import com.cloud.publishing.exception.ObjectNotFoundException;
@@ -15,7 +17,6 @@ import com.cloud.publishing.repository.PublicationRepository;
 public class PublicationServiceImpl implements PublicationService {
     private final PublicationRepository repository;
     private final PublicationMapper mapper;
-    private static final String PUBLICATION_NOT_FOUND_MSG = "Publication not found";
 
     @Autowired
     public PublicationServiceImpl(PublicationRepository repository, PublicationMapper mapper) {

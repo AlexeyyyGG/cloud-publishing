@@ -26,14 +26,17 @@
         <form:input path="middleName" placeholder="Отчество"/>
         <form:errors path="middleName" cssStyle="color:red"/>
     </div>
-    <div>
-        <form:input path="email" placeholder="Email"/>
-        <form:errors path="email" cssStyle="color:red"/>
-    </div>
-    <div>
-        <form:password path="password" placeholder="Пароль"/>
-        <form:errors path="password" cssStyle="color:red"/>
-    </div>
+    <fieldset style="display: inline-block">
+        <legend>Учётная запись</legend>
+        <div>
+            <form:input path="email" placeholder="Email"/>
+            <form:errors path="email" cssStyle="color:red"/>
+        </div>
+        <div>
+            <form:password path="password" placeholder="Пароль"/>
+            <form:errors path="password" cssStyle="color:red"/>
+        </div>
+    </fieldset>
     <div>
         <form:radiobuttons
                 path="gender"
@@ -54,11 +57,11 @@
         <form:errors path="address" cssStyle="color:red"/>
     </div>
     <div>
-        <form:select path="education">
+        <form:select path="educationId">
             <form:option value="" label="Выберите образование"/>
-            <form:options items="${educations}" itemValue="name" itemLabel="label"/>
+            <form:options items="${educations}" itemValue="id" itemLabel="label"/>
         </form:select>
-        <form:errors path="education" cssStyle="color:red"/>
+        <form:errors path="educationId" cssStyle="color:red"/>
     </div>
     <div>
         <form:select path="type">

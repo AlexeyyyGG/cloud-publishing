@@ -13,7 +13,6 @@ public class EmployeeField {
     public static final String GENDER = "gender";
     public static final String BIRTH_YEAR = "birth_year";
     public static final String ADDRESS = "address";
-    public static final String EDUCATION = "education";
     public static final String TYPE = "type";
     public static final String IS_CHIEF_EDITOR = "is_chief_editor";
 }

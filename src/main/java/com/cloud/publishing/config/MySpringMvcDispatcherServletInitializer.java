@@ -3,6 +3,7 @@ package com.cloud.publishing.config;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
@@ -21,12 +22,13 @@ public class MySpringMvcDispatcherServletInitializer extends
     }
 
     @Override
+    @NonNull
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
 
     @Override
-    public void onStartup(ServletContext context) throws ServletException {
+    public void onStartup(@NonNull ServletContext context) throws ServletException {
         super.onStartup(context);
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");

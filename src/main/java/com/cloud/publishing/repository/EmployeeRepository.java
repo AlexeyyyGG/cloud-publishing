@@ -9,5 +9,6 @@ public interface EmployeeRepository extends IRepository<Employee, Integer> {
 
     Optional<Employee> findByEmail(String email);
 
-    boolean existsChiefEditor();
+    void resetChiefEditor();
+
 }

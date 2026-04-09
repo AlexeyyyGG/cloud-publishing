@@ -1,9 +1,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
+<div>
+    <c:if test="${pageContext.request.userPrincipal != null}">
+        <form action="${pageContext.request.contextPath}/logout" method="post">
+            <input type="hidden"
+                   name="${_csrf.parameterName}"
+                   value="${_csrf.token}" />
+            <button type="submit">Выйти</button>
+        </form>
+    </c:if>
+</div>
+
 <c:if test="${pageContext.request.isUserInRole('CHIEF_EDITOR')}">
     <a href="${pageContext.request.contextPath}/web/employees/new">
-        Добавить сотрудника
+        Новый сотрудник
     </a>
 </c:if>
 
@@ -34,6 +45,9 @@
 
                     <form action="${pageContext.request.contextPath}/web/employees/${emp.id}" method="post" style="display:inline;">
                         <input type="hidden" name="_method" value="delete" />
+                        <input type="hidden"
+                               name="${_csrf.parameterName}"
+                               value="${_csrf.token}" />
                         <button type="submit"
                                 onclick="return confirm('Вы уверены?');">
                             Удалить

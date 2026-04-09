@@ -7,9 +7,9 @@ import com.cloud.publishing.constants.employee.EmployeePages;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
-import com.cloud.publishing.model.Education;
 import com.cloud.publishing.model.Gender;
 import com.cloud.publishing.model.Type;
+import com.cloud.publishing.service.EducationService;
 import jakarta.validation.Valid;
 import java.util.Comparator;
 import java.util.List;
@@ -33,13 +33,15 @@ import com.cloud.publishing.service.EmployeeService;
 @Controller("webEmployeesController")
 @RequestMapping(Urls.WEB_EMPLOYEES)
 public class EmployeesController {
-    private final EmployeeService service;
+    private final EmployeeService employeeService;
+    private final EducationService educationService;
     private static final int MIN_BIRTH_YEAR = 1960;
     private static final int MAX_BIRTH_YEAR = 2008;
 
     @Autowired
-    public EmployeesController(EmployeeService service) {
-        this.service = service;
+    public EmployeesController(EmployeeService employeeService, EducationService educationService) {
+        this.employeeService = employeeService;
+        this.educationService = educationService;
     }
 
     @InitBinder
@@ -51,7 +53,7 @@ public class EmployeesController {
     public void prepareFormData(Model model) {
         model.addAttribute(EmployeeModelAttrs.GENDERS, Gender.values());
         model.addAttribute(EmployeeModelAttrs.TYPES, Type.values());
-        model.addAttribute(EmployeeModelAttrs.EDUCATIONS, Education.values());
+        model.addAttribute(EmployeeModelAttrs.EDUCATIONS, educationService.getAll());
         List<Integer> birthYears = IntStream.rangeClosed(MIN_BIRTH_YEAR, MAX_BIRTH_YEAR)
                 .boxed()
                 .sorted(Comparator.reverseOrder())
@@ -61,7 +63,7 @@ public class EmployeesController {
 
     @GetMapping
     public String getAll(Model model) {
-        List<EmployeeResponse> employees = service.getAll();
+        List<EmployeeResponse> employees = employeeService.getAll();
         model.addAttribute(EmployeeModelAttrs.EMPLOYEES, employees);
         return EmployeePages.LIST;
     }
@@ -82,14 +84,15 @@ public class EmployeesController {
         if (bindingResult.hasErrors()) {
             return EmployeePages.NEW;
         }
-        service.add(request);
+        employeeService.add(request);
         return EmployeePages.REDIRECT_EMPLOYEES;
     }
 
     @GetMapping(Urls.ID + Urls.EDIT)
     @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String showUpdateForm(Model model, @PathVariable(Parameters.ID) int id) {
-        model.addAttribute(EmployeeModelAttrs.EMPLOYEE_UPDATE_REQUEST, service.getForUpdate(id));
+        model.addAttribute(EmployeeModelAttrs.EMPLOYEE_UPDATE_REQUEST,
+                employeeService.getForUpdate(id));
         model.addAttribute(EmployeeModelAttrs.EMPLOYEE_ID, id);
         return EmployeePages.EDIT;
     }
@@ -107,14 +110,14 @@ public class EmployeesController {
             model.addAttribute(EmployeeModelAttrs.EMPLOYEE_ID, id);
             return EmployeePages.EDIT;
         }
-        service.update(id, request);
+        employeeService.update(id, request);
         return EmployeePages.REDIRECT_EMPLOYEES;
     }
 
     @DeleteMapping(Urls.ID)
     @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String delete(@PathVariable(Parameters.ID) int id) {
-        service.delete(id);
+        employeeService.delete(id);
         return EmployeePages.REDIRECT_EMPLOYEES;
     }
 }

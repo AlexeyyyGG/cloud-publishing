@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework:spring-context:$springVersion")
     implementation("org.springframework:spring-web:$springVersion")
     implementation("org.springframework:spring-webmvc:$springVersion")
+    implementation("org.springframework:spring-jdbc:$springVersion")
     implementation("org.springframework.security:spring-security-web:6.3.1")
     implementation("org.springframework.security:spring-security-config:6.3.1")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")

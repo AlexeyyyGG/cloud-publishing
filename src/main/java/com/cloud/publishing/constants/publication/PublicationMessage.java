@@ -4,13 +4,13 @@ public class PublicationMessage {
     private PublicationMessage() {
     }
 
-    public static final String PUBLICATION_NOT_FOUND_MSG = "Publication not found";
-    public static final String FAILED_CREATING_MSG = "Creating publication failed, no ID obtained.";
-    public static final String FAILED_TO_ADD_MSG = "Failed to add publication";
-    public static final String FAILED_TO_GET_MSG = "Failed to get";
-    public static final String FAILED_TO_DELETE_MSG = "Failed to delete";
-    public static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if publication exists";
-    public static final String FAILED_TO_UPDATE = "Error updating publication";
-    public static final String FAILED_TO_GET_EMP_ID = "Failed to get employee IDs from table: ";
-    public static final String FAILED_TO_GET_CATEGORIES = "Failed to get categories";
+    public static final String PUBLICATION_NOT_FOUND_MSG = "Публикация не найдена";
+    public static final String FAILED_CREATING_MSG = "Не удалось создать публикацию";
+    public static final String FAILED_TO_ADD_MSG = "Не удалось добавить публикацию";
+    public static final String FAILED_TO_GET_MSG = "Не удалось получить данные публикации";
+    public static final String FAILED_TO_DELETE_MSG = "Не удалось удалить публикацию";
+    public static final String FAILED_TO_CHECK_MESSAGE = "Не удалось проверить существование публикации";
+    public static final String FAILED_TO_UPDATE = "Не удалось обновить публикацию";
+    public static final String FAILED_TO_GET_EMP_ID = "Не удалось получить список сотрудников для публикации";
+    public static final String FAILED_TO_GET_CATEGORIES = "Не удалось получить список категорий";
 }

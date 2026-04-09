@@ -1,5 +1,6 @@
 package com.cloud.publishing.repository;
 
+import static com.cloud.publishing.constants.EducationConstants.*;
 import static com.cloud.publishing.constants.employee.EmployeeField.*;
 import static com.cloud.publishing.constants.employee.EmployeeMessage.*;
 import static com.cloud.publishing.constants.employee.EmployeeSQL.*;
@@ -38,15 +39,15 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
             statement.setString(3, employee.middleName());
             statement.setString(4, employee.email());
             statement.setString(5, employee.password());
-            statement.setString(6, employee.gender().toString());
+            statement.setString(6, employee.gender().name());
             statement.setInt(7, employee.birthYear());
             statement.setString(8, employee.address());
-            statement.setString(9, employee.education().toString());
+            statement.setInt(9, employee.education().id());
             statement.setString(10, employee.type().toString());
             statement.setBoolean(11, employee.chiefEditor());
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("Creating employee failed, no rows affected.");
+                throw new SQLException(FAILED_TO_ADD_NO_ROWS);
             }
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -66,7 +67,7 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                             employee.chiefEditor()
                     );
                 } else {
-                    throw new SQLException("Creating employee failed, no ID obtained.");
+                    throw new SQLException(FAILED_TO_ADD_NO_ID);
                 }
             }
         } catch (SQLException e) {
@@ -95,16 +96,18 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                 statement.setString(6, employee.gender().name());
                 statement.setInt(7, employee.birthYear());
                 statement.setString(8, employee.address());
-                statement.setString(9, employee.education().name());
+                statement.setInt(9, employee.education().id());
                 statement.setString(10, employee.type().name());
-                statement.setInt(11, employee.id());
+                statement.setBoolean(11, employee.chiefEditor());
+                statement.setInt(12, employee.id());
             } else {
                 statement.setString(5, employee.gender().name());
                 statement.setInt(6, employee.birthYear());
                 statement.setString(7, employee.address());
-                statement.setString(8, employee.education().name());
+                statement.setInt(8, employee.education().id());
                 statement.setString(9, employee.type().name());
-                statement.setInt(10, employee.id());
+                statement.setBoolean(10, employee.chiefEditor());
+                statement.setInt(11, employee.id());
             }
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -161,17 +164,13 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     }
 
     @Override
-    public boolean existsChiefEditor() {
+    public void resetChiefEditor() {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_EXIST_CE);
-                ResultSet resultSet = statement.executeQuery()) {
-            if (resultSet.next()) {
-                return resultSet.getBoolean(1);
-            }
+                PreparedStatement statement = connection.prepareStatement(SQL_RESET_CE)) {
+            statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_CHECK_EXISTING_CE_MSG, e);
+            throw new RuntimeException(FAILED_TO_RESET_CHIEF_EDITOR, e);
         }
-        return false;
     }
 
     @Override
@@ -181,7 +180,7 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
             statement.setString(1, email);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return Optional.of(resultSetToEmployee(resultSet));
+                    return Optional.of(resultSetToEmployeeForAuth(resultSet));
                 } else {
                     return Optional.empty();
                 }
@@ -202,7 +201,28 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
                 Gender.valueOf(resultSet.getString(GENDER).toUpperCase()),
                 resultSet.getInt(BIRTH_YEAR),
                 resultSet.getString(ADDRESS),
-                Education.valueOf(resultSet.getString(EDUCATION).toUpperCase()),
+                new Education(
+                        resultSet.getInt(ED_ID),
+                        resultSet.getString(ED_NAME),
+                        resultSet.getString(ED_LABEL)
+                ),
+                Type.valueOf(resultSet.getString(TYPE).toUpperCase()),
+                resultSet.getBoolean(IS_CHIEF_EDITOR)
+        );
+    }
+
+    private Employee resultSetToEmployeeForAuth(ResultSet resultSet) throws SQLException {
+        return new Employee(
+                resultSet.getInt(ID),
+                null,
+                null,
+                null,
+                resultSet.getString(EMAIL),
+                resultSet.getString(PASSWORD),
+                null,
+                0,
+                null,
+                null,
                 Type.valueOf(resultSet.getString(TYPE).toUpperCase()),
                 resultSet.getBoolean(IS_CHIEF_EDITOR)
         );

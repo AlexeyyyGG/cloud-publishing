@@ -4,12 +4,16 @@ public class EmployeeMessage {
     private EmployeeMessage() {
     }
 
-    public static final String FAILED_TO_ADD_MSG = "Failed to add";
-    public static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Failed to update employee with id, %d";
-    public static final String FAILED_TO_GET_MSG = "Failed to get";
-    public static final String FAILED_TO_LIST_MSG = "Failed to getAll";
-    public static final String FAILED_TO_DELETE_MSG = "Failed to delete";
-    public static final String FAILED_TO_CHECK_MESSAGE = "Failed to check if employee exists";
-    public static final String FAILED_TO_CHECK_EXISTING_CE_MSG = "Error checking for existing chief editor";
-    public static final String EMPLOYEE_NOT_FOUND_MSG = "Employee not found";
+    public static final String FAILED_TO_ADD_MSG = "Не удалось добавить сотрудника";
+    public static final String FAILED_TO_UPDATE_WITH_ID_MSG = "Не удалось обновить сотрудника с EDUCATION_ID %d";
+    public static final String FAILED_TO_GET_MSG = "Не удалось получить данные сотрудника";
+    public static final String FAILED_TO_LIST_MSG = "Не удалось получить список сотрудников";
+    public static final String FAILED_TO_DELETE_MSG = "Не удалось удалить сотрудника";
+    public static final String FAILED_TO_CHECK_MESSAGE = "Не удалось проверить существование сотрудника";
+    public static final String EMPLOYEE_NOT_FOUND_MSG = "Сотрудник не найден";
+    public static final String FAILED_TO_RESET_CHIEF_EDITOR = "Не удалось сбросить статус главного редактора";
+    public static final String FAILED_TO_ADD_NO_ID = "Создание сотрудника не удалось, EDUCATION_ID не получен";
+    public static final String FAILED_TO_ADD_NO_ROWS = "Создание сотрудника не удалось, ни одна запись не была добавлена";
+    public static final String PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG = "Пароль обязателен при создании сотрудника";
+    public static final String PASSWORD_MISMATCH_OR_CONFIRMATION_MISSING_MSG = "Пароли не совпадают или подтверждение отсутствует";
 }
