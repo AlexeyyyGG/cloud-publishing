@@ -1,5 +1,7 @@
 package com.cloud.publishing.dto.request;
 
+import com.cloud.publishing.validation.PasswordMatchable;
+import com.cloud.publishing.validation.PasswordMatches;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -10,6 +12,7 @@ import jakarta.validation.constraints.Size;
 import com.cloud.publishing.model.Gender;
 import com.cloud.publishing.model.Type;
 
+@PasswordMatches(required = false)
 public record EmployeeUpdateRequest(
         @JsonProperty("first_name")
         @NotEmpty(message = "Имя обязательно для заполнения")
@@ -26,6 +29,7 @@ public record EmployeeUpdateRequest(
         @Email(message = "Введите корректный email")
         String email,
         String password,
+        @JsonProperty("password_confirm")
         String passwordConfirm,
         @NotNull(message = "Необходимо указать пол")
         Gender gender,
@@ -42,5 +46,5 @@ public record EmployeeUpdateRequest(
         Type type,
         @JsonProperty("is_chief_editor")
         boolean chiefEditor
-) {
+) implements PasswordMatchable {
 }

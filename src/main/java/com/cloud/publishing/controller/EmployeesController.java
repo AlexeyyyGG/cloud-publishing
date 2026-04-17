@@ -5,6 +5,7 @@ import com.cloud.publishing.constants.Urls;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class EmployeesController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CHIEF_EDITOR')")
-    public ResponseEntity<EmployeeResponse> add(@RequestBody EmployeeRequest request) {
+    public ResponseEntity<EmployeeResponse> add(@Valid @RequestBody EmployeeRequest request) {
         logger.info("add called with: {}", request);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.add(request));
     }
@@ -60,7 +61,7 @@ public class EmployeesController {
     @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public ResponseEntity<EmployeeResponse> update(
             @PathVariable(Parameters.ID) int id,
-            @RequestBody EmployeeUpdateRequest employeeUpdateRequest
+            @Valid @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
         logger.info("update called for id {}", id);
         EmployeeResponse updated = service.update(id, employeeUpdateRequest);

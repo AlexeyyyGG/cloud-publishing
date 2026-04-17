@@ -1,6 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
-
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<%--@elvariable id="_csrf" type="org.springframework.security.web.csrf.CsrfToken"--%>
+<%--@elvariable id="employees" type="java.util.List"--%>
 <div>
     <c:if test="${pageContext.request.userPrincipal != null}">
         <form action="${pageContext.request.contextPath}/logout" method="post">
@@ -58,3 +66,5 @@
         </tr>
     </c:forEach>
 </table>
+</body>
+</html>

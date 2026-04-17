@@ -5,39 +5,55 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8"/>
-    <title>Добавить сотрудника</title>
+    <title></title>
 </head>
 <body>
-<h2>Добавить сотрудника</h2>
-
 <%--@elvariable id="employeeRequest" type="dto"--%>
+<%--@elvariable id="genders" type="java.util.List"--%>
+<%--@elvariable id="minBirthYear" type="java.lang.Integer"--%>
+<%--@elvariable id="maxBirthYear" type="java.lang.Integer"--%>
+<%--@elvariable id="educations" type="java.util.List"--%>
+<%--@elvariable id="types" type="java.util.List"--%>
 <form:form method="post"
            action="${pageContext.request.contextPath}/web/employees"
            modelAttribute="employeeRequest">
     <div>
-        <form:input path="firstName" placeholder="Имя"/>
+        <label for="firstName">Имя</label>
+        <form:input path="firstName" id="firstName"/>
         <form:errors path="firstName" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="lastName" placeholder="Фамилия"/>
+        <label for="lastName">Фамилия</label>
+        <form:input path="lastName" id="lastName"/>
         <form:errors path="lastName" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="middleName" placeholder="Отчество"/>
+        <label for="middleName">Отчество</label>
+        <form:input path="middleName" id="middleName"/>
         <form:errors path="middleName" cssStyle="color:red"/>
     </div>
     <fieldset style="display: inline-block">
-        <legend>Учётная запись</legend>
+        <legend>Учетная запись</legend>
         <div>
-            <form:input path="email" placeholder="Email"/>
+            <label for="email">E-mail</label>
+            <form:input path="email" id="email"/>
             <form:errors path="email" cssStyle="color:red"/>
         </div>
+
         <div>
-            <form:password path="password" placeholder="Пароль"/>
+            <label for="password">Пароль</label>
+            <form:password path="password" id="password"/>
             <form:errors path="password" cssStyle="color:red"/>
+        </div>
+
+        <div>
+            <label for="passwordConfirm">Пароль повторно</label>
+            <form:password path="passwordConfirm" id="passwordConfirm"/>
+            <form:errors path="passwordConfirm" cssStyle="color:red"/>
         </div>
     </fieldset>
     <div>
+        <label>Пол</label>
         <form:radiobuttons
                 path="gender"
                 items="${genders}"
@@ -46,35 +62,51 @@
         <form:errors path="gender" cssStyle="color:red"/>
     </div>
     <div>
-        <form:select path="birthYear">
-            <form:option value="" label="Выберите год"/>
-            <form:options items="${birthYears}"/>
-        </form:select>
+        <label for="birthYear">Год рождения</label>
+        <form:input
+                path="birthYear"
+                id="birthYear"
+                type="number"
+                min="${minBirthYear}"
+                max="${maxBirthYear}"
+                step="1"/>
         <form:errors path="birthYear" cssStyle="color:red"/>
     </div>
     <div>
-        <form:input path="address" placeholder="Адрес"/>
+        <label for="address">Адрес</label>
+        <form:textarea
+                path="address"
+                id="address"
+                rows="4"
+                maxlength="100"/>
         <form:errors path="address" cssStyle="color:red"/>
     </div>
     <div>
-        <form:select path="educationId">
-            <form:option value="" label="Выберите образование"/>
+        <label for="educationId">Образование</label>
+        <form:select path="educationId" id="educationId">
+            <form:option value=""/>
             <form:options items="${educations}" itemValue="id" itemLabel="label"/>
         </form:select>
         <form:errors path="educationId" cssStyle="color:red"/>
     </div>
     <div>
-        <form:select path="type">
-            <form:option value="" label="Выберите тип"/>
+        <label for="type">Тип сотрудника</label>
+        <form:select path="type" id="type">
+            <form:option value=""/>
             <form:options items="${types}" itemValue="name" itemLabel="label"/>
         </form:select>
         <form:errors path="type" cssStyle="color:red"/>
     </div>
     <div>
-        <form:checkbox path="chiefEditor"/> Главный редактор
+        <form:checkbox path="chiefEditor" id="chiefEditor"/>
+        <label for="chiefEditor">Главный редактор</label>
     </div>
     <div>
-        <button type="submit">Добавить</button>
+        <button type="button"
+                onclick="location.href='${pageContext.request.contextPath}/web/employees'">
+            Отменить
+        </button>
+        <button type="submit">Сохранить</button>
     </div>
 </form:form>
 </body>

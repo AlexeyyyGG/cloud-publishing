@@ -41,9 +41,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public EmployeeResponse add(EmployeeRequest request) {
-        if (request.password() == null || request.password().isEmpty()) {
-            throw new InvalidArgumentException(PASSWORD_REQUIRED_ON_EMPLOYEE_CREATION_MSG);
-        }
         if (request.chiefEditor()) {
             employeeRepository.resetChiefEditor();
         }

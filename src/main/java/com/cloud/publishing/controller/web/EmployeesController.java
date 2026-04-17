@@ -11,9 +11,7 @@ import com.cloud.publishing.model.Gender;
 import com.cloud.publishing.model.Type;
 import com.cloud.publishing.service.EducationService;
 import jakarta.validation.Valid;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,11 +52,8 @@ public class EmployeesController {
         model.addAttribute(EmployeeModelAttrs.GENDERS, Gender.values());
         model.addAttribute(EmployeeModelAttrs.TYPES, Type.values());
         model.addAttribute(EmployeeModelAttrs.EDUCATIONS, educationService.getAll());
-        List<Integer> birthYears = IntStream.rangeClosed(MIN_BIRTH_YEAR, MAX_BIRTH_YEAR)
-                .boxed()
-                .sorted(Comparator.reverseOrder())
-                .toList();
-        model.addAttribute(EmployeeModelAttrs.BIRTH_YEARS, birthYears);
+        model.addAttribute(EmployeeModelAttrs.MIN_BIRTH_YEAR, MIN_BIRTH_YEAR);
+        model.addAttribute(EmployeeModelAttrs.MAX_BIRTH_YEAR, MAX_BIRTH_YEAR);
     }
 
     @GetMapping
