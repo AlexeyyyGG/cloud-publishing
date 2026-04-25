@@ -16,6 +16,7 @@
 <%--@elvariable id="types" type="java.util.List"--%>
 <form:form method="post"
            action="${pageContext.request.contextPath}/web/employees"
+           novalidate="true"
            modelAttribute="employeeRequest">
     <div>
         <label for="firstName">Имя</label>

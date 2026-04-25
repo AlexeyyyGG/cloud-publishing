@@ -1,8 +1,8 @@
 package com.cloud.publishing.model;
 
 public enum Type {
-    JOURNALIST("Журналист"),
-    EDITOR("Редактор");
+    JOURNALIST("журналист"),
+    EDITOR("редактор");
     private final String label;
 
     Type(String label) {

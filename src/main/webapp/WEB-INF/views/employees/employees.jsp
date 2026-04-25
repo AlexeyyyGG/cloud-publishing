@@ -42,27 +42,27 @@
         <tr>
             <td>${emp.firstName}</td>
             <td>${emp.lastName}</td>
-            <td>${emp.gender.label}</td>
+            <td>${emp.gender.shortLabel}</td>
             <td>${emp.birthYear}</td>
             <td>${emp.type.label}</td>
-            <td>
-                <c:if test="${pageContext.request.isUserInRole('CHIEF_EDITOR')}">
+            <c:if test="${pageContext.request.isUserInRole('CHIEF_EDITOR')}">
+                <td>
                     <a href="${pageContext.request.contextPath}/web/employees/${emp.id}/edit">
                         Редактировать
                     </a>
 
                     <form action="${pageContext.request.contextPath}/web/employees/${emp.id}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="delete" />
+                        <input type="hidden" name="_method" value="delete"/>
                         <input type="hidden"
                                name="${_csrf.parameterName}"
-                               value="${_csrf.token}" />
+                               value="${_csrf.token}"/>
                         <button type="submit"
                                 onclick="return confirm('Вы уверены?');">
                             Удалить
                         </button>
                     </form>
-                </c:if>
-            </td>
+                </td>
+            </c:if>
         </tr>
     </c:forEach>
 </table>
