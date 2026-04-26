@@ -1,6 +1,15 @@
 package com.cloud.publishing.model;
 
 public enum Type {
-    JOURNALIST,
-    EDITOR
+    JOURNALIST("журналист"),
+    EDITOR("редактор");
+    private final String label;
+
+    Type(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 }

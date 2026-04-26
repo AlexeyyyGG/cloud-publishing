@@ -1,5 +1,7 @@
 package com.cloud.publishing.dto.request;
 
+import com.cloud.publishing.validation.PasswordMatchable;
+import com.cloud.publishing.validation.PasswordMatches;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -10,41 +12,44 @@ import jakarta.validation.constraints.Size;
 import com.cloud.publishing.model.Gender;
 import com.cloud.publishing.model.Type;
 
+@PasswordMatches
 public record EmployeeRequest(
         @JsonProperty("first_name")
-        @NotEmpty(message = "First name is required")
-        @Size(min = 2, max = 20, message = "First name should be between 2 and 20 characters")
+        @NotEmpty(message = "Имя обязательно для заполнения")
+        @Size(min = 2, max = 20, message = "Имя должно содержать от 2 до 20 символов")
         String firstName,
         @JsonProperty("last_name")
-        @NotEmpty(message = "Last name is required")
-        @Size(min = 2, max = 20, message = "Last name should be between 2 and 20 characters")
+        @NotEmpty(message = "Фамилия обязательна для заполнения")
+        @Size(min = 2, max = 20, message = "Фамилия должна содержать от 2 до 20 символов")
         String lastName,
         @JsonProperty("middle_name")
-        @Size(min = 2, max = 20, message = "Middle name should be between 2 and 20 characters")
+        @Size(min = 2, max = 20, message = "Отчество должно содержать от 2 до 20 символов")
         String middleName,
-        @NotEmpty(message = "Email is required")
-        @Email(message = "Email should be valid")
+        @NotEmpty(message = "Email обязателен для заполнения")
+        @Email(message = "Введите корректный email")
         String email,
-        @NotEmpty(message = "Password is required")
         String password,
-        @NotNull(message = "Gender must be specified")
+        @JsonProperty("password_confirm")
+        String passwordConfirm,
+        @NotNull(message = "Необходимо указать пол")
         Gender gender,
         @JsonProperty("birth_year")
-        @NotNull(message = "Birth year must be specified")
-        @Min(value = 1960, message = "Birth year cannot be earlier than 1950")
-        @Max(value = 2008, message = "Birth year cannot be later than 2008")
+        @NotNull(message = "Необходимо указать год рождения")
+        @Min(value = 1960, message = "Год рождения не может быть раньше 1960")
+        @Max(value = 2008, message = "Год рождения не может быть позже 2008")
         Integer birthYear,
-        @NotEmpty(message = "Address is required")
+        @NotEmpty(message = "Адрес обязателен для заполнения")
         String address,
-        @NotEmpty(message = "Education is required")
-        String education,
-        @NotNull(message = "Employee type must be specified")
+        @NotNull(message = "Необходимо указать образование")
+        Integer educationId,
+        @NotNull(message = "Необходимо указать тип сотрудника")
         Type type,
         @JsonProperty("is_chief_editor")
         boolean chiefEditor
-) {
+) implements PasswordMatchable {
     public static EmployeeRequest empty() {
         return new EmployeeRequest(
+                null,
                 null,
                 null,
                 null,

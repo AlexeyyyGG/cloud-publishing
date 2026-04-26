@@ -8,6 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,9 +18,15 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.cloud.publishing.config", "com.cloud.publishing.controller",
-        "com.cloud.publishing.service", "com.cloud.publishing.repository",
-        "com.cloud.publishing.mapper"})
+@EnableTransactionManagement
+@ComponentScan(basePackages = {
+        "com.cloud.publishing.config",
+        "com.cloud.publishing.controller",
+        "com.cloud.publishing.service",
+        "com.cloud.publishing.repository",
+        "com.cloud.publishing.mapper",
+        "com.cloud.publishing.security"
+})
 @PropertySource("classpath:application.properties")
 public class Config implements WebMvcConfigurer {
     @Bean
@@ -49,5 +58,10 @@ public class Config implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/swagger-ui/");
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 }

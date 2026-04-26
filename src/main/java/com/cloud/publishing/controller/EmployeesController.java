@@ -5,11 +5,13 @@ import com.cloud.publishing.constants.Urls;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,15 +51,17 @@ public class EmployeesController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeResponse> add(@RequestBody EmployeeRequest request) {
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
+    public ResponseEntity<EmployeeResponse> add(@Valid @RequestBody EmployeeRequest request) {
         logger.info("add called with: {}", request);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.add(request));
     }
 
     @PutMapping(value = Urls.ID, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public ResponseEntity<EmployeeResponse> update(
             @PathVariable(Parameters.ID) int id,
-            @RequestBody EmployeeUpdateRequest employeeUpdateRequest
+            @Valid @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
         logger.info("update called for id {}", id);
         EmployeeResponse updated = service.update(id, employeeUpdateRequest);
@@ -65,6 +69,7 @@ public class EmployeesController {
     }
 
     @DeleteMapping(value = {Urls.ID})
+    @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public ResponseEntity<Void> delete(@PathVariable(Parameters.ID) int id) {
         logger.info("delete called with id {}", id);
         service.delete(id);

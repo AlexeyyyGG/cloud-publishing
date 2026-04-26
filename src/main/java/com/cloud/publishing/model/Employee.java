@@ -10,7 +10,7 @@ public record Employee(
         Gender gender,
         int birthYear,
         String address,
-        String education,
+        Education education,
         Type type,
         boolean chiefEditor
 ) {

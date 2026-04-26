@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 USE cloud_publishing;
 
 CREATE TABLE categories
@@ -5,6 +7,21 @@ CREATE TABLE categories
     id   INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
+
+CREATE TABLE education
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    label VARCHAR(50) NOT NULL
+);
+
+INSERT INTO education (name, label)
+VALUES ('SECONDARY', 'Среднее'),
+       ('VOCATIONAL', 'Среднее специальное'),
+       ('INCOMPLETE_HIGHER', 'Неоконченное высшее'),
+       ('HIGHER', 'Высшее'),
+       ('BACHELOR', 'Бакалавр'),
+       ('MASTER', 'Магистр');
 
 CREATE TABLE employees
 (
@@ -17,10 +34,12 @@ CREATE TABLE employees
     gender          ENUM ('male', 'female')       NOT NULL,
     birth_year      YEAR                          NOT NULL,
     address         VARCHAR(100)                  NOT NULL,
-    education       VARCHAR(100)                  NOT NULL,
+    education_id    INT                           NOT NULL,
     type            ENUM ('Journalist', 'Editor') NOT NULL,
     is_chief_editor BOOLEAN DEFAULT FALSE,
-    UNIQUE KEY unique_email (email)
+    UNIQUE KEY unique_email (email),
+    FOREIGN KEY (education_id) REFERENCES education(id)
+
 );
 
 CREATE TABLE publications
@@ -92,3 +111,59 @@ INSERT INTO categories (name) VALUES ('Finance');
 INSERT INTO categories (name) VALUES ('Advertising');
 INSERT INTO categories (name) VALUES ('Humor');
 INSERT INTO categories (name) VALUES ('Work');
+
+INSERT INTO employees (
+    first_name,
+    last_name,
+    middle_name,
+    email,
+    password,
+    gender,
+    birth_year,
+    address,
+    education_id,
+    type,
+    is_chief_editor
+)
+VALUES (
+    'Петр',
+    'Иванов',
+    'Иванович',
+    'test1@gmail.com',
+    '$2a$10$XyVegfm.5LN0SVUM1YW44u.jwobaBMnlwQQRk3X0GAPRTnoiPl1ZC', -- password1
+    'male',
+    1985,
+    'test',
+    6,
+    'Editor',
+    TRUE
+);
+
+INSERT INTO employees
+(
+    first_name,
+    last_name,
+    middle_name,
+    email,
+    password,
+    gender,
+    birth_year,
+    address,
+    education_id,
+    type,
+    is_chief_editor
+)
+VALUES
+(
+    'Иван',
+    'Петров',
+    'Петрович',
+    'test2@gmail.com',
+    '$2a$10$bD6W9A4twF0ql.WPjqaoYuyny4LyoJhRhsT4YKGK2yar3koB8yrm.', -- password2
+    'male',
+    1993,
+    'test',
+    3,
+    'Journalist',
+    FALSE
+);

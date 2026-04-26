@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 public abstract class BaseRepository {
-    private static final String CONNECTION_ERROR_MSG = "Error connecting to database";
+    private static final String CONNECTION_ERROR_MSG = "Ошибка подключения к БД";
     protected DataSource dataSource;
 
     protected BaseRepository(DataSource dataSource) {
