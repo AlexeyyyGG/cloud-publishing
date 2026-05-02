@@ -13,8 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.sql.DataSource;
 import com.cloud.publishing.model.Employee;
 import com.cloud.publishing.model.Gender;
@@ -145,6 +147,49 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_LIST_MSG, e);
         }
+    }
+
+    @Override
+    public List<Employee> findByType(Type type) {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_TYPE)) {
+            statement.setString(1, type.name());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    employees.add(resultSetToEmployee(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(FAILED_TO_FETCH_EMPLOYEES_BY_TYPE, e);
+        }
+        return employees;
+    }
+
+    @Override
+    public List<Employee> findByIdsAndType(Set<Integer> ids, Type type) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
+        String sql = SQL_FIND_BY_TYPE + " AND e.id IN (" + placeholders + ")";
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, type.name());
+            int index = 2;
+            for (Integer id : ids) {
+                statement.setInt(index++, id);
+            }
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    employees.add(resultSetToEmployee(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(FAILED_TO_GET_MSG, e);
+        }
+        return employees;
     }
 
     @Override

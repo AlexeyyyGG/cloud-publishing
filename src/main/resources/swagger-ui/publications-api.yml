@@ -4,8 +4,13 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080/
+
+security:
+  - bearerAuth: [ ]
+
 paths:
   /publications:
+    description: Доступно только главному редактору
     get:
       summary: Получение списка всех публикаций
       responses:
@@ -17,6 +22,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PublicationGetDTO'
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
     post:
       summary: Создание новой публикации
       requestBody:
@@ -24,12 +33,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PublicationDTO'
+              $ref: '#/components/schemas/PublicationRequest'
       responses:
         '201':
           description: Публикация успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationResponse'
         '400':
           description: Некорректные входные данные
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
   /publications/{id}:
     parameters:
       - name: id
@@ -46,11 +63,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicationDTO'
-        '404':
-          description: Публикация с указанным id не найдена
+                $ref: '#/components/schemas/PublicationResponse'
         '400':
           description: Некорректный id
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Публикация с указанным id не найдена
     put:
       summary: Обновление данных публикации
       requestBody:
@@ -58,12 +79,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PublicationDTO'
+              $ref: '#/components/schemas/PublicationRequest'
       responses:
         '200':
           description: Данные публикации обновлены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationResponse'
         '400':
           description: Некорректные входные данные
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
         '404':
           description: Публикация с заданным id не найдена
     delete:
@@ -73,16 +102,53 @@ paths:
           description: Публикация удалена
         '400':
           description: Некорректный id
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
         '404':
           description: Публикация с заданным id не найдена
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
+    PublicationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название публикации
+        publicationType:
+          type: string
+          enum: [ MAGAZINE, NEWSPAPER ]
+        theme:
+          type: string
+        categories:
+          type: array
+          items:
+            type: integer
+        journalists:
+          type: array
+          items:
+            type: integer
+        editors:
+          type: array
+          items:
+            type: integer
+      required:
+        - name
+        - publicationType
+        - theme
+        - categories
+        - journalists
+        - editors
     PublicationGetDTO:
       type: object
       properties:
-        id:
-          type: integer
-          description: Идентификатор публикации
         name:
           type: string
           description: Название публикации
@@ -97,42 +163,71 @@ components:
           type: array
           description: Список рубрик
           items:
-            type: string
-    PublicationDTO:
+            $ref: '#/components/schemas/Category'
+
+      required:
+        - name
+        - publicationType
+        - theme
+        - categories
+
+    PublicationResponse:
       type: object
       properties:
         id:
           type: integer
-          description: Идентификатор публикации
         name:
           type: string
-          description: Название публикации
         publicationType:
           type: string
-          description: Тип публикации
-          enum: [MAGAZINE, NEWSPAPER]
+          enum: [ MAGAZINE, NEWSPAPER ]
         theme:
           type: string
-          description: Тематика публикации
         categories:
           type: array
           items:
-            type: integer
-          description: Список идентификаторов рубрик
+            $ref: '#/components/schemas/Category'
         journalists:
           type: array
           items:
-            type: integer
-          description: Список идентификаторов журналистов
+            $ref: '#/components/schemas/EmployeeShort'
         editors:
           type: array
           items:
-            type: integer
-          description: Список идентификаторов редакторов
+            $ref: '#/components/schemas/EmployeeShort'
       required:
+        - id
         - name
         - publicationType
         - theme
         - categories
         - journalists
         - editors
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    EmployeeShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+      required:
+        - id
+        - firstName
+        - lastName
+        - middleName

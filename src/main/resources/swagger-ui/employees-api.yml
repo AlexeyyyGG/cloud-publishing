@@ -4,10 +4,15 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080/
+
+security:
+  - bearerAuth: []
+
 paths:
   /employees:
     get:
       summary: Получение списка всех сотрудников
+      description: Доступно всем авторизованным сотрудникам
       responses:
         '200':
           description: Успешный ответ со списком сотрудников
@@ -16,22 +21,34 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Employee'
+                  $ref: '#/components/schemas/EmployeeResponse'
+        '401':
+          description: Требуется авторизация
     post:
       summary: Добавление сотрудника
+      description: Доступно только главному редактору
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Employee'
+              $ref: '#/components/schemas/EmployeeRequest'
       responses:
         '201':
           description: Сотрудник добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
         '400':
           description: Некорректные входные данные
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
         '409':
           description: Электронная почта уже используется
+
   /employees/{id}:
     parameters:
       - name: id
@@ -42,48 +59,67 @@ paths:
           type: integer
     get:
       summary: Получение данных одного сотрудника по id
+      description: Доступно всем авторизованным сотрудникам
       responses:
         '200':
           description: Успешный ответ сотрудник найден
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Employee'
+                $ref: '#/components/schemas/EmployeeResponse'
         '404':
           description: Сотрудник с указанным id не найден
+        '401':
+          description: Требуется авторизация
         '400':
           description: Некорректный id
     put:
       summary: Обновление данных сотрудника
+      description: Доступно только главному редактору
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Employee'
+              $ref: '#/components/schemas/EmployeeUpdateRequest'
       responses:
         '200':
-          description: Денные сотрудника обновлены
+          description: Данные сотрудника обновлены
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Employee'
+                $ref: '#/components/schemas/EmployeeResponse'
         '400':
           description: Некорректные входные данные
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
         '404':
           description: Сотрудник с заданным id не найден
     delete:
       summary: Удаление сотрудника по id
+      description: Доступно только главному редактору
       responses:
         '204':
           description: Сотрудник удалён
         '400':
           description: Некорректный id
+        '401':
+          description: Требуется авторизация
+        '403':
+          description: Недостаточно прав
         '404':
           description: Сотрудник с заданным id не найден
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
-    Employee:
+    EmployeeResponse:
       type: object
       properties:
         id:
@@ -113,13 +149,12 @@ components:
           type: string
           description: Адрес сотрудника
         education:
-          type: string
-          description: Образование
+          $ref: '#/components/schemas/Education'
         type:
           type: string
           description: Тип сотрудника
           enum: [JOURNALIST, EDITOR]
-        isChiefEditor:
+        chiefEditor:
           type: boolean
           description: Главный редактор
 
@@ -127,11 +162,110 @@ components:
         - id
         - firstName
         - lastName
-        - middleName
         - email
         - gender
         - birthYear
         - address
         - education
         - type
-        - isChiefEditor
+        - chiefEditor
+
+    EmployeeRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        passwordConfirm:
+          type: string
+        gender:
+          type: string
+          enum: [ MALE, FEMALE ]
+        birthYear:
+          type: integer
+        address:
+          type: string
+        educationId:
+          type: integer
+        type:
+          type: string
+          enum: [ JOURNALIST, EDITOR ]
+        chiefEditor:
+          type: boolean
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - passwordConfirm
+        - gender
+        - birthYear
+        - address
+        - educationId
+        - type
+        - chiefEditor
+
+    EmployeeUpdateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        passwordConfirm:
+          type: string
+        gender:
+          type: string
+          enum: [ MALE, FEMALE ]
+        birthYear:
+          type: integer
+        address:
+          type: string
+        educationId:
+          type: integer
+        type:
+          type: string
+          enum: [ JOURNALIST, EDITOR ]
+        chiefEditor:
+          type: boolean
+
+      required:
+        - firstName
+        - lastName
+        - email
+        - gender
+        - birthYear
+        - address
+        - educationId
+        - type
+        - chiefEditor
+
+    Education:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        label:
+          type: string
+
+      required:
+        - id
+        - name
+        - label

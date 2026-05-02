@@ -5,9 +5,11 @@ import static com.cloud.publishing.constants.employee.EmployeeMessage.*;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
+import com.cloud.publishing.dto.response.EmployeeShort;
 import com.cloud.publishing.exception.InvalidArgumentException;
 import com.cloud.publishing.exception.ObjectNotFoundException;
 import com.cloud.publishing.model.Education;
+import com.cloud.publishing.model.Type;
 import com.cloud.publishing.repository.EducationRepository;
 import java.util.List;
 import com.cloud.publishing.mapper.EmployeeMapper;
@@ -103,5 +105,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeUpdateRequest getForUpdate(int id) {
         Employee employee = employeeRepository.get(id);
         return mapper.toUpdateRequest(employee);
+    }
+
+    @Override
+    public List<EmployeeShort> getJournalists() {
+        return mapper.toShortList(employeeRepository.findByType(Type.JOURNALIST));
+    }
+
+    @Override
+    public List<EmployeeShort> getEditors() {
+        return mapper.toShortList(employeeRepository.findByType(Type.EDITOR));
     }
 }

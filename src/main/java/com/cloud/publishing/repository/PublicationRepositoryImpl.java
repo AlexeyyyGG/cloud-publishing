@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Repository;
-import com.cloud.publishing.dto.response.PublicationGetDTO;
 import com.cloud.publishing.model.Publication;
 
 @Repository
@@ -191,31 +190,86 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
     }
 
     @Override
-    public List<PublicationGetDTO> getAll() {
-        List<PublicationGetDTO> publications = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_GET_PUBLICATION);
-                ResultSet resultSet = statement.executeQuery()
-        ) {
-            Map<Integer, List<String>> categoriesMap = getCategoriesMap(connection);
-            while (resultSet.next()) {
-                int id = resultSet.getInt(ID);
-                String name = resultSet.getString(NAME);
-                PublicationType type = PublicationType.valueOf(
-                        resultSet.getString(PUBLICATION_TYPE).toUpperCase());
-                String theme = resultSet.getString(THEME);
-                List<String> categories = categoriesMap.get(id);
-                publications.add(new PublicationGetDTO(id, name, type, theme, categories));
+    public boolean exists(Integer id) {
+        return super.exists(id, SQL_EXIST, FAILED_TO_CHECK_MESSAGE);
+    }
+
+    @Override
+    public List<Publication> getAll() {
+        try (Connection connection = dataSource.getConnection()) {
+            Map<Integer, Publication> publications = loadPublications(connection);
+            Map<Integer, Set<Integer>> categories = loadRelations(
+                    connection,
+                    SQL_GET_ALL_CATEGORIES,
+                    CATEGORY_ID
+            );
+            Map<Integer, Set<Integer>> journalists = loadRelations(
+                    connection,
+                    SQL_GET_ALL_JOURNALISTS,
+                    EMPLOYEE_ID
+            );
+            Map<Integer, Set<Integer>> editors = loadRelations(
+                    connection,
+                    SQL_GET_ALL_EDITORS,
+                    EMPLOYEE_ID
+            );
+            List<Publication> result = new ArrayList<>();
+            for (Publication p : publications.values()) {
+                Publication fullPublication = new Publication(
+                        p.id(),
+                        p.name(),
+                        p.publicationType(),
+                        p.theme(),
+                        categories.getOrDefault(p.id(), Set.of()),
+                        journalists.getOrDefault(p.id(), Set.of()),
+                        editors.getOrDefault(p.id(), Set.of())
+                );
+                result.add(fullPublication);
             }
+            return result;
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_GET_MSG, e);
+        }
+    }
+
+    private Map<Integer, Publication> loadPublications(Connection connection) throws SQLException {
+        Map<Integer, Publication> publications = new HashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_GET_PUBLICATION);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt(ID);
+                Publication publication = new Publication(
+                        id,
+                        resultSet.getString(NAME),
+                        PublicationType.valueOf(
+                                resultSet.getString(PUBLICATION_TYPE).toUpperCase()),
+                        resultSet.getString(THEME),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>()
+                );
+                publications.put(id, publication);
+            }
         }
         return publications;
     }
 
-    @Override
-    public boolean exists(Integer id) {
-        return super.exists(id, SQL_EXIST, FAILED_TO_CHECK_MESSAGE);
+    private Map<Integer, Set<Integer>> loadRelations(
+            Connection connection,
+            String sql,
+            String colName
+    ) throws SQLException {
+        Map<Integer, Set<Integer>> relations = new HashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                int publicationId = resultSet.getInt(PUBLICATION_ID);
+                int linkedId = resultSet.getInt(colName);
+                relations.computeIfAbsent(publicationId, k -> new HashSet<>())
+                        .add(linkedId);
+            }
+        }
+        return relations;
     }
 
     private PreparedStatement prepareDeleteConnections(
@@ -257,25 +311,6 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
             throw new RuntimeException(FAILED_TO_GET_CATEGORIES, e);
         }
         return categories;
-    }
-
-    private Map<Integer, List<String>> getCategoriesMap(Connection connection) throws SQLException {
-        Map<Integer, List<String>> categoriesMap = new HashMap<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_GET_ALL_CATEGORIES);
-                ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                int pubId = resultSet.getInt(PUBLICATION_ID);
-                String catName = resultSet.getString(NAME);
-                if (categoriesMap.containsKey(pubId)) {
-                    categoriesMap.get(pubId).add(catName);
-                } else {
-                    List<String> categoryNames = new ArrayList<>();
-                    categoryNames.add(catName);
-                    categoriesMap.put(pubId, categoryNames);
-                }
-            }
-        }
-        return categoriesMap;
     }
 
     private Set<Integer> getEmployeeIdsByPublicationId(

@@ -3,6 +3,7 @@ package com.cloud.publishing.service;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
+import com.cloud.publishing.dto.response.EmployeeShort;
 import java.util.List;
 
 /**
@@ -49,6 +50,20 @@ public interface EmployeeService {
      * @return list of {@link EmployeeResponse}
      */
     List<EmployeeResponse> getAll();
+
+    /**
+     * Returns a list of employees with type JOURNALIST.
+     *
+     * @return list of {@link EmployeeShort}
+     */
+    List<EmployeeShort> getJournalists();
+
+    /**
+     * Returns a list of employees with type EDITOR.
+     *
+     * @return list of {@link EmployeeShort}
+     */
+    List<EmployeeShort> getEditors();
 
     /**
      * Deletes employee by id.

@@ -30,7 +30,7 @@ public class SecurityConfig {
             JwtFilter jwtFilter
     ) throws Exception {
         http
-                .securityMatcher("/employees/**","/auth/**")
+                .securityMatcher("/employees/**","/auth/**","/publications/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
