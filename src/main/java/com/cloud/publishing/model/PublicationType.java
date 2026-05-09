@@ -1,8 +1,8 @@
 package com.cloud.publishing.model;
 
 public enum PublicationType {
-    MAGAZINE("Газета"),
-    NEWSPAPER("Журнал");
+    NEWSPAPER("Газета"),
+    MAGAZINE("Журнал");
     private final String label;
 
     PublicationType(String label) {

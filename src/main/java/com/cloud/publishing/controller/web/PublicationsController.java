@@ -5,12 +5,17 @@ import com.cloud.publishing.constants.Urls;
 import com.cloud.publishing.constants.publication.PublicationModelAttrs;
 import com.cloud.publishing.constants.publication.PublicationPages;
 import com.cloud.publishing.dto.request.PublicationRequest;
+import com.cloud.publishing.dto.response.EmployeeShort;
+import com.cloud.publishing.dto.response.PublicationGetDTO;
+import com.cloud.publishing.mapper.EmployeeMapper;
+import com.cloud.publishing.mapper.PublicationMapper;
 import com.cloud.publishing.model.PublicationType;
+import com.cloud.publishing.model.Type;
 import com.cloud.publishing.service.CategoryService;
-import com.cloud.publishing.service.CategoryServiceImpl;
 import com.cloud.publishing.service.EmployeeService;
 import com.cloud.publishing.service.PublicationService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -30,21 +35,34 @@ public class PublicationsController {
     private final PublicationService publicationService;
     private final EmployeeService employeeService;
     private final CategoryService categoryService;
+    private final EmployeeMapper employeeMapper;
+    private final PublicationMapper publicationMapper;
 
     @Autowired
     public PublicationsController(
             PublicationService publicationService,
             EmployeeService employeeService,
-            CategoryService categoryService
+            CategoryService categoryService,
+            EmployeeMapper employeeMapper,
+            PublicationMapper publicationMapper
     ) {
         this.publicationService = publicationService;
         this.employeeService = employeeService;
         this.categoryService = categoryService;
+        this.employeeMapper = employeeMapper;
+        this.publicationMapper = publicationMapper;
     }
 
     @GetMapping
     public String getAll(Model model) {
-        model.addAttribute(PublicationModelAttrs.PUBLICATIONS, publicationService.getAll());
+        List<PublicationGetDTO> publications =
+                publicationService.getAll().stream()
+                        .map(pub -> publicationMapper.toGetDTO(
+                                pub,
+                                categoryService.getByIds(pub.categories())
+                        ))
+                        .toList();
+        model.addAttribute(PublicationModelAttrs.PUBLICATIONS, publications);
         return PublicationPages.LIST;
     }
 
@@ -102,9 +120,15 @@ public class PublicationsController {
     }
 
     private void fillCommonModel(Model model) {
+        List<EmployeeShort> journalists = employeeService.getByType(Type.JOURNALIST).stream()
+                .map(employeeMapper::toShort)
+                .toList();
+        List<EmployeeShort> editors = employeeService.getByType(Type.EDITOR).stream()
+                .map(employeeMapper::toShort)
+                .toList();
         model.addAttribute(PublicationModelAttrs.PUBLICATION_TYPE, PublicationType.values());
         model.addAttribute(PublicationModelAttrs.CATEGORIES, categoryService.getAll());
-        model.addAttribute(PublicationModelAttrs.JOURNALISTS, employeeService.getJournalists());
-        model.addAttribute(PublicationModelAttrs.EDITORS, employeeService.getEditors());
+        model.addAttribute(PublicationModelAttrs.JOURNALISTS, journalists);
+        model.addAttribute(PublicationModelAttrs.EDITORS, editors);
     }
 }

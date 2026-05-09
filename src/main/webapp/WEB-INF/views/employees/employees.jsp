@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/layout/header.jsp" %>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,16 +10,6 @@
 <body>
 <%--@elvariable id="_csrf" type="org.springframework.security.web.csrf.CsrfToken"--%>
 <%--@elvariable id="employees" type="java.util.List"--%>
-<div>
-    <c:if test="${pageContext.request.userPrincipal != null}">
-        <form action="${pageContext.request.contextPath}/logout" method="post">
-            <input type="hidden"
-                   name="${_csrf.parameterName}"
-                   value="${_csrf.token}" />
-            <button type="submit">Выйти</button>
-        </form>
-    </c:if>
-</div>
 <div style="display: inline-block;">
     <div style="text-align: right; margin-bottom: 10px;">
         <c:if test="${pageContext.request.isUserInRole('CHIEF_EDITOR')}">

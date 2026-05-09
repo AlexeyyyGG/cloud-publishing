@@ -197,7 +197,7 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
     @Override
     public List<Publication> getAll() {
         try (Connection connection = dataSource.getConnection()) {
-            Map<Integer, Publication> publications = loadPublications(connection);
+            List<Publication> publications = loadPublications(connection);
             Map<Integer, Set<Integer>> categories = loadRelations(
                     connection,
                     SQL_GET_ALL_CATEGORIES,
@@ -213,33 +213,29 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
                     SQL_GET_ALL_EDITORS,
                     EMPLOYEE_ID
             );
-            List<Publication> result = new ArrayList<>();
-            for (Publication p : publications.values()) {
-                Publication fullPublication = new Publication(
-                        p.id(),
-                        p.name(),
-                        p.publicationType(),
-                        p.theme(),
-                        categories.getOrDefault(p.id(), Set.of()),
-                        journalists.getOrDefault(p.id(), Set.of()),
-                        editors.getOrDefault(p.id(), Set.of())
-                );
-                result.add(fullPublication);
-            }
-            return result;
+            return publications.stream()
+                    .map(publication -> new Publication(
+                            publication.id(),
+                            publication.name(),
+                            publication.publicationType(),
+                            publication.theme(),
+                            categories.getOrDefault(publication.id(), Set.of()),
+                            journalists.getOrDefault(publication.id(), Set.of()),
+                            editors.getOrDefault(publication.id(), Set.of())
+                    ))
+                    .toList();
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_GET_MSG, e);
         }
     }
 
-    private Map<Integer, Publication> loadPublications(Connection connection) throws SQLException {
-        Map<Integer, Publication> publications = new HashMap<>();
+    private List<Publication> loadPublications(Connection connection) throws SQLException {
+        List<Publication> publications = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_GET_PUBLICATION);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                int id = resultSet.getInt(ID);
-                Publication publication = new Publication(
-                        id,
+                publications.add(new Publication(
+                        resultSet.getInt(ID),
                         resultSet.getString(NAME),
                         PublicationType.valueOf(
                                 resultSet.getString(PUBLICATION_TYPE).toUpperCase()),
@@ -247,8 +243,7 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
                         new HashSet<>(),
                         new HashSet<>(),
                         new HashSet<>()
-                );
-                publications.put(id, publication);
+                ));
             }
         }
         return publications;

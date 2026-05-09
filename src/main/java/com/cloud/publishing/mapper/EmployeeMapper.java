@@ -24,10 +24,12 @@ public interface EmployeeMapper {
 
     EmployeeResponse toResponse(Employee employee);
 
+    List<EmployeeResponse> toResponse(List<Employee> employees);
+
     @Mapping(target = "educationId", source = "education.id")
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "passwordConfirm", ignore = true)
     EmployeeUpdateRequest toUpdateRequest(Employee employee);
 
-    List<EmployeeShort> toShortList(List<Employee> employees);
+    EmployeeShort toShort(Employee employee);
 }

@@ -3,7 +3,6 @@ package com.cloud.publishing.service;
 import static com.cloud.publishing.constants.employee.EmployeeMessage.*;
 
 import com.cloud.publishing.dto.request.EmployeeRequest;
-import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
 import com.cloud.publishing.dto.response.EmployeeShort;
 import com.cloud.publishing.exception.InvalidArgumentException;
@@ -14,6 +13,7 @@ import com.cloud.publishing.repository.EducationRepository;
 import java.util.List;
 import com.cloud.publishing.mapper.EmployeeMapper;
 import com.cloud.publishing.model.Employee;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeResponse add(EmployeeRequest request) {
+    public Employee add(EmployeeRequest request) {
         if (request.chiefEditor()) {
             employeeRepository.resetChiefEditor();
         }
@@ -50,13 +50,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = mapper.toEntity(request, education);
         String password = passwordEncoder.encode(request.password());
         employee = Employee.withPassword(employee, password);
-        Employee saved = employeeRepository.add(employee);
-        return mapper.toResponse(saved);
+        return employeeRepository.add(employee);
     }
 
     @Override
     @Transactional
-    public EmployeeResponse update(int id, EmployeeUpdateRequest request) {
+    public Employee update(int id, EmployeeUpdateRequest request) {
         Employee current = employeeRepository.get(id);
         if (request.chiefEditor() && !current.chiefEditor()) {
             employeeRepository.resetChiefEditor();
@@ -75,21 +74,17 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee = Employee.withPassword(employee, password);
         }
         employeeRepository.update(employee);
-        return mapper.toResponse(employee);
+        return employee;
     }
 
     @Override
-    public EmployeeResponse get(int id) {
-        Employee existingEmployee = employeeRepository.get(id);
-        return mapper.toResponse(existingEmployee);
+    public Employee get(int id) {
+        return employeeRepository.get(id);
     }
 
     @Override
-    public List<EmployeeResponse> getAll() {
-        return employeeRepository.getAll()
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
+    public List<Employee> getAll() {
+        return employeeRepository.getAll();
     }
 
     @Override
@@ -102,18 +97,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeUpdateRequest getForUpdate(int id) {
-        Employee employee = employeeRepository.get(id);
-        return mapper.toUpdateRequest(employee);
+    public Employee getForUpdate(int id) {
+        return employeeRepository.get(id);
     }
 
     @Override
-    public List<EmployeeShort> getJournalists() {
-        return mapper.toShortList(employeeRepository.findByType(Type.JOURNALIST));
+    public List<EmployeeShort> getByIds(Set<Integer> ids){
+        return employeeRepository.findById(ids);
     }
 
     @Override
-    public List<EmployeeShort> getEditors() {
-        return mapper.toShortList(employeeRepository.findByType(Type.EDITOR));
+    public List<Employee> getByType(Type type){
+        return employeeRepository.getAll().stream()
+                .filter(e -> e.type() == type)
+                .toList();
     }
 }

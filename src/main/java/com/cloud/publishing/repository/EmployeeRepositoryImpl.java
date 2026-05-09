@@ -5,6 +5,7 @@ import static com.cloud.publishing.constants.employee.EmployeeField.*;
 import static com.cloud.publishing.constants.employee.EmployeeMessage.*;
 import static com.cloud.publishing.constants.employee.EmployeeSQL.*;
 
+import com.cloud.publishing.dto.response.EmployeeShort;
 import com.cloud.publishing.exception.ObjectNotFoundException;
 import com.cloud.publishing.model.Education;
 import java.sql.Connection;
@@ -150,40 +151,22 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     }
 
     @Override
-    public List<Employee> findByType(Type type) {
-        List<Employee> employees = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_TYPE)) {
-            statement.setString(1, type.name());
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    employees.add(resultSetToEmployee(resultSet));
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(FAILED_TO_FETCH_EMPLOYEES_BY_TYPE, e);
-        }
-        return employees;
-    }
-
-    @Override
-    public List<Employee> findByIdsAndType(Set<Integer> ids, Type type) {
+    public List<EmployeeShort> findById(Set<Integer> ids) {
         if (ids.isEmpty()) {
             return List.of();
         }
         String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
-        String sql = SQL_FIND_BY_TYPE + " AND e.id IN (" + placeholders + ")";
-        List<Employee> employees = new ArrayList<>();
+        String sql = String.format(SQL_FIND_BY_IDS, placeholders);
+        List<EmployeeShort> employees = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, type.name());
-            int index = 2;
+            int index = 1;
             for (Integer id : ids) {
                 statement.setInt(index++, id);
             }
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    employees.add(resultSetToEmployee(resultSet));
+                    employees.add(resultSetToShortEmployee(resultSet));
                 }
             }
         } catch (SQLException e) {
@@ -233,6 +216,15 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_GET_MSG, e);
         }
+    }
+
+    private EmployeeShort resultSetToShortEmployee(ResultSet resultSet) throws SQLException {
+        return new EmployeeShort(
+                resultSet.getInt(ID),
+                resultSet.getString(FIRST_NAME),
+                resultSet.getString(LAST_NAME),
+                resultSet.getString(MIDDLE_NAME)
+        );
     }
 
     private Employee resultSetToEmployee(ResultSet resultSet) throws SQLException {

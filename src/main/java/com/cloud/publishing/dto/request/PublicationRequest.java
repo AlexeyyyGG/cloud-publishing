@@ -28,7 +28,7 @@ public record PublicationRequest(
     public static PublicationRequest empty() {
         return new PublicationRequest(
                 null,
-                null,
+                PublicationType.NEWSPAPER,
                 null,
                 new HashSet<>(),
                 new HashSet<>(),
