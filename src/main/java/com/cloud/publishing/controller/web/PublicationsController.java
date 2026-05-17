@@ -9,6 +9,7 @@ import com.cloud.publishing.dto.response.EmployeeShort;
 import com.cloud.publishing.dto.response.PublicationGetDTO;
 import com.cloud.publishing.mapper.EmployeeMapper;
 import com.cloud.publishing.mapper.PublicationMapper;
+import com.cloud.publishing.model.Category;
 import com.cloud.publishing.model.PublicationType;
 import com.cloud.publishing.model.Type;
 import com.cloud.publishing.service.CategoryService;
@@ -55,11 +56,14 @@ public class PublicationsController {
 
     @GetMapping
     public String getAll(Model model) {
+        List<Category> categories = categoryService.getAll();
         List<PublicationGetDTO> publications =
                 publicationService.getAll().stream()
                         .map(pub -> publicationMapper.toGetDTO(
                                 pub,
-                                categoryService.getByIds(pub.categories())
+                                categories.stream()
+                                        .filter(c -> pub.categories().contains(c.id()))
+                                        .toList()
                         ))
                         .toList();
         model.addAttribute(PublicationModelAttrs.PUBLICATIONS, publications);

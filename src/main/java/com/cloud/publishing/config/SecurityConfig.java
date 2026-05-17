@@ -52,15 +52,9 @@ public class SecurityConfig {
                         .accessDeniedHandler((
                                 request,
                                 response,
-                                accessDeniedException
-                        ) -> {
-                            request.setAttribute(
-                                    "errorMessage",
-                                    "Упс! У вас нет доступа к этой странице."
-                            );
-                            request.getRequestDispatcher("/WEB-INF/views/error/403.jsp")
-                                    .forward(request, response);
-                        }))
+                                accessDeniedException) ->
+                                request.getRequestDispatcher("/WEB-INF/views/error/403.jsp")
+                                        .forward(request, response)))
                 .formLogin(form -> form
                         .defaultSuccessUrl("/web/employees", false)
                 )

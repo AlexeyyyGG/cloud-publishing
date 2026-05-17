@@ -14,10 +14,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import com.cloud.publishing.model.Employee;
 import com.cloud.publishing.model.Gender;
@@ -155,19 +155,16 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
         if (ids.isEmpty()) {
             return List.of();
         }
-        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
-        String sql = String.format(SQL_FIND_BY_IDS, placeholders);
+        String idString = ids.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        String sql = String.format(SQL_FIND_BY_IDS, idString);
         List<EmployeeShort> employees = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            int index = 1;
-            for (Integer id : ids) {
-                statement.setInt(index++, id);
-            }
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    employees.add(resultSetToShortEmployee(resultSet));
-                }
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                employees.add(resultSetToShortEmployee(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_GET_MSG, e);

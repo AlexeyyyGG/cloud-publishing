@@ -57,7 +57,7 @@ public class PublicationsController {
         logger.info("getAll called");
         List<Publication> publications = publicationService.getAll();
         List<Category> categories = categoryService.getAll();
-        List<PublicationGetDTO> publicationGetDTOS = publications.stream()
+        List<PublicationGetDTO> dtos = publications.stream()
                 .map(publication -> {
                     List<Category> pubCategories = categories.stream()
                             .filter(c -> publication.categories().contains(c.id()))
@@ -66,7 +66,7 @@ public class PublicationsController {
                 })
                 .toList();
         logger.debug("Found {} publications", publications.size());
-        return new ResponseEntity<>(publicationGetDTOS, HttpStatus.OK);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @GetMapping(value = Urls.ID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -102,9 +102,12 @@ public class PublicationsController {
     }
 
     private PublicationResponse assemblePublicationResponse(Publication publication) {
-        List<Category> categories = categoryService.getByIds(publication.categories());
+        List<Category> categories = categoryService.getAll();
+        List<Category> pubCategories = categories.stream()
+                .filter(c -> publication.categories().contains(c.id()))
+                .toList();
         List<EmployeeShort> journalists = employeeService.getByIds(publication.journalists());
         List<EmployeeShort> editors = employeeService.getByIds(publication.editors());
-        return publicationMapper.toResponse(publication, categories, journalists, editors);
+        return publicationMapper.toResponse(publication, pubCategories, journalists, editors);
     }
 }

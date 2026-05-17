@@ -2,7 +2,6 @@ package com.cloud.publishing.service;
 
 import com.cloud.publishing.model.Category;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Service for accessing category reference data.
@@ -16,6 +15,4 @@ public interface CategoryService {
      * @return list of {@link Category}
      */
     List<Category> getAll();
-
-    List<Category> getByIds(Set<Integer> ids);
 }

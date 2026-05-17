@@ -4,13 +4,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8"/>
-    <title>Доступ запрещён</title>
+    <title>Страница не найдена</title>
 </head>
 <body>
 <main>
-    <h1>Упс!</h1>
+    <h1>404</h1>
     <p>
-        У вас нет доступа к этой странице.
+        Страница не найдена
     </p>
 </main>
 </body>
