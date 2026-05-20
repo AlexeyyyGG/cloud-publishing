@@ -105,12 +105,15 @@ CREATE TABLE reviews
     FOREIGN KEY (author) REFERENCES employees(id)
 );
 
-INSERT INTO categories (name) VALUES ('Sport');
-INSERT INTO categories (name) VALUES ('Leisure');
-INSERT INTO categories (name) VALUES ('Finance');
-INSERT INTO categories (name) VALUES ('Advertising');
-INSERT INTO categories (name) VALUES ('Humor');
-INSERT INTO categories (name) VALUES ('Work');
+INSERT INTO categories (name) VALUES ('Спорт');
+INSERT INTO categories (name) VALUES ('Отдых');
+INSERT INTO categories (name) VALUES ('Работа');
+INSERT INTO categories (name) VALUES ('Финансы');
+INSERT INTO categories (name) VALUES ('Погода');
+INSERT INTO categories (name) VALUES ('Гороскоп');
+INSERT INTO categories (name) VALUES ('Реклама');
+INSERT INTO categories (name) VALUES ('Объявления');
+INSERT INTO categories (name) VALUES ('Юмор');
 
 INSERT INTO employees (
     first_name,

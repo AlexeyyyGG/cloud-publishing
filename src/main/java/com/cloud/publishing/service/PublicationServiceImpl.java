@@ -3,13 +3,11 @@ package com.cloud.publishing.service;
 import static com.cloud.publishing.constants.publication.PublicationMessage.PUBLICATION_NOT_FOUND_MSG;
 
 import com.cloud.publishing.dto.request.PublicationRequest;
-import com.cloud.publishing.dto.response.PublicationResponse;
 import com.cloud.publishing.exception.ObjectNotFoundException;
 import java.util.List;
 import com.cloud.publishing.mapper.PublicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.cloud.publishing.dto.response.PublicationGetDTO;
 import com.cloud.publishing.model.Publication;
 import com.cloud.publishing.repository.PublicationRepository;
 
@@ -25,27 +23,25 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public PublicationResponse add(PublicationRequest request) {
+    public Publication add(PublicationRequest request) {
         Publication publication = mapper.toEntity(request);
-        Publication saved = repository.add(publication);
-        return mapper.toResponse(saved);
+        return repository.add(publication);
     }
 
     @Override
-    public PublicationResponse update(int id, PublicationRequest request) {
+    public Publication update(int id, PublicationRequest request) {
         Publication publication = mapper.toEntity(id, request);
         repository.update(publication);
-        return mapper.toResponse(publication);
+        return publication;
     }
 
     @Override
-    public PublicationResponse get(int id) {
-        Publication existingPublication = repository.get(id);
-        return mapper.toResponse(existingPublication);
+    public Publication get(int id) {
+        return repository.get(id);
     }
 
     @Override
-    public List<PublicationGetDTO> getAll() {
+    public List<Publication> getAll() {
         return repository.getAll();
     }
 

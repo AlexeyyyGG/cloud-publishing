@@ -2,8 +2,11 @@ package com.cloud.publishing.service;
 
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
-import com.cloud.publishing.dto.response.EmployeeResponse;
+import com.cloud.publishing.dto.response.EmployeeShort;
+import com.cloud.publishing.model.Employee;
+import com.cloud.publishing.model.Type;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service interface for managing employees. Provides operations for creating, updating, retrieving
@@ -14,41 +17,57 @@ public interface EmployeeService {
      * Creates a new employee.
      *
      * @param request {@link EmployeeRequest} containing employee data
-     * @return created {@link EmployeeResponse}
+     * @return created {@link Employee}
      */
-    EmployeeResponse add(EmployeeRequest request);
+    Employee add(EmployeeRequest request);
 
     /**
      * Updates an existing employee.
      *
      * @param id      identifier of the employee to update
      * @param request {@link EmployeeUpdateRequest} containing updated employee data
-     * @return updated {@link EmployeeResponse}
+     * @return updated {@link Employee}
      */
-    EmployeeResponse update(int id, EmployeeUpdateRequest request);
+    Employee update(int id, EmployeeUpdateRequest request);
 
     /**
      * Returns employee by id.
      *
      * @param id identifier of the employee
-     * @return {@link EmployeeResponse}
+     * @return {@link Employee}
      */
-    EmployeeResponse get(int id);
+    Employee get(int id);
 
     /**
      * Returns employee data prepared for update form.
      *
      * @param id identifier of the employee
-     * @return {@link EmployeeUpdateRequest}
+     * @return {@link Employee}
      */
-    EmployeeUpdateRequest getForUpdate(int id);
+    Employee getForUpdate(int id);
 
     /**
      * Returns list of all employees.
      *
-     * @return list of {@link EmployeeResponse}
+     * @return list of {@link Employee}
      */
-    List<EmployeeResponse> getAll();
+    List<Employee> getAll();
+
+    /**
+     * Returns employees by IDs.
+     *
+     * @param ids employee IDs
+     * @return list of {@link EmployeeShort}
+     */
+    List<EmployeeShort> getByIds(Set<Integer> ids);
+
+    /**
+     * Returns employees by type.
+     *
+     * @param type employee Type
+     * @return list of {@link Employee}
+     */
+    List<Employee> getByType(Type type);
 
     /**
      * Deletes employee by id.

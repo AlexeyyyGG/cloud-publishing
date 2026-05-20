@@ -35,4 +35,8 @@ public class EmployeeSQL {
             FROM employees e
             WHERE e.email = ?""";
     public static final String SQL_RESET_CE = "UPDATE employees SET is_chief_editor = false WHERE is_chief_editor = true";
+    public static final String SQL_FIND_BY_IDS = """
+            SELECT id, first_name, last_name, middle_name
+            FROM employees
+            WHERE id IN (%s)""";
 }

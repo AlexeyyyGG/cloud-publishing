@@ -22,11 +22,6 @@ public class PublicationSQL {
             "DELETE FROM publication_editors WHERE publication_id = ?";
     public static final String SQL_DELETE = "DELETE FROM publications WHERE id=?";
     public static final String SQL_GET_PUBLICATION = "SELECT id, name, publication_type, theme FROM publications";
-    public static final String SQL_GET_ALL_CATEGORIES = """
-            SELECT publication_id, c.name
-            FROM publication_categories pc
-            JOIN categories c ON pc.category_id = c.id;
-            """;
     public static final String SQL_EXIST = "SELECT EXISTS(SELECT 1 FROM publications WHERE id = ?)";
     public static final String SQL_GET_EMPLOYEE = """
             SELECT e.id
@@ -40,4 +35,7 @@ public class PublicationSQL {
             """;
     public static final String SQL_GET_BY_ID_PUBLICATION =
             "SELECT id, name, publication_type, theme FROM publications WHERE id = ?";
+    public static final String SQL_GET_ALL_CATEGORIES = "SELECT publication_id, category_id FROM publication_categories";
+    public static final String SQL_GET_ALL_JOURNALISTS = "SELECT publication_id, employee_id FROM publication_journalists";
+    public static final String SQL_GET_ALL_EDITORS = "SELECT publication_id, employee_id FROM publication_editors";
 }

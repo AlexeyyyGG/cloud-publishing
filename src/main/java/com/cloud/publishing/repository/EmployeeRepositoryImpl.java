@@ -5,6 +5,7 @@ import static com.cloud.publishing.constants.employee.EmployeeField.*;
 import static com.cloud.publishing.constants.employee.EmployeeMessage.*;
 import static com.cloud.publishing.constants.employee.EmployeeSQL.*;
 
+import com.cloud.publishing.dto.response.EmployeeShort;
 import com.cloud.publishing.exception.ObjectNotFoundException;
 import com.cloud.publishing.model.Education;
 import java.sql.Connection;
@@ -15,6 +16,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import com.cloud.publishing.model.Employee;
 import com.cloud.publishing.model.Gender;
@@ -136,8 +139,8 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_LIST);
-                ResultSet resultSet = statement.executeQuery()) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(SQL_LIST)) {
             while (resultSet.next()) {
                 employees.add(resultSetToEmployee(resultSet));
             }
@@ -145,6 +148,28 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_LIST_MSG, e);
         }
+    }
+
+    @Override
+    public List<EmployeeShort> findById(Set<Integer> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        String idString = ids.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        String sql = String.format(SQL_FIND_BY_IDS, idString);
+        List<EmployeeShort> employees = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                employees.add(resultSetToShortEmployee(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(FAILED_TO_GET_MSG, e);
+        }
+        return employees;
     }
 
     @Override
@@ -166,8 +191,8 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     @Override
     public void resetChiefEditor() {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_RESET_CE)) {
-            statement.executeUpdate();
+                Statement statement = connection.createStatement()) {
+            statement.executeUpdate(SQL_RESET_CE);
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_RESET_CHIEF_EDITOR, e);
         }
@@ -188,6 +213,15 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_GET_MSG, e);
         }
+    }
+
+    private EmployeeShort resultSetToShortEmployee(ResultSet resultSet) throws SQLException {
+        return new EmployeeShort(
+                resultSet.getInt(ID),
+                resultSet.getString(FIRST_NAME),
+                resultSet.getString(LAST_NAME),
+                resultSet.getString(MIDDLE_NAME)
+        );
     }
 
     private Employee resultSetToEmployee(ResultSet resultSet) throws SQLException {

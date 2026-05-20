@@ -9,6 +9,8 @@ public class PublicationField {
     public static final String PUBLICATION_TYPE = "publication_type";
     public static final String THEME = "theme";
     public static final String PUBLICATION_ID = "publication_id";
+    public static final String EMPLOYEE_ID = "employee_id";
+    public static final String CATEGORY_ID = "category_id";
     public static final String PUBLICATION_JOURNALISTS = "publication_journalists";
     public static final String PUBLICATION_EDITORS = "publication_editors";
 }

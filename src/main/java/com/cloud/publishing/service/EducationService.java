@@ -1,21 +1,18 @@
 package com.cloud.publishing.service;
 
 import com.cloud.publishing.model.Education;
-import com.cloud.publishing.repository.EducationRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class EducationService {
-    private final EducationRepository repository;
-
-    @Autowired
-    public EducationService(EducationRepository repository) {
-        this.repository = repository;
-    }
-
-    public List<Education> getAll() {
-        return repository.getAll();
-    }
+/**
+ * Service for accessing education reference data.
+ * <p>
+ * Education entities are predefined and stored in the database. They are not editable.
+ */
+public interface EducationService {
+    /**
+     * Returns all available entries.
+     *
+     * @return list of {@link Education}
+     */
+    List<Education> getAll();
 }

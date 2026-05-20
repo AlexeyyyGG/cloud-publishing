@@ -5,6 +5,8 @@ import com.cloud.publishing.constants.Urls;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
+import com.cloud.publishing.mapper.EmployeeMapper;
+import com.cloud.publishing.model.Employee;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,33 +30,36 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(Urls.EMPLOYEES)
 public class EmployeesController {
     private final EmployeeService service;
+    private final EmployeeMapper mapper;
     private static final Logger logger = LoggerFactory.getLogger(EmployeesController.class);
 
     @Autowired
-    public EmployeesController(EmployeeService service) {
+    public EmployeesController(EmployeeService service, EmployeeMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<EmployeeResponse>> getAll() {
         logger.info("getAll called");
-        List<EmployeeResponse> employees = service.getAll();
+        List<Employee> employees = service.getAll();
         logger.debug("Found {} employees", employees.size());
-        return ResponseEntity.status(HttpStatus.OK).body(employees);
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toResponse(employees));
     }
 
     @GetMapping(value = Urls.ID, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeResponse> get(@PathVariable(Parameters.ID) int id) {
         logger.info("get called with id={}", id);
-        EmployeeResponse employee = service.get(id);
-        return ResponseEntity.status(HttpStatus.OK).body(employee);
+        Employee employee = service.get(id);
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toResponse(employee));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public ResponseEntity<EmployeeResponse> add(@Valid @RequestBody EmployeeRequest request) {
         logger.info("add called with: {}", request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(request));
+        Employee employee = service.add(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(employee));
     }
 
     @PutMapping(value = Urls.ID, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -64,8 +69,8 @@ public class EmployeesController {
             @Valid @RequestBody EmployeeUpdateRequest employeeUpdateRequest
     ) {
         logger.info("update called for id {}", id);
-        EmployeeResponse updated = service.update(id, employeeUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(updated);
+        Employee updated = service.update(id, employeeUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toResponse(updated));
     }
 
     @DeleteMapping(value = {Urls.ID})

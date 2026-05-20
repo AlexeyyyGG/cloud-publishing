@@ -1,5 +1,6 @@
 package com.cloud.publishing.dto.response;
 
+import com.cloud.publishing.model.Category;
 import com.cloud.publishing.model.PublicationType;
 import java.util.List;
 
@@ -8,6 +9,6 @@ public record PublicationGetDTO(
         String name,
         PublicationType publicationType,
         String theme,
-        List<String> category
+        List<Category> categories
 ) {
 }

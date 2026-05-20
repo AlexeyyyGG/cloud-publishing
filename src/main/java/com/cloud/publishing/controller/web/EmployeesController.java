@@ -7,6 +7,8 @@ import com.cloud.publishing.constants.employee.EmployeePages;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
+import com.cloud.publishing.mapper.EmployeeMapper;
+import com.cloud.publishing.model.Employee;
 import com.cloud.publishing.model.Gender;
 import com.cloud.publishing.model.Type;
 import com.cloud.publishing.service.EducationService;
@@ -33,13 +35,19 @@ import com.cloud.publishing.service.EmployeeService;
 public class EmployeesController {
     private final EmployeeService employeeService;
     private final EducationService educationService;
+    private final EmployeeMapper mapper;
     private static final int MIN_BIRTH_YEAR = 1960;
     private static final int MAX_BIRTH_YEAR = 2008;
 
     @Autowired
-    public EmployeesController(EmployeeService employeeService, EducationService educationService) {
+    public EmployeesController(
+            EmployeeService employeeService,
+            EducationService educationService,
+            EmployeeMapper mapper
+    ) {
         this.employeeService = employeeService;
         this.educationService = educationService;
+        this.mapper = mapper;
     }
 
     @InitBinder
@@ -58,7 +66,9 @@ public class EmployeesController {
 
     @GetMapping
     public String getAll(Model model) {
-        List<EmployeeResponse> employees = employeeService.getAll();
+        List<EmployeeResponse> employees = employeeService.getAll().stream()
+                .map(mapper::toResponse)
+                .toList();
         model.addAttribute(EmployeeModelAttrs.EMPLOYEES, employees);
         return EmployeePages.LIST;
     }
@@ -86,8 +96,11 @@ public class EmployeesController {
     @GetMapping(Urls.ID + Urls.EDIT)
     @PreAuthorize("hasRole('CHIEF_EDITOR')")
     public String showUpdateForm(Model model, @PathVariable(Parameters.ID) int id) {
-        model.addAttribute(EmployeeModelAttrs.EMPLOYEE_UPDATE_REQUEST,
-                employeeService.getForUpdate(id));
+        Employee employee = employeeService.getForUpdate(id);
+        model.addAttribute(
+                EmployeeModelAttrs.EMPLOYEE_UPDATE_REQUEST,
+                mapper.toUpdateRequest(employee)
+        );
         model.addAttribute(EmployeeModelAttrs.EMPLOYEE_ID, id);
         return EmployeePages.EDIT;
     }

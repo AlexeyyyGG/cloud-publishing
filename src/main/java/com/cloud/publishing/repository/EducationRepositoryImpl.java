@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
@@ -41,8 +42,8 @@ public class EducationRepositoryImpl implements EducationRepository {
     public List<Education> getAll() {
         List<Education> educations = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_GET_ALL);
-                ResultSet resultSet = statement.executeQuery()) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(SQL_GET_ALL)) {
             while (resultSet.next()) {
                 educations.add(resultSetToEducation(resultSet));
             }

@@ -3,8 +3,10 @@ package com.cloud.publishing.mapper;
 import com.cloud.publishing.dto.request.EmployeeRequest;
 import com.cloud.publishing.dto.request.EmployeeUpdateRequest;
 import com.cloud.publishing.dto.response.EmployeeResponse;
+import com.cloud.publishing.dto.response.EmployeeShort;
 import com.cloud.publishing.model.Education;
 import com.cloud.publishing.model.Employee;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -22,8 +24,12 @@ public interface EmployeeMapper {
 
     EmployeeResponse toResponse(Employee employee);
 
+    List<EmployeeResponse> toResponse(List<Employee> employees);
+
     @Mapping(target = "educationId", source = "education.id")
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "passwordConfirm", ignore = true)
     EmployeeUpdateRequest toUpdateRequest(Employee employee);
+
+    EmployeeShort toShort(Employee employee);
 }

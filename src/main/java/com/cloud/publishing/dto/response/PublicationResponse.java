@@ -1,6 +1,7 @@
 package com.cloud.publishing.dto.response;
 
-import java.util.Set;
+import com.cloud.publishing.model.Category;
+import java.util.List;
 import com.cloud.publishing.model.PublicationType;
 
 public record PublicationResponse(
@@ -8,8 +9,8 @@ public record PublicationResponse(
         String name,
         PublicationType publicationType,
         String theme,
-        Set<Integer> categories,
-        Set<Integer> journalists,
-        Set<Integer> editors
+        List<Category> categories,
+        List<EmployeeShort> journalists,
+        List<EmployeeShort> editors
 ) {
 }

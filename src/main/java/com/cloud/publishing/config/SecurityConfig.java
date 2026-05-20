@@ -30,7 +30,7 @@ public class SecurityConfig {
             JwtFilter jwtFilter
     ) throws Exception {
         http
-                .securityMatcher("/employees/**","/auth/**")
+                .securityMatcher("/employees/**","/auth/**","/publications/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -45,17 +45,24 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/web/**").authenticated()
+                        .anyRequest().permitAll())
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((
+                                request,
+                                response,
+                                accessDeniedException) ->
+                                request.getRequestDispatcher("/WEB-INF/views/error/403.jsp")
+                                        .forward(request, response)))
+                .formLogin(form -> form
+                        .defaultSuccessUrl("/web/employees", false)
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
-                        .permitAll())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/web/**").authenticated()
-                        .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/web/employees", true)
                         .permitAll());
         return http.build();
     }
