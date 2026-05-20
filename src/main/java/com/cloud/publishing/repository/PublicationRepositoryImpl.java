@@ -231,8 +231,8 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
 
     private List<Publication> loadPublications(Connection connection) throws SQLException {
         List<Publication> publications = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_GET_PUBLICATION);
-                ResultSet resultSet = statement.executeQuery()) {
+        try (Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(SQL_GET_PUBLICATION)) {
             while (resultSet.next()) {
                 publications.add(new Publication(
                         resultSet.getInt(ID),
@@ -255,8 +255,8 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
             String colName
     ) throws SQLException {
         Map<Integer, Set<Integer>> relations = new HashMap<>();
-        try (PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
+        try (Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 int publicationId = resultSet.getInt(PUBLICATION_ID);
                 int linkedId = resultSet.getInt(colName);

@@ -139,8 +139,8 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_LIST);
-                ResultSet resultSet = statement.executeQuery()) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(SQL_LIST)) {
             while (resultSet.next()) {
                 employees.add(resultSetToEmployee(resultSet));
             }
@@ -191,8 +191,8 @@ public class EmployeeRepositoryImpl extends BaseRepository implements EmployeeRe
     @Override
     public void resetChiefEditor() {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SQL_RESET_CE)) {
-            statement.executeUpdate();
+                Statement statement = connection.createStatement()) {
+            statement.executeUpdate(SQL_RESET_CE);
         } catch (SQLException e) {
             throw new RuntimeException(FAILED_TO_RESET_CHIEF_EDITOR, e);
         }

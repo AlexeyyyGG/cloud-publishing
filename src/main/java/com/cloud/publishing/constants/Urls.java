@@ -14,4 +14,5 @@ public class Urls {
     public static final String AUTH = "/auth";
     public static final String LOGIN = "/login";
     public static final String REFRESH = "/refresh";
+    public static final String WEB = "/web/**";
 }
