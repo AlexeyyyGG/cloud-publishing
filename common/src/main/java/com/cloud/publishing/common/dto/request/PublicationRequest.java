@@ -1,6 +1,6 @@
 package com.cloud.publishing.common.dto.request;
 
-import com.cloud.publishing.common.reference.PublicationType;
+import com.cloud.publishing.model.publication.PublicationType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,7 +15,7 @@ public record PublicationRequest(
         String name,
         @JsonProperty("publication_type")
         @NotNull(message = "Необходимо указать тип публикации")
-        com.cloud.publishing.common.reference.PublicationType publicationType,
+        PublicationType publicationType,
         @NotEmpty(message = "Тематика обязательна к заполнению")
         String theme,
         @NotEmpty(message = "Необходимо указать категории")

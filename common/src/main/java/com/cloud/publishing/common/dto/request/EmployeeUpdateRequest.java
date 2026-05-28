@@ -1,9 +1,9 @@
 package com.cloud.publishing.common.dto.request;
 
-import com.cloud.publishing.common.reference.Type;
-import com.cloud.publishing.common.reference.Gender;
 import com.cloud.publishing.common.validation.PasswordMatchable;
 import com.cloud.publishing.common.validation.PasswordMatches;
+import com.cloud.publishing.model.employee.Gender;
+import com.cloud.publishing.model.employee.Type;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;

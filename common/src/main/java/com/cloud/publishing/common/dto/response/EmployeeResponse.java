@@ -1,8 +1,8 @@
 package com.cloud.publishing.common.dto.response;
 
-import com.cloud.publishing.common.reference.Education;
-import com.cloud.publishing.common.reference.Gender;
-import com.cloud.publishing.common.reference.Type;
+import com.cloud.publishing.model.employee.Education;
+import com.cloud.publishing.model.employee.Gender;
+import com.cloud.publishing.model.employee.Type;
 
 public record EmployeeResponse(
         Integer id,

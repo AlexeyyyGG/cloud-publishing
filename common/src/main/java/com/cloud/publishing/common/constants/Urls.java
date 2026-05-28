@@ -15,4 +15,6 @@ public class Urls {
     public static final String LOGIN = "/login";
     public static final String REFRESH = "/refresh";
     public static final String WEB = "/web/**";
+    public static final String EDUCATIONS = "/educations";
+    public static final String CATEGORIES ="/categories";
 }
