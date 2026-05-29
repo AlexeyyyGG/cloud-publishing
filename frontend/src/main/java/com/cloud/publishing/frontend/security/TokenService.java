@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -51,17 +52,22 @@ public class TokenService {
     private String refreshToken(HttpSession session) {
         String token = (String) session.getAttribute(REFRESH_TOKEN);
         String url = backendUrl + Urls.AUTH + Urls.REFRESH;
-        AuthResponse response = restTemplate.postForObject(
-                url,
-                new RefreshRequest(token),
-                AuthResponse.class
-        );
-        if (response == null || response.accessToken() == null) {
+        try {
+            AuthResponse response = restTemplate.postForObject(
+                    url,
+                    new RefreshRequest(token),
+                    AuthResponse.class
+            );
+            if (response == null || response.accessToken() == null) {
+                session.invalidate();
+                throw new InsufficientAuthenticationException(SESSION_EXPIRED_MSG);
+            }
+            session.setAttribute(ACCESS_TOKEN, response.accessToken());
+            session.setAttribute(REFRESH_TOKEN, response.refreshToken());
+            return response.accessToken();
+        } catch (HttpStatusCodeException e) {
             session.invalidate();
-            throw new InsufficientAuthenticationException(SESSION_EXPIRED_MSG);
+            throw new InsufficientAuthenticationException(SESSION_EXPIRED_MSG, e);
         }
-        session.setAttribute(ACCESS_TOKEN, response.accessToken());
-        session.setAttribute(REFRESH_TOKEN, response.refreshToken());
-        return response.accessToken();
     }
 }

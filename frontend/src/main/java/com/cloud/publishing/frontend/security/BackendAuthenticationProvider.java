@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
@@ -36,7 +38,12 @@ public class BackendAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
         LoginRequest request = new LoginRequest(username, password);
         String url = backendUrl + Urls.AUTH + Urls.LOGIN;
-        AuthResponse response = restTemplate.postForObject(url, request, AuthResponse.class);
+        AuthResponse response;
+        try {
+            response = restTemplate.postForObject(url, request, AuthResponse.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            throw new BadCredentialsException("Неверный логин или пароль");
+        }
         if (response == null || response.accessToken() == null) {
             throw new AuthenticationServiceException(ERROR_MESSAGE);
         }
