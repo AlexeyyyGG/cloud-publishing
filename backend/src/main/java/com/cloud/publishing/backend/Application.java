@@ -15,7 +15,11 @@ public class Application {
         tomcat.setPort(PORT);
         tomcat.getConnector();
         tomcat.getHost().setAppBase(".");
-        tomcat.addWebapp("", new File("backend").getAbsolutePath());
+        File webAppDir = new File("backend");
+        if (!webAppDir.exists()) {
+            webAppDir = new File(".");
+        }
+        tomcat.addWebapp("", webAppDir.getAbsolutePath());
         tomcat.start();
         tomcat.getServer().await();
     }

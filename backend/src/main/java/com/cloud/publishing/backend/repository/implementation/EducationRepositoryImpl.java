@@ -1,7 +1,8 @@
-package com.cloud.publishing.backend.repository;
+package com.cloud.publishing.backend.repository.implementation;
 
 import static com.cloud.publishing.common.constants.EducationConstants.*;
 
+import com.cloud.publishing.backend.repository.EducationRepository;
 import com.cloud.publishing.model.employee.Education;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

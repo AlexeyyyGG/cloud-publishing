@@ -1,5 +1,6 @@
 package com.cloud.publishing.frontend.config;
 
+import com.cloud.publishing.common.constants.Urls;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,7 +26,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(new HttpSessionCsrfTokenRepository()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/web/**").authenticated()
+                        .requestMatchers(Urls.WEB).authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler((
@@ -40,7 +41,7 @@ public class SecurityConfig {
                         .successHandler(successHandler))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl(Urls.LOGIN)
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .permitAll()

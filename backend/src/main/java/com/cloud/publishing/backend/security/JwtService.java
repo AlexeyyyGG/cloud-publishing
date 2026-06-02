@@ -1,5 +1,7 @@
 package com.cloud.publishing.backend.security;
 
+import static com.cloud.publishing.backend.security.SecurityConstants.*;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,9 +20,6 @@ public class JwtService {
     private final SecretKey secretKey;
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
-    private static final String ACCESS_TOKEN_TYPE = "access";
-    private static final String REFRESH_TOKEN_TYPE = "refresh";
-    private static final String TYPE = "type";
     private static final String ROLES = "roles";
     private static final String INVALID_TOKEN_TYPE = "Invalid token type";
 

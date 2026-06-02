@@ -1,9 +1,11 @@
-package com.cloud.publishing.backend.repository;
+package com.cloud.publishing.backend.repository.implementation;
 
 import static com.cloud.publishing.common.constants.publication.PublicationField.*;
 import static com.cloud.publishing.common.constants.publication.PublicationMessage.*;
 import static com.cloud.publishing.common.constants.publication.PublicationSQL.*;
 
+import com.cloud.publishing.backend.repository.BaseRepository;
+import com.cloud.publishing.backend.repository.PublicationRepository;
 import com.cloud.publishing.model.publication.Publication;
 import com.cloud.publishing.model.publication.PublicationType;
 import javax.sql.DataSource;

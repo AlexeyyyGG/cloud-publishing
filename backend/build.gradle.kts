@@ -1,28 +1,34 @@
 plugins {
-    java
+    id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-val springVersion = "6.2.9"
+tasks.shadowJar {
+    archiveClassifier.set("")
+    manifest {
+        attributes["Main-Class"] = "com.cloud.publishing.backend.Application"
+    }
+}
 
 dependencies {
     implementation(project(":common"))
     implementation(project(":model"))
-    implementation("org.springframework:spring-context:$springVersion")
-    implementation("org.springframework:spring-web:$springVersion")
-    implementation("org.springframework:spring-webmvc:$springVersion")
-    implementation("org.springframework:spring-jdbc:$springVersion")
-    implementation("org.springframework.security:spring-security-web:6.3.1")
-    implementation("org.springframework.security:spring-security-config:6.3.1")
-    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    implementation(libs.spring.context)
+    implementation(libs.spring.web)
+    implementation(libs.spring.webmvc)
+    implementation(libs.spring.jdbc)
+    implementation(libs.springSecurity.web)
+    implementation(libs.springSecurity.config)
+    implementation(libs.jjwt.api)
+    runtimeOnly(libs.jjwt.impl)
+    runtimeOnly(libs.jjwt.jackson)
+    annotationProcessor(libs.mapstruct.processor)
+    implementation(libs.mapstruct)
+    implementation(libs.hibernate.validator)
+    implementation(libs.jackson.databind)
+    compileOnly(libs.servlet.api)
+    implementation(libs.tomcat.jasper)
     implementation("com.mysql:mysql-connector-j:8.3.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("ch.qos.logback:logback-classic:1.5.6")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
-    implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
-    implementation("org.apache.tomcat.embed:tomcat-embed-jasper:11.0.7")
 }

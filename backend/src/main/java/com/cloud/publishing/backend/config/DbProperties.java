@@ -14,6 +14,18 @@ public class DbProperties {
     @Value("${db.password}")
     private String password;
 
+    @Value("${db.cachePrepStmts}")
+    private boolean cachePrepStmts;
+
+    @Value("${db.prepStmtCacheSize}")
+    private int prepStmtCacheSize;
+
+    @Value("${db.prepStmtCacheSqlLimit}")
+    private int prepStmtCacheSqlLimit;
+
+    @Value("${db.initializationFailTimeout}")
+    private long initializationFailTimeout;
+
     public String getUrl() {
         return url;
     }
@@ -24,5 +36,21 @@ public class DbProperties {
 
     public String getPassword() {
         return password;
+    }
+
+    public boolean isCachePrepStmts() {
+        return cachePrepStmts;
+    }
+
+    public int getPrepStmtCacheSize() {
+        return prepStmtCacheSize;
+    }
+
+    public int getPrepStmtCacheSqlLimit() {
+        return prepStmtCacheSqlLimit;
+    }
+
+    public long getInitializationFailTimeout() {
+        return initializationFailTimeout;
     }
 }

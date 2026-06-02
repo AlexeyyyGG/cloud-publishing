@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.scan.StandardJarScanner;
 
 public class Application {
     private static final int PORT = 8081;
@@ -15,7 +17,15 @@ public class Application {
         tomcat.setPort(PORT);
         tomcat.getConnector();
         tomcat.getHost().setAppBase(".");
-        tomcat.addWebapp("", new File("frontend/src/main/webapp").getAbsolutePath());
+        File webAppDir = new File("frontend/src/main/webapp");
+        if (!webAppDir.exists()) {
+            webAppDir = new File("webapp");
+        }
+        Context context = tomcat.addWebapp("", webAppDir.getAbsolutePath());
+        context.setParentClassLoader(Application.class.getClassLoader());
+        StandardJarScanner jarScanner = new StandardJarScanner();
+        jarScanner.setScanManifest(true);
+        context.setJarScanner(jarScanner);
         tomcat.start();
         tomcat.getServer().await();
     }

@@ -1,6 +1,5 @@
 package com.cloud.publishing.frontend.client;
 
-
 import com.cloud.publishing.common.constants.Urls;
 import com.cloud.publishing.model.publication.Category;
 import java.util.Arrays;

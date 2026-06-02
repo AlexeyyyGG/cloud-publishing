@@ -1,6 +1,7 @@
-package com.cloud.publishing.backend.service;
+package com.cloud.publishing.backend.service.implementation;
 
-import com.cloud.publishing.backend.repository.CategoryRepositoryImpl;
+import com.cloud.publishing.backend.repository.implementation.CategoryRepositoryImpl;
+import com.cloud.publishing.backend.service.CategoryService;
 import com.cloud.publishing.model.publication.Category;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

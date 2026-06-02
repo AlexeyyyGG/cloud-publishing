@@ -1,5 +1,9 @@
 package com.cloud.publishing.backend.security;
 
+import static com.cloud.publishing.backend.security.SecurityConstants.ACCESS_TOKEN_TYPE;
+import static com.cloud.publishing.backend.security.SecurityConstants.TYPE;
+
+import com.cloud.publishing.common.constants.Urls;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -22,9 +26,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final String ACCESS_TOKEN_TYPE = "access";
-    private static final String AUTH_PATH = "/auth/";
-    private static final String TYPE = "type";
 
     @Autowired
     public JwtFilter(JwtService jwtService) {
@@ -33,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().startsWith(AUTH_PATH);
+        return request.getServletPath().startsWith(Urls.AUTH + "/");
     }
 
     @Override

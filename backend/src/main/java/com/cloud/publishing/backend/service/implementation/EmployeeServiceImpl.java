@@ -1,7 +1,8 @@
-package com.cloud.publishing.backend.service;
+package com.cloud.publishing.backend.service.implementation;
 
 import static com.cloud.publishing.common.constants.employee.EmployeeMessage.*;
 
+import com.cloud.publishing.backend.service.EmployeeService;
 import com.cloud.publishing.common.dto.request.EmployeeRequest;
 import com.cloud.publishing.common.dto.request.EmployeeUpdateRequest;
 import com.cloud.publishing.common.dto.response.EmployeeShort;

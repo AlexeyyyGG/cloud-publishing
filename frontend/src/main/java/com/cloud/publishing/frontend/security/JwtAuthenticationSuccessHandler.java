@@ -1,5 +1,8 @@
 package com.cloud.publishing.frontend.security;
 
+import static com.cloud.publishing.frontend.security.SecurityConstants.ACCESS_TOKEN;
+import static com.cloud.publishing.frontend.security.SecurityConstants.REFRESH_TOKEN;
+
 import com.cloud.publishing.common.constants.Urls;
 import com.cloud.publishing.common.dto.response.AuthResponse;
 import jakarta.servlet.ServletException;
@@ -13,9 +16,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String REFRESH_TOKEN = "refresh_token";
-
     public JwtAuthenticationSuccessHandler() {
         setDefaultTargetUrl(Urls.WEB_EMPLOYEES);
         setAlwaysUseDefaultTargetUrl(false);

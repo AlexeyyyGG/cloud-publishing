@@ -1,5 +1,8 @@
 package com.cloud.publishing.frontend.security;
 
+import static com.cloud.publishing.frontend.security.SecurityConstants.ACCESS_TOKEN;
+import static com.cloud.publishing.frontend.security.SecurityConstants.REFRESH_TOKEN;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.cloud.publishing.common.constants.Urls;
@@ -19,8 +22,6 @@ import org.springframework.web.client.RestTemplate;
 public class TokenService {
     private final RestTemplate restTemplate;
     private final String backendUrl;
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String REFRESH_TOKEN = "refresh_token";
     private static final String SESSION_EXPIRED_MSG = "Сессия истекла";
     private static final String INVALID_TOKEN_MSG = "Некорректный JWT токен";
 

@@ -1,6 +1,7 @@
-package com.cloud.publishing.backend.service;
+package com.cloud.publishing.backend.service.implementation;
 
 import com.cloud.publishing.backend.repository.EducationRepository;
+import com.cloud.publishing.backend.service.EducationService;
 import com.cloud.publishing.model.employee.Education;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

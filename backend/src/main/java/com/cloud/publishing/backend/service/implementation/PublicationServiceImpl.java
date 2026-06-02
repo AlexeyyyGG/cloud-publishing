@@ -1,7 +1,8 @@
-package com.cloud.publishing.backend.service;
+package com.cloud.publishing.backend.service.implementation;
 
 import static com.cloud.publishing.common.constants.publication.PublicationMessage.PUBLICATION_NOT_FOUND_MSG;
 
+import com.cloud.publishing.backend.service.PublicationService;
 import com.cloud.publishing.common.dto.request.PublicationRequest;
 import com.cloud.publishing.backend.exception.ObjectNotFoundException;
 import com.cloud.publishing.model.publication.Publication;

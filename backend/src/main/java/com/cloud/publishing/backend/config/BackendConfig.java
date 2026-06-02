@@ -34,9 +34,11 @@ public class BackendConfig {
         config.setJdbcUrl(dbProperties.getUrl());
         config.setUsername(dbProperties.getUser());
         config.setPassword(dbProperties.getPassword());
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setInitializationFailTimeout(dbProperties.getInitializationFailTimeout());
+        config.addDataSourceProperty("cachePrepStmts", dbProperties.isCachePrepStmts());
+        config.addDataSourceProperty("prepStmtCacheSize", dbProperties.getPrepStmtCacheSize());
+        config.addDataSourceProperty("prepStmtCacheSqlLimit",
+                dbProperties.getPrepStmtCacheSqlLimit());
         return new HikariDataSource(config);
     }
 

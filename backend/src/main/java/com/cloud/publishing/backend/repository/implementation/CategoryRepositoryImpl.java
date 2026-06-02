@@ -1,5 +1,6 @@
-package com.cloud.publishing.backend.repository;
+package com.cloud.publishing.backend.repository.implementation;
 
+import com.cloud.publishing.backend.repository.CategoryRepository;
 import com.cloud.publishing.model.publication.Category;
 import java.sql.Connection;
 import java.sql.ResultSet;

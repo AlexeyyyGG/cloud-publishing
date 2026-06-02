@@ -1,10 +1,12 @@
-package com.cloud.publishing.backend.repository;
+package com.cloud.publishing.backend.repository.implementation;
 
 import static com.cloud.publishing.common.constants.EducationConstants.*;
 import static com.cloud.publishing.common.constants.employee.EmployeeField.*;
 import static com.cloud.publishing.common.constants.employee.EmployeeMessage.*;
 import static com.cloud.publishing.common.constants.employee.EmployeeSQL.*;
 
+import com.cloud.publishing.backend.repository.BaseRepository;
+import com.cloud.publishing.backend.repository.EmployeeRepository;
 import com.cloud.publishing.common.dto.response.EmployeeShort;
 import com.cloud.publishing.backend.exception.ObjectNotFoundException;
 import com.cloud.publishing.model.employee.Education;

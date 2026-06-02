@@ -3,11 +3,11 @@ package com.cloud.publishing.frontend.security;
 import com.cloud.publishing.common.constants.Urls;
 import com.cloud.publishing.common.dto.request.LoginRequest;
 import com.cloud.publishing.common.dto.response.AuthResponse;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +22,7 @@ import java.util.List;
 public class BackendAuthenticationProvider implements AuthenticationProvider {
     private final RestTemplate restTemplate;
     private final String backendUrl;
-    private static final String ERROR_MESSAGE = "Ошибка аутентификации";
+    private static final String INVALID_CREDENTIALS_MESSAGE = "Неверный логин или пароль";
 
     public BackendAuthenticationProvider(
             @Qualifier("authRestTemplate") RestTemplate restTemplate,
@@ -42,12 +42,9 @@ public class BackendAuthenticationProvider implements AuthenticationProvider {
         try {
             response = restTemplate.postForObject(url, request, AuthResponse.class);
         } catch (HttpClientErrorException.Unauthorized e) {
-            throw new BadCredentialsException("Неверный логин или пароль");
+            throw new BadCredentialsException(INVALID_CREDENTIALS_MESSAGE);
         }
-        if (response == null || response.accessToken() == null) {
-            throw new AuthenticationServiceException(ERROR_MESSAGE);
-        }
-        List<GrantedAuthority> authorities = response.roles().stream()
+        List<GrantedAuthority> authorities = Objects.requireNonNull(response).roles().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(

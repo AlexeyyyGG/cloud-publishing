@@ -11,5 +11,42 @@ services:
       - "23306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-uroot", "-proot_password", "-h", "localhost" ]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: "jdbc:mysql://mysql:3306/cloud_publishing?useUnicode=true&characterEncoding=utf8"
+      DB_USER: "user"
+      DB_PASSWORD: "pass"
+      JWT_SECRET: "3563C7YujY767aDLvnWvMbIG6nzrlp7XrpCPtTp+Ip7rs"
+      JWT_ACCESS_EXPIRATION_MS: "3600000"
+      JWT_REFRESH_EXPIRATION_MS: "604800000"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: "http://backend:8080"
+
 volumes:
   mysql_data:
