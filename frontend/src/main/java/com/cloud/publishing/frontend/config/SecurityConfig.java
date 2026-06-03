@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .successHandler(successHandler))
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl(Urls.LOGOUT)
                         .logoutSuccessUrl(Urls.LOGIN)
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)

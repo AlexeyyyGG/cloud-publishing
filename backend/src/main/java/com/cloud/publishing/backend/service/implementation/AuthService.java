@@ -1,4 +1,4 @@
-package com.cloud.publishing.backend.service;
+package com.cloud.publishing.backend.service.implementation;
 
 import com.cloud.publishing.common.dto.request.LoginRequest;
 import com.cloud.publishing.common.dto.response.AuthResponse;

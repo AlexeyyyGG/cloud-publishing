@@ -4,7 +4,7 @@ import com.cloud.publishing.common.constants.Urls;
 import com.cloud.publishing.common.dto.request.LoginRequest;
 import com.cloud.publishing.common.dto.request.RefreshRequest;
 import com.cloud.publishing.common.dto.response.AuthResponse;
-import com.cloud.publishing.backend.service.AuthService;
+import com.cloud.publishing.backend.service.implementation.AuthService;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

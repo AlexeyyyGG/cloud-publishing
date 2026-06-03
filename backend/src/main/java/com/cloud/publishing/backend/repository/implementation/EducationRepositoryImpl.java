@@ -1,6 +1,11 @@
 package com.cloud.publishing.backend.repository.implementation;
 
-import static com.cloud.publishing.common.constants.EducationConstants.*;
+import static com.cloud.publishing.common.constants.EducationConstants.EDUCATION_ID;
+import static com.cloud.publishing.common.constants.EducationConstants.EDUCATION_LABEL;
+import static com.cloud.publishing.common.constants.EducationConstants.EDUCATION_NAME;
+import static com.cloud.publishing.common.constants.EducationConstants.EDUCATION_NOT_FOUND;
+import static com.cloud.publishing.common.constants.EducationConstants.SQL_GET_ALL;
+import static com.cloud.publishing.common.constants.EducationConstants.SQL_GET_EDUCATIONS;
 
 import com.cloud.publishing.backend.repository.EducationRepository;
 import com.cloud.publishing.model.employee.Education;

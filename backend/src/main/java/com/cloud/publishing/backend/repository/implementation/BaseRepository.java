@@ -1,5 +1,6 @@
-package com.cloud.publishing.backend.repository;
+package com.cloud.publishing.backend.repository.implementation;
 
+import com.cloud.publishing.backend.repository.TransactionalOperation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

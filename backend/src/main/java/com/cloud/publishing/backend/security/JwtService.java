@@ -1,6 +1,8 @@
 package com.cloud.publishing.backend.security;
 
-import static com.cloud.publishing.backend.security.SecurityConstants.*;
+import static com.cloud.publishing.backend.security.SecurityConstants.ACCESS_TOKEN_TYPE;
+import static com.cloud.publishing.backend.security.SecurityConstants.REFRESH_TOKEN_TYPE;
+import static com.cloud.publishing.backend.security.SecurityConstants.TYPE;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

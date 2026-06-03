@@ -17,4 +17,5 @@ public class Urls {
     public static final String WEB = "/web/**";
     public static final String EDUCATIONS = "/educations";
     public static final String CATEGORIES ="/categories";
+    public static final String LOGOUT = "/logout";
 }
