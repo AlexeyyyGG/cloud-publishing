@@ -20,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ArticleGetDTO'
+                  $ref: '#/components/schemas/ArticleGetAllDTO'
         '401':
           description: Требуется авторизация
     post:
@@ -97,7 +97,7 @@ components:
       bearerFormat: JWT
 
   schemas:
-    ArticleGetDTO:
+    ArticleGetAllDTO:
       type: object
       properties:
         name:
@@ -106,14 +106,15 @@ components:
         publicationName:
           type: string
           description: Название публикации
-        category:
-          $ref: '#/components/schemas/Category'
-        author:
-          $ref: '#/components/schemas/EmployeeShort'
-        coAuthors:
+        categoryName:
+          type: string
+          description: Название рубрики
+        authorName:
+          type: string
+          description: ФИО автора
+        coAuthorsNames:
           type: array
-          items:
-            $ref: '#/components/schemas/EmployeeShort'
+          description: ФИО соавторов
 
     ArticleResponse:
       type: object
@@ -124,9 +125,8 @@ components:
         name:
           type: string
           description: Название статьи
-        publicationName:
-          type: string
-          description: Название публикации
+        publication:
+          $ref: '#/components/schemas/PublicationShort'
         content:
           type: string
           description: Содержание статьи
@@ -158,11 +158,14 @@ components:
         content:
           type: string
           description: Содержание статьи
-        coAuthors:
+        coAuthorsIds:
           type: array
           description: Список идентификаторов соавторов
           items:
             type: integer
+        reviewerId:
+          type: integer
+          description: Идентификатор автора рецензии
       required:
         - publicationId
         - categoryId
@@ -208,3 +211,16 @@ components:
       required:
         - reviewer
         - reviewText
+
+    PublicationShort:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор публикации
+        name:
+          type: string
+          description: Название публикации
+      required:
+        - id
+        - name
