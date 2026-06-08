@@ -30,7 +30,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ArticleRequest'
+              $ref: '#/components/schemas/ArticleForm'
       responses:
         '201':
           description: Статья добавлена
@@ -54,7 +54,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleResponse'
+                $ref: '#/components/schemas/ArticleFormDetails'
         '400':
           description: Некорректный id
         '401':
@@ -68,7 +68,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ArticleRequest'
+              $ref: '#/components/schemas/ArticleForm'
       responses:
         '200':
           description: Данные статьи обновлены
@@ -115,35 +115,10 @@ components:
         coAuthorsNames:
           type: array
           description: ФИО соавторов
-
-    ArticleResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Идентификатор статьи
-        name:
-          type: string
-          description: Название статьи
-        publication:
-          $ref: '#/components/schemas/PublicationShort'
-        content:
-          type: string
-          description: Содержание статьи
-        category:
-          $ref: '#/components/schemas/Category'
-        author:
-          $ref: '#/components/schemas/EmployeeShort'
-        coAuthors:
-          type: array
           items:
-            $ref: '#/components/schemas/EmployeeShort'
-        reviews:
-          type: array
-          items:
-            $ref: '#/components/schemas/Review'
+            type: string
 
-    ArticleRequest:
+    ArticleForm:
       type: object
       properties:
         publicationId:
@@ -163,25 +138,41 @@ components:
           description: Список идентификаторов соавторов
           items:
             type: integer
-        reviewerId:
-          type: integer
-          description: Идентификатор автора рецензии
       required:
         - publicationId
         - categoryId
         - name
         - content
 
-    Category:
+    ArticleFormDetails:
       type: object
       properties:
-        id:
+        publicationId:
           type: integer
+          description: Идентификатор публикации
+        categoryId:
+          type: integer
+          description: Идентификатор рубрики
         name:
           type: string
+          description: Название статьи
+        content:
+          type: string
+          description: Содержание статьи
+        coAuthorsIds:
+          type: array
+          description: Список идентификаторов соавторов
+          items:
+            type: integer
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
       required:
-        - id
+        - publicationId
+        - categoryId
         - name
+        - content
 
     EmployeeShort:
       type: object
@@ -211,16 +202,3 @@ components:
       required:
         - reviewer
         - reviewText
-
-    PublicationShort:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Идентификатор публикации
-        name:
-          type: string
-          description: Название публикации
-      required:
-        - id
-        - name
