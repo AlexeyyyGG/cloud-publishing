@@ -30,7 +30,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ArticleForm'
+              $ref: '#/components/schemas/ArticleDTO'
       responses:
         '201':
           description: Статья добавлена
@@ -54,7 +54,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFormDetails'
+                $ref: '#/components/schemas/ArticleDTO'
         '400':
           description: Некорректный id
         '401':
@@ -68,7 +68,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ArticleForm'
+              $ref: '#/components/schemas/ArticleDTO'
       responses:
         '200':
           description: Данные статьи обновлены
@@ -100,6 +100,9 @@ components:
     ArticleGetAllDTO:
       type: object
       properties:
+        id:
+          type: integer
+          description: Идентификатор статьи
         name:
           type: string
           description: Название статьи
@@ -118,7 +121,7 @@ components:
           items:
             type: string
 
-    ArticleForm:
+    ArticleDTO:
       type: object
       properties:
         publicationId:
@@ -143,62 +146,3 @@ components:
         - categoryId
         - name
         - content
-
-    ArticleFormDetails:
-      type: object
-      properties:
-        publicationId:
-          type: integer
-          description: Идентификатор публикации
-        categoryId:
-          type: integer
-          description: Идентификатор рубрики
-        name:
-          type: string
-          description: Название статьи
-        content:
-          type: string
-          description: Содержание статьи
-        coAuthorsIds:
-          type: array
-          description: Список идентификаторов соавторов
-          items:
-            type: integer
-        reviews:
-          type: array
-          items:
-            $ref: '#/components/schemas/Review'
-      required:
-        - publicationId
-        - categoryId
-        - name
-        - content
-
-    EmployeeShort:
-      type: object
-      properties:
-        id:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        middleName:
-          type: string
-      required:
-        - id
-        - firstName
-        - lastName
-        - middleName
-
-    Review:
-      type: object
-      properties:
-        reviewer:
-          $ref: '#/components/schemas/EmployeeShort'
-        reviewText:
-          type: string
-          description: Текст рецензии
-      required:
-        - reviewer
-        - reviewText
