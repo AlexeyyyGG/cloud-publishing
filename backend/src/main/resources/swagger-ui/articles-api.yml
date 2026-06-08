@@ -4,6 +4,10 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080/
+
+security:
+  - bearerAuth: [ ]
+
 paths:
   /articles:
     get:
@@ -16,7 +20,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ArticleGetDTO'
+                  $ref: '#/components/schemas/ArticleGetAllDTO'
+        '401':
+          description: Требуется авторизация
     post:
       summary: Добавление статьи
       requestBody:
@@ -24,12 +30,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ArticleDTO'
+              $ref: '#/components/schemas/ArticleForm'
       responses:
         '201':
           description: Статья добавлена
         '400':
           description: Некорректные входные данные
+        '401':
+          description: Требуется авторизация
   /articles/{id}:
     parameters:
       - name: id
@@ -46,11 +54,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleDTO'
-        '404':
-          description: Статья с указанным id не найдена
+                $ref: '#/components/schemas/ArticleFormDetails'
         '400':
           description: Некорректный id
+        '401':
+          description: Требуется авторизация
+        '404':
+          description: Статья с указанным id не найдена
     put:
       summary: Обновление данных статьи
       requestBody:
@@ -58,12 +68,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ArticleDTO'
+              $ref: '#/components/schemas/ArticleForm'
       responses:
         '200':
           description: Данные статьи обновлены
         '400':
           description: Некорректные входные данные
+        '401':
+          description: Требуется авторизация
         '404':
           description: Статья с заданным id не найдена
     delete:
@@ -73,16 +85,21 @@ paths:
           description: Статья удалена
         '400':
           description: Некорректный id
+        '401':
+          description: Требуется авторизация
         '404':
           description: Статья с заданным id не найдена
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
-    ArticleGetDTO:
+    ArticleGetAllDTO:
       type: object
       properties:
-        id:
-          type: integer
-          description: Идентификатор статьи
         name:
           type: string
           description: Название статьи
@@ -91,21 +108,19 @@ components:
           description: Название публикации
         categoryName:
           type: string
-          description: Рубрика публикации
-        author:
+          description: Название рубрики
+        authorName:
           type: string
-          description: Фамилия И.О. автора
+          description: ФИО автора
         coAuthorsNames:
           type: array
-          description: Соавторы публикации
+          description: ФИО соавторов
           items:
             type: string
-    ArticleDTO:
+
+    ArticleForm:
       type: object
       properties:
-        id:
-          type: integer
-          description: Идентификатор статьи
         publicationId:
           type: integer
           description: Идентификатор публикации
@@ -118,33 +133,72 @@ components:
         content:
           type: string
           description: Содержание статьи
-        coAuthors:
+        coAuthorsIds:
           type: array
-          description: Список идентификаторов авторов
+          description: Список идентификаторов соавторов
           items:
             type: integer
-        review:
+      required:
+        - publicationId
+        - categoryId
+        - name
+        - content
+
+    ArticleFormDetails:
+      type: object
+      properties:
+        publicationId:
+          type: integer
+          description: Идентификатор публикации
+        categoryId:
+          type: integer
+          description: Идентификатор рубрики
+        name:
+          type: string
+          description: Название статьи
+        content:
+          type: string
+          description: Содержание статьи
+        coAuthorsIds:
+          type: array
+          description: Список идентификаторов соавторов
+          items:
+            type: integer
+        reviews:
+          type: array
+          items:
             $ref: '#/components/schemas/Review'
       required:
-        -publicationId
-        -categoryId
-        -name
-        -content
-    CoAuthor:
+        - publicationId
+        - categoryId
+        - name
+        - content
+
+    EmployeeShort:
       type: object
       properties:
         id:
           type: integer
-          description: Идентификатор соавтора
-        name:
+        firstName:
           type: string
-          description: Фамилия И.О. соавтора
+        lastName:
+          type: string
+        middleName:
+          type: string
+      required:
+        - id
+        - firstName
+        - lastName
+        - middleName
+
     Review:
       type: object
       properties:
-        reviewerId:
-          type: integer
-          description: Идентификатор рецензента
+        reviewer:
+          $ref: '#/components/schemas/EmployeeShort'
         reviewText:
           type: string
           description: Текст рецензии
+      required:
+        - reviewer
+        - reviewText

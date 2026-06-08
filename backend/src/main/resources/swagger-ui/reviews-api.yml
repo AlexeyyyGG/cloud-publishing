@@ -30,6 +30,25 @@ paths:
           description: Рецензия добавлена
         '400':
           description: Некорректные входные данные
+  /reviews/article/{articleId}:
+    get:
+      summary: Получение списка рецензий по ID статьи
+      parameters:
+        - name: articleId
+          in: path
+          description: Уникальный идентификатор статьи
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный ответ со списком рецензий для статьи
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewDetailsDTO'
   /reviews/{id}:
     parameters:
       - name: id
@@ -131,4 +150,37 @@ components:
         - authorId
         - articleId
         - articleContent
+        - reviewText
+
+    EmployeeShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+      required:
+        - id
+        - firstName
+        - lastName
+        - middleName
+
+    ReviewDetailsDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор рецензии
+        reviewer:
+          $ref: '#/components/schemas/EmployeeShort'
+        reviewText:
+          type: string
+          description: Текст рецензии
+      required:
+        - id
+        - reviewer
         - reviewText
