@@ -47,7 +47,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -234,16 +233,19 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
             Map<Integer, Set<Integer>> categories = loadRelations(
                     connection,
                     SQL_GET_ALL_CATEGORIES,
+                    PUBLICATION_ID,
                     CATEGORY_ID
             );
             Map<Integer, Set<Integer>> journalists = loadRelations(
                     connection,
                     SQL_GET_ALL_JOURNALISTS,
+                    PUBLICATION_ID,
                     EMPLOYEE_ID
             );
             Map<Integer, Set<Integer>> editors = loadRelations(
                     connection,
                     SQL_GET_ALL_EDITORS,
+                    PUBLICATION_ID,
                     EMPLOYEE_ID
             );
             return publications.stream()
@@ -280,24 +282,6 @@ public class PublicationRepositoryImpl extends BaseRepository implements Publica
             }
         }
         return publications;
-    }
-
-    private Map<Integer, Set<Integer>> loadRelations(
-            Connection connection,
-            String sql,
-            String colName
-    ) throws SQLException {
-        Map<Integer, Set<Integer>> relations = new HashMap<>();
-        try (Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                int publicationId = resultSet.getInt(PUBLICATION_ID);
-                int linkedId = resultSet.getInt(colName);
-                relations.computeIfAbsent(publicationId, k -> new HashSet<>())
-                        .add(linkedId);
-            }
-        }
-        return relations;
     }
 
     private PreparedStatement prepareDeleteConnections(
